@@ -12,27 +12,31 @@ async function getGymDetails() {
 		// Load the HTML into cheerio
 		const $ = cheerio.load(response.data);
 
+		const currentTime = new Date()
+		console.log(currentTime)
+
 		// Initialize an array to hold the formatted gym data
 		const gymData: {
 			GymName: string;
-			Size: string;
-			LiveMemberCount: string;
+			Size: number;
+			LiveMemberCount: number;
+			MemberAreaRatio: number;
 		}[] = [];
 
 		// Find all divs with the attribute 'data-counter-card' (for gym info)
 		$("div[data-counter-card]").each((i, element) => {
 			const gymName = $(element).attr("data-counter-card"); // Extract the gym name from the attribute
-			const size = $(element)
+			const size = Number($(element)
 				.find("span.is-h6")
 				.last()
 				.text()
 				.trim()
 				.replace(/\s+/g, "")
-				.replace(/sq\/m/g, ""); // Extract and clean size
+				.replace(/sq\/m/g, "")); // Extract and clean size
 			// Extract the size (sqm)
 
 			// Find the corresponding member count in 'span[data-live-count]'
-			const memberCount = $(`span[data-live-count="${gymName}"]`).text().trim(); // Match gym with live member count
+			const memberCount = Number($(`span[data-live-count="${gymName}"]`).text().trim()); // Match gym with live member count
 
 			if (gymName && size && memberCount) {
 				// Push the formatted object into the gymData array
@@ -40,6 +44,7 @@ async function getGymDetails() {
 					GymName: gymName,
 					Size: size, // Remove extra whitespaces from the size
 					LiveMemberCount: memberCount,
+					MemberAreaRatio: size / memberCount
 				});
 			}
 		});
