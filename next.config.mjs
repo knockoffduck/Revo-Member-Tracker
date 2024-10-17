@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    exclude: ['ogServer'],
-};
+const nextConfig = {};
 
 export default nextConfig;
