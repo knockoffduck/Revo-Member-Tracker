@@ -9,13 +9,13 @@ export default async function Home() {
 		percentage: number;
 	};
 
-	let response = await fetch(
+	const response = await fetch(
 		"https://revotracker.daffydvck.live/api/gyms/stats/latest"
 	);
 
-	let result = await response.json();
+	const result = await response.json();
 
-	let gyms: Gym[] = result.data.data;
+	const gyms: Gym[] = result.data.data;
 
 	return (
 		<div className="grid w-screen h-screen px-8 justify-center pt-6 gap-6">
