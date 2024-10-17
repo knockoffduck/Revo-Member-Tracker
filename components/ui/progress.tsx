@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 
 const Progress = React.forwardRef<
 	React.ElementRef<typeof ProgressPrimitive.Root>,
-	React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, max, ...props }, ref) => (
+	React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & {
+		color?: string;
+	}
+>(({ className, value, max, color, ...props }, ref) => (
 	<ProgressPrimitive.Root
 		ref={ref}
 		className={cn(
@@ -18,7 +20,7 @@ const Progress = React.forwardRef<
 		{...props}
 	>
 		<ProgressPrimitive.Indicator
-			className="h-full w-full flex-1 bg-primary transition-all"
+			className={cn("h-full w-full flex-1 bg-red-600 transition-all", color)}
 			style={{
 				transform: `translateX(-${100 - ((value || 0) / (max || 100)) * 100}%)`,
 			}}
