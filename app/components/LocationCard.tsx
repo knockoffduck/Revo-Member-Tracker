@@ -10,13 +10,6 @@ interface Gym {
 	Percentage: number;
 }
 
-const style = {
-	top: "50%",
-	right: 0,
-	transform: "translate(0, -50%)",
-	lineHeight: "24px",
-};
-
 export const LocationCard = ({ gym }: { gym: Gym }) => {
 	return (
 		<Card className="flex flex-col  items-center justify-between border-black h-52 p-6">
