@@ -32,12 +32,8 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
 
 	const currentLevel = checkLevel(gym.percentage);
 
-	const style = `h-8 rounded-lg ${currentLevel.colour}`;
-
-	console.log(style);
-
 	return (
-		<Card className="flex flex-col  items-center justify-between border-black h-52 p-6">
+		<Card className="flex flex-col items-center border-0 bg-primary/5 justify-between h-52 p-6">
 			<h2 className="text-xl">{gym.name}</h2>
 			<h3 className="text-4xl">{gym.member_count}</h3>
 			<Progress
