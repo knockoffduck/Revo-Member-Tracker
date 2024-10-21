@@ -4,5 +4,5 @@ export type Gym = {
 	member_count: number;
 	member_ratio: number;
 	percentage: number;
-	created_at: Date;
+	created_at: string;
 };
