@@ -38,7 +38,7 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
 			<h3 className="text-4xl">{gym.member_count}</h3>
 			<Progress
 				value={gym.percentage}
-				max={50}
+				max={60}
 				className={`h-8 rounded-lg`}
 				color={currentLevel.colour}
 			></Progress>
