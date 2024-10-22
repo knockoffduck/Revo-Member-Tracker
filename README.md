@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Revo Fitness Gym Occupancy Tracker
+
+A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users can view the least crowded gyms and store historical data for analysis. Integrated with **Supabase** for data storage and **Tailwind CSS** for styling.
+
+## Current and Upcoming Features
+
+- [x] Fetches live member count and gym size.
+- [x] Displays gyms based on member-to-area ratio (least crowded first).
+- [x] Stores historical data for trend analysis.
+  - [ ] Access to older data.
+- [ ] Users can filter favorite gyms and view live stats.
+  - [ ] Create users to store favourite gyms.
+- [x] Dark mode toggle for better UI experience.
+
+## Tech Stack
+
+- **Next.js** (Frontend)
+- **Tailwind CSS** (Styling)
+- **Supabase** (Database)
+- **Hono** (API framework)
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/revo-fitness-gym-tracker.git
+   cd revo-fitness-gym-tracker
+   ```
+2. **Install dependencies**:
+   ```bash
+   bun install
+   ```
+3. **Create environment variables:** Add the following to .env.local:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_KEY=your-supabase-anon-key
+   SUPABASE_SERVICE_KEY=your-supabase-service-role-key
+   ```
+4. **Run the app**:
+   ```
+   bun run dev
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Database
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app uses **Supabase** for storing gym statistics.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### `Revo Member Stats` Table:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `id`: Primary key.
+- `name`: Gym name.
+- `size`: Gym size (sqm).
+- `member_count`: Live member count.
+- `member_ratio`: Member-to-area ratio.
+- `created_at`: Timestamp.
 
-## Learn More
+## API Endpoints
 
-To learn more about Next.js, take a look at the following resources:
+### `/api/gyms/stats/update`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Method**: `GET`
+- **Description**: Fetches the latest gym stats and updates the database.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `/api/gyms/stats/latest`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Method**: `GET`
+- **Description**: Returns the most recent gym statistics (sorted by occupancy).
