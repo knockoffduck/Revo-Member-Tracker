@@ -2,7 +2,23 @@
 import { Gym, GymResponse } from "./_types";
 import { LocationCard } from "./components/LocationCard";
 
-export default async function GymList({
+// Convert ISO string to the local time (using browser's local timezone)
+const convertToLocalTime = (isoString: string): string => {
+	const date = new Date(isoString);
+
+	// Format the date to the local timezone (browser's timezone)
+	const localTimeFormatter = new Intl.DateTimeFormat("en-AU", {
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false, // 24-hour format
+	});
+
+	return localTimeFormatter.format(date);
+};
+
+export default function GymList({
 	query,
 	gymResponse,
 }: {
@@ -10,22 +26,6 @@ export default async function GymList({
 	gymResponse: GymResponse;
 }) {
 	const response = gymResponse;
-
-	// Convert ISO string to the local time (using browser's local timezone)
-	const convertToLocalTime = (isoString: string): string => {
-		const date = new Date(isoString);
-
-		// Format the date to the local timezone (browser's timezone)
-		const localTimeFormatter = new Intl.DateTimeFormat("en-US", {
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false, // 24-hour format
-		});
-
-		return localTimeFormatter.format(date);
-	};
 
 	// Get the latest time in local timezone
 	const latestTime = convertToLocalTime(response.timestamp);
