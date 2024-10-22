@@ -10,12 +10,15 @@ if (!supabaseKey) {
 	);
 }
 
-// Create the client once
+// Correctly typed custom fetch function
+const customFetch: typeof fetch = (url, options = {}) => {
+	return fetch(url, { ...options, cache: "no-store" });
+};
+
+// Create the client once with the custom fetch
 const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
 	global: {
-		fetch: (url: any, options = {}) => {
-			return fetch(url, { ...options, cache: "no-store" });
-		},
+		fetch: customFetch,
 	},
 });
 
