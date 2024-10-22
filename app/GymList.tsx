@@ -1,9 +1,15 @@
 import { getGyms } from "@/lib/fetchData";
-import { Gym } from "./_types";
+import { Gym, GymResponse } from "./_types";
 import { LocationCard } from "./components/LocationCard";
 
-export default async function GymList({ query }: { query: string }) {
-	const response = await getGyms();
+export default async function GymList({
+	query,
+	gymResponse,
+}: {
+	query: string;
+	gymResponse: GymResponse;
+}) {
+	const response = gymResponse;
 
 	// Convert ISO string to the local time (using browser's local timezone)
 	const convertToLocalTime = (isoString: string): string => {

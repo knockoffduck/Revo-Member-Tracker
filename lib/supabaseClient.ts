@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { Database } from "@/app/_types/supabase";
 
 // Initialize Supabase client only once and reuse it
 const supabaseUrl = "https://database.daffydvck.live";
@@ -16,7 +17,7 @@ const customFetch: typeof fetch = (url, options = {}) => {
 };
 
 // Create the client once with the custom fetch
-const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
+const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
 	global: {
 		fetch: customFetch,
 	},
