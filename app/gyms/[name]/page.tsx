@@ -2,7 +2,7 @@ import Chart from "@/app/components/Chart";
 import { Card, CardHeader } from "@/components/ui/card";
 import { supabaseClient } from "@/lib/supabaseClient";
 
-const convertToPerthTime = (isoString: string): string => {
+const convertToPerthHour = (isoString: string): string => {
 	const date = new Date(isoString);
 
 	// Format the date to Perth time (UTC+8)
@@ -16,12 +16,51 @@ const convertToPerthTime = (isoString: string): string => {
 	return perthTimeFormatter.format(date);
 };
 
+function convertUTCToPerthTime(utcDate: Date): Date {
+	// Get the UTC time in milliseconds
+	const utcTime = utcDate.getTime();
+
+	// Perth is UTC+8, so calculate the offset (in milliseconds)
+	const perthOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
+
+	// Create a new Date object adjusted to Perth time
+	const perthDate = new Date(utcTime + perthOffset);
+
+	return perthDate;
+}
+
 export default async function page({ params }: { params: { name: string } }) {
 	const supabase = supabaseClient();
+	const gymName = decodeURIComponent(params.name);
+
+	const today = new Date();
+
+	// Offset for Perth timezone (UTC+8)
+	const perthOffset = 8 * 60; // Offset in minutes
+
+	// Get current date in Perth timezone
+	const perthToday = new Date(today.getTime() + perthOffset * 60 * 1000);
+
+	// Format the date as YYYY-MM-DD for the Perth timezone
+	const perthTodayDate = perthToday.toISOString().split("T")[0];
+
+	// Get the start of the day in UTC (Perth midnight in UTC)
+	const perthMidnightUTC = new Date(
+		`${perthTodayDate}T00:00:00.000+08:00`
+	).toISOString();
+
+	// Get the end of the day in UTC (Perth 23:59:59 in UTC)
+	const perthEndOfDayUTC = new Date(
+		`${perthTodayDate}T23:59:59.999+08:00`
+	).toISOString();
+
+	// Query for records created today (in Perth time)
 	const { data, error } = await supabase
 		.from("Revo Member Stats")
 		.select()
-		.eq("name", params.name);
+		.eq("name", gymName)
+		.gte("created_at", perthMidnightUTC)
+		.lt("created_at", perthEndOfDayUTC);
 
 	if (error) {
 		console.error("Error fetching data: ", error.message);
@@ -30,7 +69,7 @@ export default async function page({ params }: { params: { name: string } }) {
 
 	// Safeguard: if data is not available or empty
 	if (!data || data.length === 0) {
-		return <div>No data available</div>;
+		return <div>No data available for {gymName}</div>;
 	}
 
 	// Helper function to normalize time to the nearest 30-minute interval
@@ -53,10 +92,10 @@ export default async function page({ params }: { params: { name: string } }) {
 	} = {};
 
 	data.forEach((item) => {
-		const date = new Date(item.created_at);
-		const roundedTime = roundTo30Minutes(date);
-		const time = convertToPerthTime(roundedTime); // Normalize time to the nearest 30 minutes
-		console.log(time);
+		const perthTime = convertUTCToPerthTime(new Date(item.created_at));
+		const roundedTime = roundTo30Minutes(perthTime);
+		const time = convertToPerthHour(roundedTime);
+		// Normalize time to the nearest 30 minutes
 
 		if (!groupedData[time]) {
 			groupedData[time] = {
@@ -86,9 +125,9 @@ export default async function page({ params }: { params: { name: string } }) {
 	});
 
 	return (
-		<Card className="p-6 border-0">
+		<Card className="p-6 border-0 grid justify-center">
 			<CardHeader className="text-center font-bold text-2xl">
-				{params.name}
+				{gymName}
 			</CardHeader>
 			<Chart data={averagedData}></Chart>
 		</Card>
