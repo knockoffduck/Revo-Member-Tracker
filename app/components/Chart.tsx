@@ -35,7 +35,7 @@ type CountAverages = {
 
 export default function Chart({ data }: { data: CountAverages[] }) {
 	return (
-		<Card>
+		<Card className="max-w-[500px]">
 			<CardHeader>
 				<CardTitle>Average Member Count</CardTitle>
 				<CardDescription>
@@ -48,8 +48,8 @@ export default function Chart({ data }: { data: CountAverages[] }) {
 						accessibilityLayer
 						data={data}
 						margin={{
-							left: 12,
-							right: 12,
+							left: 8,
+							right: 8,
 						}}
 					>
 						<CartesianGrid vertical={false} />
@@ -58,7 +58,6 @@ export default function Chart({ data }: { data: CountAverages[] }) {
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							tickFormatter={(value) => value.slice(0, 3)}
 						/>
 						<ChartTooltip
 							cursor={false}
