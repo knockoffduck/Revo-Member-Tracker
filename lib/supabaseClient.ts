@@ -11,7 +11,13 @@ if (!supabaseKey) {
 }
 
 // Create the client once
-const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
+const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
+	global: {
+		fetch: (url: any, options = {}) => {
+			return fetch(url, { ...options, cache: "no-store" });
+		},
+	},
+});
 
 export const supabaseClient = () => {
 	return supabase;
