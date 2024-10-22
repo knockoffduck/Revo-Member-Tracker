@@ -4,12 +4,13 @@ import { LocationCard } from "./components/LocationCard";
 
 export default async function GymList({ query }: { query: string }) {
 	const response = await getGyms();
-	const convertToPerthTime = (isoString: string): string => {
+
+	// Convert ISO string to the local time (using browser's local timezone)
+	const convertToLocalTime = (isoString: string): string => {
 		const date = new Date(isoString);
 
-		// Format the date to Perth time (UTC+8)
-		const perthTimeFormatter = new Intl.DateTimeFormat("en-AU", {
-			timeZone: "Australia/Perth", // Convert to Perth timezone
+		// Format the date to the local timezone (browser's timezone)
+		const localTimeFormatter = new Intl.DateTimeFormat("en-US", {
 			month: "2-digit",
 			day: "2-digit",
 			hour: "2-digit",
@@ -17,10 +18,11 @@ export default async function GymList({ query }: { query: string }) {
 			hour12: false, // 24-hour format
 		});
 
-		return perthTimeFormatter.format(date);
+		return localTimeFormatter.format(date);
 	};
 
-	const latestTime = convertToPerthTime(response.timestamp);
+	// Get the latest time in local timezone
+	const latestTime = convertToLocalTime(response.timestamp);
 	const gyms = response.data;
 
 	const filteredGyms = Array.isArray(gyms)

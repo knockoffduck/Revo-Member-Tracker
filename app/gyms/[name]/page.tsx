@@ -2,31 +2,32 @@ import Chart from "@/app/components/Chart";
 import { Card, CardHeader } from "@/components/ui/card";
 import { supabaseClient } from "@/lib/supabaseClient";
 
-const convertToPerthHour = (isoString: string): string => {
+// Convert ISO string to a localized hour (using browser's local timezone)
+const convertToLocalHour = (isoString: string): string => {
 	const date = new Date(isoString);
 
-	// Format the date to Perth time (UTC+8)
-	const perthTimeFormatter = new Intl.DateTimeFormat("en-AU", {
-		timeZone: "Australia/Perth", // Convert to Perth timezone
+	// Format the date to local timezone (browser's timezone)
+	const localTimeFormatter = new Intl.DateTimeFormat("en-US", {
 		hour: "2-digit",
 		minute: "2-digit",
 		hour12: false, // 24-hour format
 	});
 
-	return perthTimeFormatter.format(date);
+	return localTimeFormatter.format(date);
 };
 
-function convertUTCToPerthTime(utcDate: Date): Date {
+// Convert UTC date to local browser time
+function convertUTCToLocalTime(utcDate: Date): Date {
 	// Get the UTC time in milliseconds
 	const utcTime = utcDate.getTime();
 
-	// Perth is UTC+8, so calculate the offset (in milliseconds)
-	const perthOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
+	// Calculate the offset for the local timezone
+	const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
 
-	// Create a new Date object adjusted to Perth time
-	const perthDate = new Date(utcTime + perthOffset);
+	// Adjust UTC time to local time
+	const localDate = new Date(utcTime - timezoneOffset);
 
-	return perthDate;
+	return localDate;
 }
 
 export default async function page({ params }: { params: { name: string } }) {
@@ -35,32 +36,29 @@ export default async function page({ params }: { params: { name: string } }) {
 
 	const today = new Date();
 
-	// Offset for Perth timezone (UTC+8)
-	const perthOffset = 8 * 60; // Offset in minutes
+	// Get current local date
+	const localToday = new Date(today);
 
-	// Get current date in Perth timezone
-	const perthToday = new Date(today.getTime() + perthOffset * 60 * 1000);
+	// Format the date as YYYY-MM-DD for the local timezone
+	const localTodayDate = localToday.toISOString().split("T")[0];
 
-	// Format the date as YYYY-MM-DD for the Perth timezone
-	const perthTodayDate = perthToday.toISOString().split("T")[0];
-
-	// Get the start of the day in UTC (Perth midnight in UTC)
-	const perthMidnightUTC = new Date(
-		`${perthTodayDate}T00:00:00.000+00:00`
+	// Get the start of the day in UTC based on local timezone
+	const localMidnightUTC = new Date(
+		`${localTodayDate}T00:00:00.000Z`
 	).toISOString();
 
-	// Get the end of the day in UTC (Perth 23:59:59 in UTC)
-	const perthEndOfDayUTC = new Date(
-		`${perthTodayDate}T23:59:59.999+00:00`
+	// Get the end of the day in UTC based on local timezone
+	const localEndOfDayUTC = new Date(
+		`${localTodayDate}T23:59:59.999Z`
 	).toISOString();
 
-	// Query for records created today (in Perth time)
+	// Query for records created today (based on local time)
 	const { data, error } = await supabase
 		.from("Revo Member Stats")
 		.select()
 		.eq("name", gymName)
-		.gte("created_at", perthMidnightUTC)
-		.lt("created_at", perthEndOfDayUTC);
+		.gte("created_at", localMidnightUTC)
+		.lt("created_at", localEndOfDayUTC);
 
 	if (error) {
 		console.error("Error fetching data: ", error.message);
@@ -92,9 +90,9 @@ export default async function page({ params }: { params: { name: string } }) {
 	} = {};
 
 	data.forEach((item) => {
-		const perthTime = convertUTCToPerthTime(new Date(item.created_at));
-		const roundedTime = roundTo30Minutes(perthTime);
-		const time = convertToPerthHour(roundedTime);
+		const localTime = convertUTCToLocalTime(new Date(item.created_at));
+		const roundedTime = roundTo30Minutes(localTime);
+		const time = convertToLocalHour(roundedTime);
 		// Normalize time to the nearest 30 minutes
 
 		if (!groupedData[time]) {
