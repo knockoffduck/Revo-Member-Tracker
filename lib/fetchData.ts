@@ -1,6 +1,8 @@
 import { supabaseClient } from "./supabaseClient";
 import { Gym } from "@/app/_types";
 
+export const revalidate = 0;
+
 export const getGyms = async () => {
 	const supabase = supabaseClient();
 	if (!supabase) throw new Error("Cannot access supabase");
