@@ -31,7 +31,9 @@ export default async function GymList({ query }: { query: string }) {
 
 	return (
 		<div className="flex flex-col gap-6 ">
-			<h4 className="text-xl font-normal text-center ">{latestTime}</h4>
+			<h4 className="text-xl font-normal text-center ">
+				Last Fetched: {latestTime}
+			</h4>
 			{filteredGyms?.map((gym, index) => (
 				<LocationCard key={index} gym={gym}></LocationCard>
 			))}
