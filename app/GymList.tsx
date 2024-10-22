@@ -1,4 +1,4 @@
-import { getGyms } from "@/lib/fetchData";
+"use client";
 import { Gym, GymResponse } from "./_types";
 import { LocationCard } from "./components/LocationCard";
 
