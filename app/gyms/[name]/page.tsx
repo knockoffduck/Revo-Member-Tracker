@@ -46,12 +46,12 @@ export default async function page({ params }: { params: { name: string } }) {
 
 	// Get the start of the day in UTC (Perth midnight in UTC)
 	const perthMidnightUTC = new Date(
-		`${perthTodayDate}T00:00:00.000+08:00`
+		`${perthTodayDate}T00:00:00.000+00:00`
 	).toISOString();
 
 	// Get the end of the day in UTC (Perth 23:59:59 in UTC)
 	const perthEndOfDayUTC = new Date(
-		`${perthTodayDate}T23:59:59.999+08:00`
+		`${perthTodayDate}T23:59:59.999+00:00`
 	).toISOString();
 
 	// Query for records created today (in Perth time)
