@@ -1,6 +1,9 @@
 import Chart from "@/app/components/Chart";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { supabaseClient } from "@/lib/supabaseClient";
+import Link from "next/link";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 export default async function page({ params }: { params: { name: string } }) {
 	const supabase = supabaseClient();
@@ -44,6 +47,11 @@ export default async function page({ params }: { params: { name: string } }) {
 
 	return (
 		<Card className="p-6 border-0 grid justify-center">
+			<Link href={"/"}>
+				<Button>
+					<IoArrowBackOutline></IoArrowBackOutline>
+				</Button>
+			</Link>
 			<CardHeader className="text-center font-bold text-2xl">
 				{gymName}
 			</CardHeader>
