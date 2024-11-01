@@ -12,6 +12,11 @@ A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users
   - [ ] Create users to store favourite gyms.
 - [x] Dark mode toggle for better UI experience.
 
+## Known Bugs
+
+- [ ] Locations not updating when no occupants
+  - [ ] On server, reference the list of gyms, and if missing gym then add value 0
+
 ## Tech Stack
 
 - **Next.js** (Frontend)
