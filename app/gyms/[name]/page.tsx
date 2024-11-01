@@ -2,6 +2,12 @@ import Chart from "@/app/components/Chart";
 import { Card, CardHeader } from "@/components/ui/card";
 import { supabaseClient } from "@/lib/supabaseClient";
 
+function getPreviousDate(date: Date): Date {
+	const previousDate = new Date(date);
+	previousDate.setDate(date.getDate() - 1);
+	return previousDate;
+}
+
 export default async function page({ params }: { params: { name: string } }) {
 	const supabase = supabaseClient();
 	const gymName = decodeURIComponent(params.name);
@@ -13,23 +19,26 @@ export default async function page({ params }: { params: { name: string } }) {
 
 	// Format the date as YYYY-MM-DD for the local timezone
 	const localTodayDate = localToday.toISOString().split("T")[0];
+	const previousDate = getPreviousDate(today).toISOString().split("T")[0];
 
 	// Get the start of the day in UTC based on local timezone
-	const localMidnightUTC = new Date(
-		`${localTodayDate}T00:00:00.000Z`
+	const localStartofDayUTC = new Date(
+		`${previousDate}T16:00:00.000Z`
 	).toISOString();
 
 	// Get the end of the day in UTC based on local timezone
 	const localEndOfDayUTC = new Date(
-		`${localTodayDate}T23:59:59.999Z`
+		`${localTodayDate}T16:00:00.000Z`
 	).toISOString();
+	console.log(localTodayDate);
+	console.log(localStartofDayUTC, ":", localEndOfDayUTC);
 
 	// Query for records created today (based on local time)
 	const { data, error } = await supabase
 		.from("Revo Member Stats")
 		.select()
 		.eq("name", gymName)
-		.gte("created_at", localMidnightUTC)
+		.gte("created_at", localStartofDayUTC)
 		.lt("created_at", localEndOfDayUTC);
 
 	if (error) {
