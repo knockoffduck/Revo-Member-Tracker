@@ -33,8 +33,6 @@ export default async function page({ params }: { params: { name: string } }) {
 	const localEndOfDayUTC = new Date(
 		`${localTodayDate}T16:00:00.000Z`
 	).toISOString();
-	console.log(localTodayDate);
-	console.log(localStartofDayUTC, ":", localEndOfDayUTC);
 
 	// Query for records created today (based on local time)
 	const { data, error } = await supabase
