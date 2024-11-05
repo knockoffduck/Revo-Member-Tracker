@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { Inter } from "next/font/google";
+import Header from "./components/Header";
 
 export const metadata: Metadata = {
 	title: "Revo Member Tracker",
@@ -27,6 +28,7 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
+					<Header></Header>
 					{children}
 				</ThemeProvider>
 			</body>
