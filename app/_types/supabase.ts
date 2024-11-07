@@ -59,6 +59,46 @@ export type Database = {
 	};
 	public: {
 		Tables: {
+			account: {
+				Row: {
+					access_token: string | null;
+					account_id: string;
+					expires_at: string | null;
+					id: string;
+					password: string | null;
+					provider_id: string;
+					refresh_token: string | null;
+					user_id: string | null;
+				};
+				Insert: {
+					access_token?: string | null;
+					account_id: string;
+					expires_at?: string | null;
+					id: string;
+					password?: string | null;
+					provider_id: string;
+					refresh_token?: string | null;
+					user_id?: string | null;
+				};
+				Update: {
+					access_token?: string | null;
+					account_id?: string;
+					expires_at?: string | null;
+					id?: string;
+					password?: string | null;
+					provider_id?: string;
+					refresh_token?: string | null;
+					user_id?: string | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "account_user_id_fkey";
+						columns: ["user_id"];
+						referencedRelation: "user";
+						referencedColumns: ["id"];
+					}
+				];
+			};
 			categories: {
 				Row: {
 					cid: number | null;
@@ -114,12 +154,12 @@ export type Database = {
 					cost_difference_MSRP: number | null;
 					created: string;
 					id: string;
-					img_url: string | null;
+					img_url: string;
 					item_set: string | null;
-					item_url: string | null;
+					item_url: string;
 					model: string | null;
 					MSRP: number | null;
-					name: string | null;
+					name: string;
 					percentage_difference: number | null;
 					percentage_difference_MSRP: number | null;
 					ple_code: string | null;
@@ -135,12 +175,12 @@ export type Database = {
 					cost_difference_MSRP?: number | null;
 					created?: string;
 					id?: string;
-					img_url?: string | null;
+					img_url: string;
 					item_set?: string | null;
-					item_url?: string | null;
+					item_url: string;
 					model?: string | null;
 					MSRP?: number | null;
-					name?: string | null;
+					name: string;
 					percentage_difference?: number | null;
 					percentage_difference_MSRP?: number | null;
 					ple_code?: string | null;
@@ -156,12 +196,12 @@ export type Database = {
 					cost_difference_MSRP?: number | null;
 					created?: string;
 					id?: string;
-					img_url?: string | null;
+					img_url?: string;
 					item_set?: string | null;
-					item_url?: string | null;
+					item_url?: string;
 					model?: string | null;
 					MSRP?: number | null;
-					name?: string | null;
+					name?: string;
 					percentage_difference?: number | null;
 					percentage_difference_MSRP?: number | null;
 					ple_code?: string | null;
@@ -176,6 +216,34 @@ export type Database = {
 						foreignKeyName: "items_item_set_fkey";
 						columns: ["item_set"];
 						referencedRelation: "item_sets";
+						referencedColumns: ["id"];
+					}
+				];
+			};
+			profiles: {
+				Row: {
+					created_at: string;
+					gyms: string[] | null;
+					id: string;
+					name: string | null;
+				};
+				Insert: {
+					created_at?: string;
+					gyms?: string[] | null;
+					id: string;
+					name?: string | null;
+				};
+				Update: {
+					created_at?: string;
+					gyms?: string[] | null;
+					id?: string;
+					name?: string | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "profiles_id_fkey";
+						columns: ["id"];
+						referencedRelation: "users";
 						referencedColumns: ["id"];
 					}
 				];
@@ -210,6 +278,37 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			session: {
+				Row: {
+					expires_at: string;
+					id: string;
+					ip_address: unknown | null;
+					user_agent: string | null;
+					user_id: string | null;
+				};
+				Insert: {
+					expires_at: string;
+					id: string;
+					ip_address?: unknown | null;
+					user_agent?: string | null;
+					user_id?: string | null;
+				};
+				Update: {
+					expires_at?: string;
+					id?: string;
+					ip_address?: unknown | null;
+					user_agent?: string | null;
+					user_id?: string | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "session_user_id_fkey";
+						columns: ["user_id"];
+						referencedRelation: "user";
+						referencedColumns: ["id"];
+					}
+				];
+			};
 			subcategories: {
 				Row: {
 					category: string | null;
@@ -241,9 +340,71 @@ export type Database = {
 					}
 				];
 			};
+			user: {
+				Row: {
+					created_at: string | null;
+					email: string;
+					email_verified: boolean | null;
+					id: string;
+					image: string | null;
+					name: string;
+					updated_at: string | null;
+				};
+				Insert: {
+					created_at?: string | null;
+					email: string;
+					email_verified?: boolean | null;
+					id: string;
+					image?: string | null;
+					name: string;
+					updated_at?: string | null;
+				};
+				Update: {
+					created_at?: string | null;
+					email?: string;
+					email_verified?: boolean | null;
+					id?: string;
+					image?: string | null;
+					name?: string;
+					updated_at?: string | null;
+				};
+				Relationships: [];
+			};
+			verification: {
+				Row: {
+					expires_at: string;
+					id: string;
+					identifier: string;
+					value: string;
+				};
+				Insert: {
+					expires_at: string;
+					id: string;
+					identifier: string;
+					value: string;
+				};
+				Update: {
+					expires_at?: string;
+					id?: string;
+					identifier?: string;
+					value?: string;
+				};
+				Relationships: [];
+			};
 		};
 		Views: {
-			[_ in never]: never;
+			gyms_view: {
+				Row: {
+					name: string | null;
+				};
+				Insert: {
+					name?: string | null;
+				};
+				Update: {
+					name?: string | null;
+				};
+				Relationships: [];
+			};
 		};
 		Functions: {
 			[_ in never]: never;
