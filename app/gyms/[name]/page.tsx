@@ -11,48 +11,49 @@ function getPreviousDate(date: Date): Date {
 	return previousDate;
 }
 
-export default async function page({ params }: { params: { name: string } }) {
-	const supabase = supabaseClient();
-	const gymName = decodeURIComponent(params.name);
+export default async function page(props: { params: Promise<{ name: string }> }) {
+    const params = await props.params;
+    const supabase = supabaseClient();
+    const gymName = decodeURIComponent(params.name);
 
-	const today = new Date();
+    const today = new Date();
 
-	// Get current local date
-	const localToday = new Date(today);
+    // Get current local date
+    const localToday = new Date(today);
 
-	// Format the date as YYYY-MM-DD for the local timezone
-	const localTodayDate = localToday.toISOString().split("T")[0];
-	const previousDate = getPreviousDate(today).toISOString().split("T")[0];
+    // Format the date as YYYY-MM-DD for the local timezone
+    const localTodayDate = localToday.toISOString().split("T")[0];
+    const previousDate = getPreviousDate(today).toISOString().split("T")[0];
 
-	// Get the start of the day in UTC based on local timezone
-	const localStartofDayUTC = new Date(
+    // Get the start of the day in UTC based on local timezone
+    const localStartofDayUTC = new Date(
 		`${previousDate}T16:00:00.000Z`
 	).toISOString();
 
-	// Get the end of the day in UTC based on local timezone
-	const localEndOfDayUTC = new Date(
+    // Get the end of the day in UTC based on local timezone
+    const localEndOfDayUTC = new Date(
 		`${localTodayDate}T16:00:00.000Z`
 	).toISOString();
 
-	// Query for records created today (based on local time)
-	const { data, error } = await supabase
+    // Query for records created today (based on local time)
+    const { data, error } = await supabase
 		.from("Revo Member Stats")
 		.select()
 		.eq("name", gymName)
 		.gte("created_at", localStartofDayUTC)
 		.lt("created_at", localEndOfDayUTC);
 
-	if (error) {
+    if (error) {
 		console.error("Error fetching data: ", error.message);
 		return <div>Error fetching data</div>;
 	}
 
-	// Safeguard: if data is not available or empty
-	if (!data || data.length === 0) {
+    // Safeguard: if data is not available or empty
+    if (!data || data.length === 0) {
 		return <div>No data available for {gymName}</div>;
 	}
 
-	return (
+    return (
 		<Card className="p-6 border-0 grid justify-center">
 			<Link href={"/"}>
 				<Button>

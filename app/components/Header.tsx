@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/darkmode";
 import { getUser } from "@/utils/supabase/server";
 import Link from "next/link";
 import SignOutButton from "./SignOutButton";
 import SignInButton from "./SignInButton";
+import AccountButton from "./AccountButton";
 
 export default async function Header() {
 	const user = await getUser();
-	console.log(user?.email);
+
 	return (
 		<div className="flex pt-8 justify-center">
 			<Link href="/" className="text-4xl font-bold mb-6 text-center">
@@ -31,11 +31,11 @@ export default async function Header() {
 					</g>
 				</svg>
 			</Link>
-			<div className="absolute top-8 left-8 z-50">
+			<div className="absolute top-8 left-8 z-50 hidden md:block">
 				<ModeToggle></ModeToggle>
 			</div>
 			<div className="absolute top-8 right-8 z-50">
-				{user && <SignOutButton></SignOutButton>}
+				{user && <AccountButton></AccountButton>}
 				{!user && <SignInButton></SignInButton>}
 			</div>
 		</div>

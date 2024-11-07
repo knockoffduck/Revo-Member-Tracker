@@ -1,5 +1,6 @@
 "use client";
 import { Gym, GymResponse } from "./_types";
+import { getGymPreferences } from "./auth/actions";
 import { LocationCard } from "./components/LocationCard";
 
 // Convert ISO string to the local time (using browser's local timezone)
@@ -38,7 +39,7 @@ export default function GymList({
 		: [];
 
 	return (
-		<div className="flex flex-col gap-6 ">
+		<div className="flex flex-col gap-6 py-6">
 			<h4 className="text-xl font-normal text-center ">
 				Last Fetched: {latestTime}
 			</h4>
