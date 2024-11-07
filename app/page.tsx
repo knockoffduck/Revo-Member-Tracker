@@ -6,11 +6,14 @@ import { getUser } from "@/utils/supabase/server";
 import { getGymPreferences } from "./auth/actions";
 import { Gym } from "./_types";
 
-// Type guard to check if the result is an error object
-function isErrorResponse(obj: any): obj is { errorMessage: string } {
-	return obj && typeof obj.errorMessage === "string";
-}
+type GymPreferencesResponse = string[] | { errorMessage: string };
 
+// Type guard to check if the result is an error object
+function isErrorResponse(
+	obj: GymPreferencesResponse
+): obj is { errorMessage: string } {
+	return typeof obj === "object" && "errorMessage" in obj;
+}
 export default async function Home(props: {
 	searchParams?: Promise<{ query?: string }>;
 }) {
