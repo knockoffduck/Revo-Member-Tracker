@@ -1,10 +1,19 @@
 "use client";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import {
+	Area,
+	AreaChart,
+	CartesianGrid,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
 
 import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -14,15 +23,20 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
+import { TooltipProps } from "recharts";
+
+import { IoTrendingUp } from "react-icons/io5";
+import { ValueType } from "tailwindcss/types/config";
+import { NameType } from "recharts/types/component/DefaultTooltipContent";
 
 const chartConfig = {
 	desktop: {
 		label: "Desktop",
-		color: "#2563eb",
+		color: "hsl(var(--chart-1))",
 	},
 	mobile: {
 		label: "Mobile",
-		color: "#60a5fa",
+		color: "hsl(var(--chart-2))",
 	},
 } satisfies ChartConfig;
 
@@ -34,135 +48,105 @@ type CountAverages = {
 };
 
 type ResponseData = {
-	created_at: string;
-	id: number;
-	member_count: number;
-	member_ratio: number;
-	name: string;
-	percentage: number;
-	size: number;
+	time: string;
+	aTime: string;
+	avg_member_count: number;
+	avg_member_ratio: number;
+	avg_percentage: number;
 }[];
 
-// Convert ISO string to a localized hour (using browser's local timezone)
-const convertToLocalHour = (isoString: string): string => {
-	const date = new Date(isoString);
-
-	// Format the date to local timezone (browser's timezone)
-	const localTimeFormatter = new Intl.DateTimeFormat("en-US", {
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: false, // 24-hour format
-	});
-
-	return localTimeFormatter.format(date);
+const CustomTooltip = ({
+	active,
+	payload,
+	label,
+}: TooltipProps<ValueType, NameType>) => {
+	if (active && payload && payload.length) {
+		return (
+			<div className="p-2 md:p-4 bg-background/70 flex flex-col gap-2 rounded-md">
+				<p className="text-sm md:text-lg">{label}</p>
+				<p className="text-xs md:text-sm text-[hsl(var(--chart-2))]">
+					Member Count:
+					<span className="ml-2">{payload[0].value}</span>
+				</p>
+			</div>
+		);
+	}
 };
-
-// Convert UTC date to local browser time
-function convertUTCToLocalTime(utcDate: Date): Date {
-	// Get the UTC time in milliseconds
-	const utcTime = utcDate.getTime();
-
-	// Calculate the offset for the local timezone
-	const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
-
-	// Adjust UTC time to local time
-	const localDate = new Date(utcTime - timezoneOffset);
-
-	return localDate;
-}
 
 export default function Chart({ data }: { data: ResponseData }) {
 	// Helper function to normalize time to the nearest 30-minute interval
-	const roundTo30Minutes = (date: Date): string => {
-		const msIn30Minutes = 30 * 60 * 1000;
+	console.log(data);
 
-		const roundedTime = new Date(
-			Math.round(date.getTime() / msIn30Minutes) * msIn30Minutes
-		);
-		return roundedTime.toISOString().substring(0, 16); // Returns YYYY-MM-DDTHH:MM
+	const getTickValues = (data: ResponseData) => {
+		// Ensure there are only 3 ticks
+		const length = data.length;
+		if (length <= 3) return data.map((item) => item.aTime);
+
+		const interval = Math.floor(length / 3);
+		return data
+			.filter((_, index) => index % interval === 0)
+			.map((item) => item.aTime);
 	};
 
-	// Grouping data by 30-minute intervals and averaging the values
-	const groupedData: {
-		[key: string]: {
-			member_count: number[];
-			member_ratio: number[];
-			percentage: number[];
-		};
-	} = {};
-
-	data.forEach((item) => {
-		const localTime = convertUTCToLocalTime(new Date(item.created_at));
-		const roundedTime = roundTo30Minutes(localTime);
-		const time = convertToLocalHour(roundedTime);
-		// Normalize time to the nearest 30 minutes
-
-		if (!groupedData[time]) {
-			groupedData[time] = {
-				member_count: [],
-				member_ratio: [],
-				percentage: [],
-			};
-		}
-
-		groupedData[time].member_count.push(item.member_count);
-		groupedData[time].member_ratio.push(item.member_ratio);
-		groupedData[time].percentage.push(item.percentage);
-	});
-
-	// Function to calculate the average of an array
-	const average = (arr: number[]): number =>
-		arr.reduce((sum, val) => sum + val, 0) / arr.length;
-
-	// Create the final grouped result with averages
-	const averagedData = Object.entries(groupedData).map(([time, values]) => {
-		return {
-			time,
-			avg_member_count: Math.round(average(values.member_count)),
-			avg_member_ratio: Math.round(average(values.member_ratio)),
-			avg_percentage: Math.round(average(values.percentage)),
-		};
-	});
+	const ticks = getTickValues(data);
 
 	return (
-		<Card className="max-w-[500px]">
+		<Card className="w-full p-10">
 			<CardHeader>
-				<CardTitle>Average Member Count</CardTitle>
+				<CardTitle>Area Chart - Axes</CardTitle>
 				<CardDescription>
-					Showing average member count per 30 mins
+					Showing total visitors for the last 6 months
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<ChartContainer config={chartConfig}>
+				<ChartContainer
+					config={chartConfig}
+					className="md:min-h-[20rem] w-full"
+				>
 					<AreaChart
+						width={500}
+						height={400}
 						accessibilityLayer
-						data={averagedData}
+						data={data}
 						margin={{
-							left: 8,
-							right: 8,
+							left: -20,
+							right: 12,
 						}}
 					>
 						<CartesianGrid vertical={false} />
 						<XAxis
-							dataKey="time"
+							dataKey="aTime"
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
+							ticks={ticks}
 						/>
-						<ChartTooltip
-							cursor={false}
-							content={<ChartTooltipContent indicator="line" />}
-						/>
+						<YAxis tickLine={false} tickMargin={8} tickCount={3} />
+						<Tooltip content={<CustomTooltip />} />
 						<Area
 							dataKey="avg_member_count"
 							type="natural"
-							fill="var(--color-desktop)"
+							fill="var(--color-mobile)"
 							fillOpacity={0.4}
-							stroke="var(--color-desktop)"
+							stroke="var(--color-mobile)"
+							stackId="a"
 						/>
 					</AreaChart>
 				</ChartContainer>
 			</CardContent>
+			<CardFooter>
+				<div className="flex w-full items-start gap-2 text-sm">
+					<div className="grid gap-2">
+						<div className="flex items-center gap-2 font-medium leading-none">
+							Trending up by 5.2% this month{" "}
+							<IoTrendingUp className="h-4 w-4" />
+						</div>
+						<div className="flex items-center gap-2 leading-none text-muted-foreground">
+							January - June 2024
+						</div>
+					</div>
+				</div>
+			</CardFooter>
 		</Card>
 	);
 }
