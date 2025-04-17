@@ -1,12 +1,10 @@
 import { ModeToggle } from "@/components/ui/darkmode";
-import { getUser } from "@/utils/supabase/server";
 import Link from "next/link";
 import SignOutButton from "./SignOutButton";
 import SignInButton from "./SignInButton";
 import AccountButton from "./AccountButton";
 
 export default async function Header() {
-	const user = await getUser();
 
 	return (
 		<div className="relative flex pt-8 justify-center">
@@ -38,11 +36,11 @@ export default async function Header() {
 				<ModeToggle />
 			</div>
 
-			{/* Account/Sign in button - always visible */}
+			{/* Account/Sign in button - always visible
 			<div className="absolute top-8 right-8 z-50">
 				{user && <AccountButton />}
 				{!user && <SignInButton />}
-			</div>
+			</div> */}
 		</div>
 	);
 }

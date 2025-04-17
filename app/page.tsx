@@ -2,9 +2,7 @@ import { ModeToggle } from "@/components/ui/darkmode";
 import GymList from "./GymList";
 import SearchGyms from "./SearchGyms";
 import { getGyms } from "@/lib/fetchData";
-import { getUser } from "@/utils/supabase/server";
-import { getGymPreferences } from "./auth/actions";
-import { Gym } from "./_types";
+import { Gym, GymResponse } from "./_types";
 
 type GymPreferencesResponse = string[] | { errorMessage: string };
 
@@ -19,31 +17,9 @@ export default async function Home(props: {
 }) {
 	const searchParams = await props.searchParams;
 	const query = searchParams?.query || "";
-	const user = await getUser();
-	let response;
+	let response: GymResponse = await getGyms();
+	console.log("response", response);
 
-	if (user) {
-		// Fetch gym preferences for the user
-		const gymPreferences = await getGymPreferences(user.id);
-
-		if (isErrorResponse(gymPreferences)) {
-			// Handle the error case
-			console.error(
-				"Error fetching gym preferences:",
-				gymPreferences.errorMessage
-			);
-			throw new Error(gymPreferences.errorMessage);
-		} else if (gymPreferences.length > 0) {
-			// Use gym preferences if available
-			response = await getGyms(gymPreferences);
-		} else {
-			// No preferences, fetch all gyms
-			response = await getGyms();
-		}
-	} else {
-		// If no user, fetch all gyms
-		response = await getGyms();
-	}
 
 	return (
 		<div className="w-full px-8 justify-center pt-6 gap-6 ">

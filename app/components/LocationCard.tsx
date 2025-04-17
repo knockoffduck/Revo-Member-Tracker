@@ -4,11 +4,13 @@ import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 
 type Gym = {
-	name: string;
-	size: number;
-	member_count: number;
-	member_ratio: number;
-	percentage: number;
+	id: string;
+	created: string;
+	count: number;
+	ratio: number;
+	gymName: string;
+	percentage: number | null;
+	gymId: string;
 };
 
 export const LocationCard = ({ gym }: { gym: Gym }) => {
@@ -18,6 +20,7 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
 		high: { percentage: 37.5, colour: "bg-orange-600" },
 		full: { percentage: 50, colour: "bg-red-600" },
 	};
+
 
 	const checkLevel = (percentage: number) => {
 		if (percentage <= levels.low.percentage) {
@@ -31,13 +34,17 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
 		}
 	};
 
+	// Check if gym.percentage is null or undefined
+	if (gym.percentage === null || gym.percentage === undefined) {
+		return <div>ERROR...</div>;
+	}
 	const currentLevel = checkLevel(gym.percentage);
 
 	return (
-		<Link href={`/gyms/${gym.name}`}>
+		<Link href={`/gyms/${gym.gymName}`}>
 			<Card className="flex flex-col items-center border-0 bg-primary/5 justify-between h-52 p-6">
-				<h2 className="text-xl">{gym.name}</h2>
-				<h3 className="text-4xl">{gym.member_count}</h3>
+				<h2 className="text-xl">{gym.gymName}</h2>
+				<h3 className="text-4xl">{gym.count}</h3>
 				<Progress
 					value={gym.percentage}
 					max={60}

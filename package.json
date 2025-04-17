@@ -24,8 +24,10 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "dayjs-plugin-utc": "^0.1.2",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.42.0",
     "lucide-react": "^0.453.0",
+    "mysql2": "^3.14.0",
     "next": "15.0.2",
     "next-themes": "^0.3.0",
     "pg": "^8.13.1",
@@ -41,14 +43,16 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "typescript": "^5.6.3",
     "@types/node": "^20.17.6",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "drizzle-kit": "^0.31.0",
+    "eslint": "^9.14.0",
+    "eslint-config-next": "15.0.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
-    "eslint": "^9.14.0",
-    "eslint-config-next": "15.0.2"
+    "tsx": "^4.19.3",
+    "typescript": "^5.6.3"
   },
   "overrides": {
     "@types/react": "npm:types-react@19.0.0-rc.1",

@@ -1,10 +1,11 @@
 export type Gym = {
-	name: string;
-	size: number;
-	member_count: number;
-	member_ratio: number;
-	percentage: number;
-	created_at: string;
+	id: string;
+	created: string;
+	count: number;
+	ratio: number;
+	gymName: string;
+	percentage: number | null;
+	gymId: string;
 };
 
 export type GymResponse = {

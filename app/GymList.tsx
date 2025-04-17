@@ -1,6 +1,5 @@
 "use client";
 import { Gym, GymResponse } from "./_types";
-import { getGymPreferences } from "./auth/actions";
 import { LocationCard } from "./components/LocationCard";
 
 // Convert ISO string to the local time (using browser's local timezone)
@@ -34,8 +33,8 @@ export default function GymList({
 
 	const filteredGyms = Array.isArray(gyms)
 		? gyms.filter((gym: Gym) => {
-				return gym.name.toLowerCase().includes(query.toLowerCase());
-		  })
+			return gym.gymName.toLowerCase().includes(query.toLowerCase());
+		})
 		: [];
 
 	return (

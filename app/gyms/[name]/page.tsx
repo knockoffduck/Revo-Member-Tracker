@@ -2,7 +2,6 @@ import Chart from "@/app/components/Chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { getGymStats } from "@/lib/fetchData";
-import { supabaseClient } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { IoArrowBackOutline } from "react-icons/io5";
 
@@ -16,7 +15,6 @@ export default async function page(props: {
 	params: Promise<{ name: string }>;
 }) {
 	const params = await props.params;
-	const supabase = supabaseClient();
 	const gymName = decodeURIComponent(params.name);
 
 	const data = await getGymStats(gymName);
