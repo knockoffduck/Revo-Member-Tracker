@@ -25,6 +25,7 @@ export default async function Home(props: {
 		console.error("Failed to fetch gyms:", error);
 		fetchError = "Could not load gym data. Please try again later.";
 	}
+	console.log("Response:", response);
 
 	return (
 		<div className="w-full px-8 justify-center pt-6 gap-6 ">

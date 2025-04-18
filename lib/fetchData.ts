@@ -56,13 +56,12 @@ export const getGyms = async (gyms?: string[]) => {
 						)
 					)
 				);
-
-			const result: GymResponse = {
-				timestamp: latestTime[0].created,
-				data: latestData,
-			};
-			return result;
 		}
+		const result: GymResponse = {
+			timestamp: latestTime[0].created,
+			data: latestData,
+		};
+		return result;
 		// return result;
 	} catch (error) {
 		console.error("Error fetching gym data:", error);
