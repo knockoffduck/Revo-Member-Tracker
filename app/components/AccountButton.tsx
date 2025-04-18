@@ -13,9 +13,23 @@ import { MdAccountCircle } from "react-icons/md";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 export default function AccountButton() {
+
 	const router = useRouter();
+
+	const handleSignOut = async () => {
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					router.push("/auth/sign-in"); // redirect to login page
+					router.refresh(); // Refresh server components/data
+				},
+			},
+		});
+
+	}
 
 	return (
 		<div>
@@ -29,9 +43,10 @@ export default function AccountButton() {
 					<DropdownMenuLabel>My Account</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem>
-						<Link href="/account/gyms">My Gyms</Link>
+						<Link href="/account/gympreferences">My Gyms</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem
+						onClick={handleSignOut}
 						className="cursor-pointer"
 					>
 						Sign Out

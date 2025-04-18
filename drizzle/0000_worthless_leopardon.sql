@@ -7,7 +7,7 @@ CREATE TABLE `Revo_Gym_Count` (
 	`count` int NOT NULL,
 	`ratio` double NOT NULL,
 	`gym_name` text NOT NULL,
-	`percentage` double,
+	`percentage` double NOT NULL,
 	`gym_id` varchar(36) NOT NULL,
 	CONSTRAINT `Revo_Gym_Count_id` PRIMARY KEY(`id`)
 );

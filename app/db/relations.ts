@@ -2,10 +2,13 @@ import { relations } from "drizzle-orm/relations";
 import {
 	revoGyms,
 	revoGymCount,
+	user,
+	account,
 	motherboards,
 	biosLinks,
 	itemSets,
 	items,
+	session,
 	categories,
 	subcategories,
 } from "./schema";
@@ -19,6 +22,18 @@ export const revoGymCountRelations = relations(revoGymCount, ({ one }) => ({
 
 export const revoGymsRelations = relations(revoGyms, ({ many }) => ({
 	revoGymCounts: many(revoGymCount),
+}));
+
+export const accountRelations = relations(account, ({ one }) => ({
+	user: one(user, {
+		fields: [account.userId],
+		references: [user.id],
+	}),
+}));
+
+export const userRelations = relations(user, ({ many }) => ({
+	accounts: many(account),
+	sessions: many(session),
 }));
 
 export const biosLinksRelations = relations(biosLinks, ({ one }) => ({
@@ -41,6 +56,13 @@ export const itemsRelations = relations(items, ({ one }) => ({
 
 export const itemSetsRelations = relations(itemSets, ({ many }) => ({
 	items: many(items),
+}));
+
+export const sessionRelations = relations(session, ({ one }) => ({
+	user: one(user, {
+		fields: [session.userId],
+		references: [user.id],
+	}),
 }));
 
 export const subcategoriesRelations = relations(subcategories, ({ one }) => ({

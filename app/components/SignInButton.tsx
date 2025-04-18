@@ -8,7 +8,7 @@ export default function SignInButton() {
 	const disabledButton = pathname === "/login" ? true : false;
 	return (
 		<Button asChild disabled={disabledButton}>
-			<Link href="/login" className="w-full h-full">
+			<Link href="/auth/sign-in" className="w-full h-full">
 				Sign In
 			</Link>
 		</Button>

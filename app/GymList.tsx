@@ -1,6 +1,8 @@
-"use client";
+import { authClient } from "@/lib/auth-client";
 import { Gym, GymResponse } from "./_types";
 import { LocationCard } from "./components/LocationCard";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 // Convert ISO string to the local time (using browser's local timezone)
 const convertToLocalTime = (isoString: string): string => {
@@ -18,18 +20,22 @@ const convertToLocalTime = (isoString: string): string => {
 	return localTimeFormatter.format(date);
 };
 
-export default function GymList({
+export default async function GymList({
 	query,
 	gymResponse,
 }: {
 	query: string;
 	gymResponse: GymResponse;
 }) {
-	const response = gymResponse;
+
+
+
 
 	// Get the latest time in local timezone
-	const latestTime = convertToLocalTime(response.timestamp);
-	const gyms = response.data;
+	const latestTime = convertToLocalTime(gymResponse.timestamp);
+	const gyms = gymResponse.data;
+
+
 
 	const filteredGyms = Array.isArray(gyms)
 		? gyms.filter((gym: Gym) => {

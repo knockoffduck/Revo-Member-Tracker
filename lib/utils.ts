@@ -38,7 +38,6 @@ export function convertUTCToLocalTime(utcDate: Date): Date {
 
 	// Calculate the offset for the local timezone
 	const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
-	console.log(timezoneOffset);
 
 	// Adjust UTC time to local time
 	const localDate = new Date(utcTime - timezoneOffset);

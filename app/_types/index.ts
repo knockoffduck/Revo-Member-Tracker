@@ -4,7 +4,7 @@ export type Gym = {
 	count: number;
 	ratio: number;
 	gymName: string;
-	percentage: number | null;
+	percentage: number;
 	gymId: string;
 };
 

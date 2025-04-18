@@ -5,9 +5,11 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { convertToLocalHour, convertUTCToLocalTime } from "./utils";
 import { db } from "@/app/db/database";
-import { revoGymCount, revoGyms } from "@/app/db/schema";
-import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
+import { revoGymCount, revoGyms, user } from "@/app/db/schema";
+import { and, asc, desc, eq, gte, inArray, lte } from "drizzle-orm";
 import { raw } from "mysql2";
+import { auth } from "./auth";
+import { headers } from "next/headers";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -15,6 +17,7 @@ dayjs.extend(timezone);
 export const revalidate = 0;
 
 export const getGyms = async (gyms?: string[]) => {
+	let latestData: Gym[] = [];
 	try {
 		const latestTime = await db
 			.select({ created: revoGymCount.created })
@@ -24,41 +27,43 @@ export const getGyms = async (gyms?: string[]) => {
 		if (!latestTime) {
 			throw new Error("No entries found in the database");
 		}
+		const session = await auth.api.getSession({
+			headers: await headers(),
+		});
+		const userId = session?.user?.id;
+		if (!userId) {
+			latestData = await db
+				.select()
+				.from(revoGymCount)
+				.where(eq(revoGymCount.created, latestTime[0].created))
+				.orderBy(desc(revoGymCount.percentage));
+		} else {
+			const gymPreferences = await db
+				.select({ gymPreferences: user.gymPreferences })
+				.from(user)
+				.where(eq(user.id, userId))
+				.limit(1);
 
-		const latestData = await db
-			.select()
-			.from(revoGymCount)
-			.where(eq(revoGymCount.created, latestTime[0].created))
-			.orderBy(desc(revoGymCount.percentage));
+			latestData = await db
+				.select()
+				.from(revoGymCount)
+				.where(
+					and(
+						eq(revoGymCount.created, latestTime[0].created),
+						inArray(
+							revoGymCount.gymName,
+							gymPreferences[0].gymPreferences as string[]
+						)
+					)
+				);
 
-		// Step 1: Get the latest `created_at` timestamp
-		// const { data: latestEntry, error: latestError } = await supabase
-		// 	.from("Revo Member Stats")
-		// 	.select("created_at")
-		// 	.order("created_at", { ascending: false })
-		// 	.limit(1)
-		// 	.single();
-		// if (latestError) throw latestError;
-		// if (!latestEntry) throw new Error("No entries found in the database");
-		// const latestCreatedAt = latestEntry.created_at;
-		// // Step 2: Fetch all entries with the same latest `created_at` timestamp
-		// const query = supabase
-		// 	.from("Revo Member Stats")
-		// 	.select("name, size, member_count, member_ratio, percentage, created_at")
-		// 	.eq("created_at", latestCreatedAt)
-		// 	.order("percentage", { ascending: false });
-		// // Apply gym name filtering if `gyms` is provided
-		// if (gyms && gyms.length > 0) {
-		// 	query.in("name", gyms);
-		// }
-		// const { data: filteredEntries, error: filteredError } = await query;
-		// if (filteredError) throw filteredError;
-		const result: GymResponse = {
-			timestamp: latestTime[0].created,
-			data: latestData || [],
-		};
+			const result: GymResponse = {
+				timestamp: latestTime[0].created,
+				data: latestData,
+			};
+			return result;
+		}
 		// return result;
-		return result;
 	} catch (error) {
 		console.error("Error fetching gym data:", error);
 		throw error;
@@ -119,7 +124,6 @@ export const getGymStats = async (gymName: string) => {
 	// 	// const localTime = convertUTCToLocalTime(new Date(item.created));
 	// 	const rawTime = new Date(item.created);
 	// 	const stringLocalTime = rawTime.toLocaleString();
-	// 	console.log("stringLocalTime", stringLocalTime);
 	// 	const localTime = new Date(stringLocalTime);
 
 	// 	const roundedTime = roundTo30Minutes(localTime);

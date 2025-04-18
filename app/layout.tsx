@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { Inter } from "next/font/google";
 import Header from "./components/Header";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
 	title: "Revo Member Tracker",
@@ -30,6 +31,7 @@ export default function RootLayout({
 				>
 					<Header></Header>
 					{children}
+					<Toaster />
 				</ThemeProvider>
 			</body>
 		</html>

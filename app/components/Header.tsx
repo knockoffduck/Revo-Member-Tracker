@@ -3,8 +3,15 @@ import Link from "next/link";
 import SignOutButton from "./SignOutButton";
 import SignInButton from "./SignInButton";
 import AccountButton from "./AccountButton";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { Button } from "@/components/ui/button";
 
 export default async function Header() {
+	const session = await auth.api.getSession({
+		headers: await headers()
+	});
+
 
 	return (
 		<div className="relative flex pt-8 justify-center">
@@ -36,11 +43,17 @@ export default async function Header() {
 				<ModeToggle />
 			</div>
 
-			{/* Account/Sign in button - always visible
+			{/* Account/Sign in button - always visible */}
 			<div className="absolute top-8 right-8 z-50">
-				{user && <AccountButton />}
-				{!user && <SignInButton />}
-			</div> */}
+				{session ? (
+					<AccountButton></AccountButton>
+				) : (
+					<Link href="/auth/sign-in">
+						<Button variant="outline">Sign In</Button>
+					</Link>
+				)}
+				{/* Sign out button - only visible when signed in */}
+			</div>
 		</div>
 	);
 }

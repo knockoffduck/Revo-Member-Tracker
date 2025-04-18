@@ -47,7 +47,7 @@
           "name": "percentage",
           "type": "double",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "gym_id": {
           "autoincrement": false,

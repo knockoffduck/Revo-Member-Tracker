@@ -76,7 +76,6 @@ const CustomTooltip = ({
 
 export default function Chart({ data }: { data: Gym[] }) {
 	// Helper function to normalize time to the nearest 30-minute interval
-	console.log("data", data);
 
 	// const getTickValues = (data: ResponseData) => {
 	// 	// Ensure there are only 3 ticks

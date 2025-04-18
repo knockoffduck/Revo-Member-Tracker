@@ -42,7 +42,6 @@ export default async function page(props: {
 		};
 		return localisedItem;
 	});
-	console.log("localisedData", localisedData);
 
 
 
