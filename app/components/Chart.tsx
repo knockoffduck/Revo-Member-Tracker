@@ -28,6 +28,7 @@ import { TooltipProps } from "recharts";
 import { IoTrendingUp } from "react-icons/io5";
 import { ValueType } from "tailwindcss/types/config";
 import { NameType } from "recharts/types/component/DefaultTooltipContent";
+import { Gym } from "../_types";
 
 const chartConfig = {
 	desktop: {
@@ -73,22 +74,22 @@ const CustomTooltip = ({
 	}
 };
 
-export default function Chart({ data }: { data: ResponseData }) {
+export default function Chart({ data }: { data: Gym[] }) {
 	// Helper function to normalize time to the nearest 30-minute interval
-	console.log(data);
+	console.log("data", data);
 
-	const getTickValues = (data: ResponseData) => {
-		// Ensure there are only 3 ticks
-		const length = data.length;
-		if (length <= 3) return data.map((item) => item.aTime);
+	// const getTickValues = (data: ResponseData) => {
+	// 	// Ensure there are only 3 ticks
+	// 	const length = data.length;
+	// 	if (length <= 3) return data.map((item) => item.aTime);
 
-		const interval = Math.floor(length / 3);
-		return data
-			.filter((_, index) => index % interval === 0)
-			.map((item) => item.aTime);
-	};
+	// 	const interval = Math.floor(length / 3);
+	// 	return data
+	// 		.filter((_, index) => index % interval === 0)
+	// 		.map((item) => item.aTime);
+	// };
 
-	const ticks = getTickValues(data);
+	// const ticks = getTickValues(data);
 
 	return (
 		<Card className="w-full p-10">
@@ -113,16 +114,37 @@ export default function Chart({ data }: { data: ResponseData }) {
 					>
 						<CartesianGrid vertical={false} />
 						<XAxis
-							dataKey="aTime"
+							dataKey="created"
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							ticks={ticks}
+							minTickGap={32}
+							tickFormatter={(value) => {
+								const date = new Date(value);
+								const options: Intl.DateTimeFormatOptions = {
+									hour: "2-digit",
+									minute: "2-digit",
+									hour12: true,
+								};
+								return date.toLocaleTimeString("en-AU", options);
+							}}
 						/>
 						<YAxis tickLine={false} tickMargin={8} tickCount={3} />
-						<Tooltip content={<CustomTooltip />} />
+						<ChartTooltip cursor={false} content={
+							<ChartTooltipContent
+								labelFormatter={(value) => {
+									return new Date(value).toLocaleTimeString("en-AU", {
+										month: "short",
+										day: "numeric",
+										hour: "2-digit",
+										minute: "2-digit",
+									})
+								}}
+								indicator="dot"
+							/>
+						}></ChartTooltip>
 						<Area
-							dataKey="avg_member_count"
+							dataKey="count"
 							type="natural"
 							fill="var(--color-mobile)"
 							fillOpacity={0.4}

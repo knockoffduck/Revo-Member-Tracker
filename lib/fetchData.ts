@@ -6,7 +6,8 @@ import utc from "dayjs/plugin/utc";
 import { convertToLocalHour, convertUTCToLocalTime } from "./utils";
 import { db } from "@/app/db/database";
 import { revoGymCount, revoGyms } from "@/app/db/schema";
-import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
+import { raw } from "mysql2";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -71,6 +72,7 @@ export const getGymStats = async (gymName: string) => {
 
 	// Get midnight time in Australia/Perth timezone
 	const startOfDayInPerth = nowInPerth.startOf("day");
+
 	const data = await db
 		.select()
 		.from(revoGymCount)
@@ -80,7 +82,8 @@ export const getGymStats = async (gymName: string) => {
 				gte(revoGymCount.created, startOfDayInPerth.utc().format()),
 				lte(revoGymCount.created, nowInPerth.utc().format())
 			)
-		);
+		)
+		.orderBy(asc(revoGymCount.created));
 
 	// const { data, error } = await supabase
 	// 	.from("Revo Member Stats")
@@ -94,42 +97,47 @@ export const getGymStats = async (gymName: string) => {
 	// 	console.error("Error fetching data: ", error);
 	// 	return [];
 	// }
-	const roundTo30Minutes = (date: Date): string => {
-		const msIn30Minutes = 30 * 60 * 1000;
+	// const roundTo30Minutes = (date: Date): string => {
+	// 	const msIn30Minutes = 30 * 60 * 1000;
 
-		const roundedTime = new Date(
-			Math.round(date.getTime() / msIn30Minutes) * msIn30Minutes
-		);
-		return roundedTime.toISOString().substring(0, 16); // Returns YYYY-MM-DDTHH:MM
-	};
+	// 	const roundedTime = new Date(
+	// 		Math.round(date.getTime() / msIn30Minutes) * msIn30Minutes
+	// 	);
+	// 	return roundedTime.toISOString().substring(0, 16); // Returns YYYY-MM-DDTHH:MM
+	// };
 
-	// Grouping data by 30-minute intervals and averaging the values
-	const groupedData: {
-		[key: string]: {
-			member_count: number[];
-			member_ratio: number[];
-			percentage: number[];
-		};
-	} = {};
+	// // Grouping data by 30-minute intervals and averaging the values
+	// const groupedData: {
+	// 	[key: string]: {
+	// 		member_count: number[];
+	// 		member_ratio: number[];
+	// 		percentage: number[];
+	// 	};
+	// } = {};
 
-	data.forEach((item) => {
-		const localTime = convertUTCToLocalTime(new Date(item.created));
-		const roundedTime = roundTo30Minutes(localTime);
-		const time = convertToLocalHour(roundedTime);
-		// Normalize time to the nearest 30 minutes
+	// data.forEach((item) => {
+	// 	// const localTime = convertUTCToLocalTime(new Date(item.created));
+	// 	const rawTime = new Date(item.created);
+	// 	const stringLocalTime = rawTime.toLocaleString();
+	// 	console.log("stringLocalTime", stringLocalTime);
+	// 	const localTime = new Date(stringLocalTime);
 
-		if (!groupedData[time]) {
-			groupedData[time] = {
-				member_count: [],
-				member_ratio: [],
-				percentage: [],
-			};
-		}
+	// 	const roundedTime = roundTo30Minutes(localTime);
+	// 	const time = convertToLocalHour(roundedTime);
+	// 	// Normalize time to the nearest 30 minutes
 
-		groupedData[time].member_count.push(item.count);
-		groupedData[time].member_ratio.push(item.ratio);
-		groupedData[time].percentage.push(item.percentage);
-	});
+	// 	if (!groupedData[time]) {
+	// 		groupedData[time] = {
+	// 			member_count: [],
+	// 			member_ratio: [],
+	// 			percentage: [],
+	// 		};
+	// 	}
+
+	// 	groupedData[time].member_count.push(item.count);
+	// 	groupedData[time].member_ratio.push(item.ratio);
+	// 	groupedData[time].percentage.push(item.percentage);
+	// });
 
 	// data.forEach((item) => {
 	// 	const localTime = convertUTCToLocalTime(new Date(item.created_at));
@@ -151,18 +159,18 @@ export const getGymStats = async (gymName: string) => {
 	// });
 
 	// Function to calculate the average of an array
-	const average = (arr: number[]): number =>
-		arr.reduce((sum, val) => sum + val, 0) / arr.length;
+	// const average = (arr: number[]): number =>
+	// 	arr.reduce((sum, val) => sum + val, 0) / arr.length;
 
-	// Create the final grouped result with averages
-	const averagedData = Object.entries(groupedData).map(([time, values]) => {
-		return {
-			time,
-			aTime: dayjs(`2024-01-01T${time}`).format("h:mm A"),
-			avg_member_count: Math.round(average(values.member_count)),
-			avg_member_ratio: Math.round(average(values.member_ratio)),
-			avg_percentage: Math.round(average(values.percentage)),
-		};
-	});
-	return averagedData;
+	// // Create the final grouped result with averages
+	// const averagedData = Object.entries(groupedData).map(([time, values]) => {
+	// 	return {
+	// 		time,
+	// 		aTime: dayjs(`2024-01-01T${time}`).format("h:mm A"),
+	// 		avg_member_count: Math.round(average(values.member_count)),
+	// 		avg_member_ratio: Math.round(average(values.member_ratio)),
+	// 		avg_percentage: Math.round(average(values.percentage)),
+	// 	};
+	// });
+	return data;
 };
