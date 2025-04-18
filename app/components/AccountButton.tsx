@@ -10,24 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import React, { startTransition } from "react";
 import { MdAccountCircle } from "react-icons/md";
-import { signOut } from "../auth/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function AccountButton() {
 	const router = useRouter();
-	const handleClickSignOutButton = () => {
-		startTransition(async () => {
-			const { errorMessage } = await signOut();
-			if (errorMessage) {
-				toast.error(errorMessage);
-			} else {
-				router.push("/");
-				toast.success("Successfully signed out");
-			}
-		});
-	};
+
 	return (
 		<div>
 			<DropdownMenu>
@@ -44,7 +33,6 @@ export default function AccountButton() {
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						className="cursor-pointer"
-						onClick={handleClickSignOutButton}
 					>
 						Sign Out
 					</DropdownMenuItem>

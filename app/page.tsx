@@ -17,7 +17,7 @@ export default async function Home(props: {
 }) {
 	const searchParams = await props.searchParams;
 	const query = searchParams?.query || "";
-	let response: GymResponse = await getGyms();
+	const response: GymResponse = await getGyms();
 	console.log("response", response);
 
 
