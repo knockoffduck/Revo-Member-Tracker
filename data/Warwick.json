@@ -1,0 +1,3296 @@
+[
+  {
+    "id": "564f081b-c213-4b0f-8f2a-54d58591caa6",
+    "created": "2025-04-18 16:01:26",
+    "count": 53,
+    "ratio": 21.88679245283019,
+    "gymName": "Warwick",
+    "percentage": 63.52201257861635,
+    "gymId": "856830"
+  },
+  {
+    "id": "e286802b-f6b0-439c-9de3-b436bff1bc00",
+    "created": "2025-04-18 16:03:20",
+    "count": 4,
+    "ratio": 290,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "156c6043-0413-42cd-ad80-27ac3f7b12b5",
+    "created": "2025-04-18 16:06:26",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "19795621-672e-4811-bc74-389a01b6c402",
+    "created": "2025-04-18 16:08:21",
+    "count": 4,
+    "ratio": 290,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b248edb4-6a0d-4be7-a3f5-736be88f77c8",
+    "created": "2025-04-18 16:11:26",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "0beccaa9-6883-49f4-8a57-f689f780b4ec",
+    "created": "2025-04-18 16:13:20",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9d53ef22-b760-4bfa-b5ee-87e6396d9d2c",
+    "created": "2025-04-18 16:16:26",
+    "count": 53,
+    "ratio": 21.88679245283019,
+    "gymName": "Warwick",
+    "percentage": 63.52201257861635,
+    "gymId": "856830"
+  },
+  {
+    "id": "25c6af93-e66b-4b26-8f3a-b3e26289aff0",
+    "created": "2025-04-18 16:18:21",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7c033ea5-15ac-4ca0-8136-8f73308cabaa",
+    "created": "2025-04-18 16:21:26",
+    "count": 55,
+    "ratio": 21.09090909090909,
+    "gymName": "Warwick",
+    "percentage": 64.84848484848484,
+    "gymId": "856830"
+  },
+  {
+    "id": "490c41c0-82e5-4f27-8bce-4dfbbd61eabf",
+    "created": "2025-04-18 16:23:20",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "be698bb4-6e9e-4565-9a8e-295fffc00125",
+    "created": "2025-04-18 16:26:26",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "ee2592b2-b88c-4af5-9ffe-d472cac96847",
+    "created": "2025-04-18 16:28:30",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "93125b95-7506-45db-87d5-ee42490d6d06",
+    "created": "2025-04-18 16:31:26",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "8bee135b-48b3-49fc-867c-ffef2d59c37b",
+    "created": "2025-04-18 16:33:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "21e1330b-6f4c-4aed-bf48-7822bbcd25fc",
+    "created": "2025-04-18 16:36:26",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "fb62d1a5-902e-4158-bc9f-1acb86e89cf6",
+    "created": "2025-04-18 16:38:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "1144383a-566f-4cc0-8082-ffd2ae2ddda3",
+    "created": "2025-04-18 16:41:26",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "ac33b1f7-fccb-4d20-b8b2-7fdd1e1c972d",
+    "created": "2025-04-18 16:43:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "63bfb245-6b2e-4a5b-a4bf-5ee35268ea83",
+    "created": "2025-04-18 16:46:26",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "8ae1a224-cf5a-4a8f-8dfd-e4bc3194b527",
+    "created": "2025-04-18 16:48:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "593335cf-82d3-4a1d-ac0c-652377be1c16",
+    "created": "2025-04-18 16:51:26",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "305eaa8f-7830-4d25-87b2-6840d19ac348",
+    "created": "2025-04-18 16:53:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "ebac94ff-7e85-4070-a35f-a73fade6bb30",
+    "created": "2025-04-18 16:56:26",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "7edf1041-7ae8-45de-bf20-53d3f7ac5f79",
+    "created": "2025-04-18 16:58:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7efccad0-4f97-4f1d-b1b7-58dc27560380",
+    "created": "2025-04-18 17:01:26",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "f739c425-76c1-4968-9695-b366ee594db9",
+    "created": "2025-04-18 17:03:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "18bad348-87da-4a73-94c2-412fca779cae",
+    "created": "2025-04-18 17:06:26",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "8ce93b29-28a1-4aac-b1bd-51b7ebae4156",
+    "created": "2025-04-18 17:08:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "44c0bdf3-d735-4360-85ba-cdc7649e5030",
+    "created": "2025-04-18 17:11:26",
+    "count": 43,
+    "ratio": 26.976744186046517,
+    "gymName": "Warwick",
+    "percentage": 55.03875968992248,
+    "gymId": "856830"
+  },
+  {
+    "id": "a927651d-23a6-419e-bdc9-43c1fc37cd04",
+    "created": "2025-04-18 17:13:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e12857d5-13e2-437b-81fa-5f06b404b6d2",
+    "created": "2025-04-18 17:16:26",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "2e695060-ae8e-41b3-a1d2-fb5e96381a03",
+    "created": "2025-04-18 17:18:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "305d7bc1-e96b-4ee3-97a8-d6ef8e829930",
+    "created": "2025-04-18 17:21:26",
+    "count": 43,
+    "ratio": 26.976744186046517,
+    "gymName": "Warwick",
+    "percentage": 55.03875968992248,
+    "gymId": "856830"
+  },
+  {
+    "id": "1298df4f-9e74-4a7c-9fc3-72c9169a77d7",
+    "created": "2025-04-18 17:23:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "11242d6e-5a8f-4520-9528-d126d840ab50",
+    "created": "2025-04-18 17:26:26",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "33f6605b-05e8-4787-a42b-d72168defda1",
+    "created": "2025-04-18 17:28:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "14ecc447-a341-408b-8032-b2bfbf91e72e",
+    "created": "2025-04-18 17:31:26",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "4c368d0d-83bc-489c-b50a-d98ca4e1201c",
+    "created": "2025-04-18 17:33:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "664d3c7d-f02c-478c-aa9b-7670353c3499",
+    "created": "2025-04-18 17:36:26",
+    "count": 36,
+    "ratio": 32.22222222222222,
+    "gymName": "Warwick",
+    "percentage": 46.29629629629631,
+    "gymId": "856830"
+  },
+  {
+    "id": "53b06527-784e-45af-944f-15959ee08212",
+    "created": "2025-04-18 17:38:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "6db6fbd9-dfe3-4428-9c30-ef4f366e7d8f",
+    "created": "2025-04-18 17:41:26",
+    "count": 34,
+    "ratio": 34.11764705882353,
+    "gymName": "Warwick",
+    "percentage": 43.13725490196079,
+    "gymId": "856830"
+  },
+  {
+    "id": "bd6a1cf6-71de-4420-a238-146281021ae9",
+    "created": "2025-04-18 17:43:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7fa39f1d-5fab-475a-9578-535eba883bc2",
+    "created": "2025-04-18 17:46:26",
+    "count": 35,
+    "ratio": 33.142857142857146,
+    "gymName": "Warwick",
+    "percentage": 44.76190476190476,
+    "gymId": "856830"
+  },
+  {
+    "id": "2787a42d-01c7-4971-ab06-25eabf68dd0f",
+    "created": "2025-04-18 17:48:20",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "4858019f-58f9-4603-a595-406ab4c03dc2",
+    "created": "2025-04-18 17:51:26",
+    "count": 32,
+    "ratio": 36.25,
+    "gymName": "Warwick",
+    "percentage": 39.583333333333336,
+    "gymId": "856830"
+  },
+  {
+    "id": "5230f190-ff7f-4a60-9182-e877a4c1ee8e",
+    "created": "2025-04-18 17:53:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "aa31bbd9-dce9-4409-9e51-50f4664f7c84",
+    "created": "2025-04-18 17:56:26",
+    "count": 31,
+    "ratio": 37.41935483870968,
+    "gymName": "Warwick",
+    "percentage": 37.634408602150536,
+    "gymId": "856830"
+  },
+  {
+    "id": "dc782a0f-dd6e-4d6c-92ea-69d8628e7210",
+    "created": "2025-04-18 17:58:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "cb2f742d-625f-485e-806c-542b4c6f8461",
+    "created": "2025-04-18 18:01:26",
+    "count": 33,
+    "ratio": 35.15151515151515,
+    "gymName": "Warwick",
+    "percentage": 41.41414141414141,
+    "gymId": "856830"
+  },
+  {
+    "id": "78677ad1-229a-45a5-a1ce-2699163a5d08",
+    "created": "2025-04-18 18:03:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "cfb55832-95b9-4f03-ade4-b230f02ee3a7",
+    "created": "2025-04-18 18:06:26",
+    "count": 34,
+    "ratio": 34.11764705882353,
+    "gymName": "Warwick",
+    "percentage": 43.13725490196079,
+    "gymId": "856830"
+  },
+  {
+    "id": "db1ba63a-e89c-4d3b-8116-0ce8f0e7ac64",
+    "created": "2025-04-18 18:08:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7c526c82-102c-4948-a146-3b73d56584ad",
+    "created": "2025-04-18 18:11:26",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "b1ff5e68-c909-4e6d-a0d4-59e6fbbf845d",
+    "created": "2025-04-18 18:13:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7f4d3569-4909-434d-b74c-9bb67d9d5268",
+    "created": "2025-04-18 18:16:26",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "1d97f370-c067-458f-a144-aa8cb6c90f45",
+    "created": "2025-04-18 18:18:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "8d5209c6-22bb-4970-8e4f-019b796ace9d",
+    "created": "2025-04-18 18:21:26",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "020c96e7-e055-4e47-96ff-aac919f72120",
+    "created": "2025-04-18 18:23:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "6934ad2c-0911-47c9-a917-49c368e0cb35",
+    "created": "2025-04-18 18:26:26",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "c4fe4d7b-27c2-41fd-860a-715031169820",
+    "created": "2025-04-18 18:28:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "d52cfb4e-8168-45bf-90d7-40740631002b",
+    "created": "2025-04-18 18:31:26",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "37969308-7bd3-4fa5-a488-cdeed7f994bb",
+    "created": "2025-04-18 18:33:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7b9eb7e5-2e79-49a4-8f5a-374380d9f47a",
+    "created": "2025-04-18 18:36:26",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "8637b507-5f85-4b48-a799-7a6641a8e63a",
+    "created": "2025-04-18 18:38:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b1958bf4-7ad4-48ad-a59e-88bb361b0ab1",
+    "created": "2025-04-18 18:41:26",
+    "count": 52,
+    "ratio": 22.307692307692307,
+    "gymName": "Warwick",
+    "percentage": 62.82051282051282,
+    "gymId": "856830"
+  },
+  {
+    "id": "b454e6d4-6c19-46a4-9bfe-b1a82bae8eb2",
+    "created": "2025-04-18 18:43:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9268e1ff-fa5c-48d1-9348-031eeccbf473",
+    "created": "2025-04-18 18:46:26",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "e1549118-2403-429b-8154-399735272d8e",
+    "created": "2025-04-18 18:48:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "246c2606-9d24-42f6-a8df-a121125bb06f",
+    "created": "2025-04-18 18:51:26",
+    "count": 52,
+    "ratio": 22.307692307692307,
+    "gymName": "Warwick",
+    "percentage": 62.82051282051282,
+    "gymId": "856830"
+  },
+  {
+    "id": "3a438d85-254a-4425-bc43-689d2b25b9b9",
+    "created": "2025-04-18 18:53:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e4a68bcb-5c0d-4b30-bf74-d8ca2cfb748b",
+    "created": "2025-04-18 18:56:26",
+    "count": 54,
+    "ratio": 21.48148148148148,
+    "gymName": "Warwick",
+    "percentage": 64.19753086419753,
+    "gymId": "856830"
+  },
+  {
+    "id": "83123591-b906-40b9-85dd-0f7aab5505ef",
+    "created": "2025-04-18 18:58:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "2564030e-b043-4b39-ad58-91fc44c6e711",
+    "created": "2025-04-18 19:01:26",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "b407cda9-9082-4f05-bc14-44689768e0d8",
+    "created": "2025-04-18 19:03:20",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "3ed84cea-fd53-4dd0-bf7f-1b12406816d2",
+    "created": "2025-04-18 19:06:26",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "c2af64c6-28fb-41b6-89b1-e69532c755a0",
+    "created": "2025-04-18 19:08:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "31a251c2-c442-47a1-8241-1dd48a0dc41b",
+    "created": "2025-04-18 19:11:26",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "d3228906-4bae-4cde-87a7-4c3b37601222",
+    "created": "2025-04-18 19:13:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7aa1e417-f7ca-4df9-aff0-675c20528782",
+    "created": "2025-04-18 19:16:26",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "b327b10c-fe0f-4ef9-a321-496e3ffaf8b0",
+    "created": "2025-04-18 19:18:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a28eb1fc-c848-44d7-aaa1-11b24689a51c",
+    "created": "2025-04-18 19:21:26",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "5df0f527-5681-4b84-80d7-d96f9bf38b0e",
+    "created": "2025-04-18 19:23:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "56e3296d-519d-4a59-863c-17eb3f024e29",
+    "created": "2025-04-18 19:26:26",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "7e09b952-e9f2-4613-9c3d-7973d285ac30",
+    "created": "2025-04-18 19:28:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "d243c8b2-15d4-41f4-bcb6-8ab139e32e4b",
+    "created": "2025-04-18 19:31:26",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "7373b84a-3b91-4ceb-8e49-d99f2cba549a",
+    "created": "2025-04-18 19:33:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "78577323-e775-42f3-943a-83488def90b3",
+    "created": "2025-04-18 19:36:26",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "60cf93a2-912d-4822-b3b6-89569376bdcc",
+    "created": "2025-04-18 19:38:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "75d08f75-bf12-4cec-9d61-901169e5d3e0",
+    "created": "2025-04-18 19:41:26",
+    "count": 36,
+    "ratio": 32.22222222222222,
+    "gymName": "Warwick",
+    "percentage": 46.29629629629631,
+    "gymId": "856830"
+  },
+  {
+    "id": "65098d85-2d77-41f2-8fef-84b59c928426",
+    "created": "2025-04-18 19:43:20",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "daf10ede-04a3-4aba-9495-87b37c10d9b7",
+    "created": "2025-04-18 19:46:26",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "f730a33c-10da-49cc-bfc4-9b971fe2bac5",
+    "created": "2025-04-18 19:48:20",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b734bede-2f13-4390-b97f-af7f8d811756",
+    "created": "2025-04-18 19:51:26",
+    "count": 34,
+    "ratio": 34.11764705882353,
+    "gymName": "Warwick",
+    "percentage": 43.13725490196079,
+    "gymId": "856830"
+  },
+  {
+    "id": "865ca381-ff00-4264-a64d-d519d1767ef3",
+    "created": "2025-04-18 19:53:21",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "81b09160-8cc2-477e-882e-732c75a724ac",
+    "created": "2025-04-18 19:56:26",
+    "count": 31,
+    "ratio": 37.41935483870968,
+    "gymName": "Warwick",
+    "percentage": 37.634408602150536,
+    "gymId": "856830"
+  },
+  {
+    "id": "ea02ca14-f2fa-4b0b-b3e4-01cbafa33fd1",
+    "created": "2025-04-18 19:58:20",
+    "count": 0,
+    "ratio": 0,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "ed9f9470-2ae4-430a-936e-fdcfc567513b",
+    "created": "2025-04-18 20:01:26",
+    "count": 31,
+    "ratio": 37.41935483870968,
+    "gymName": "Warwick",
+    "percentage": 37.634408602150536,
+    "gymId": "856830"
+  },
+  {
+    "id": "c6fc0e44-75c9-4fc4-82c1-a8e04bad13e8",
+    "created": "2025-04-18 20:03:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "2933360a-dcd0-4280-b81c-2a3e08667f6b",
+    "created": "2025-04-18 20:06:26",
+    "count": 32,
+    "ratio": 36.25,
+    "gymName": "Warwick",
+    "percentage": 39.583333333333336,
+    "gymId": "856830"
+  },
+  {
+    "id": "b5c42a22-1587-4982-b3df-0dc7bad1927b",
+    "created": "2025-04-18 20:08:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b764ee47-679e-4841-8860-befa9fb817d9",
+    "created": "2025-04-18 20:11:26",
+    "count": 24,
+    "ratio": 48.333333333333336,
+    "gymName": "Warwick",
+    "percentage": 19.444444444444443,
+    "gymId": "856830"
+  },
+  {
+    "id": "9f7c9d1a-6104-42ca-afe7-475fbefe8f84",
+    "created": "2025-04-18 20:13:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9a9705f9-2ff8-4566-8756-2fa58dc49229",
+    "created": "2025-04-18 20:16:26",
+    "count": 20,
+    "ratio": 58,
+    "gymName": "Warwick",
+    "percentage": 3.3333333333333326,
+    "gymId": "856830"
+  },
+  {
+    "id": "47c65afd-91ab-40ab-afe8-8932f85231ff",
+    "created": "2025-04-18 20:18:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "6c2dffd1-cf1f-4087-8bf6-e41ee8414535",
+    "created": "2025-04-18 20:21:26",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "ca242154-fd06-42ab-9e19-732d521cda5d",
+    "created": "2025-04-18 20:23:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "1291a997-1499-44a1-a01e-0765fe371df6",
+    "created": "2025-04-18 20:26:26",
+    "count": 22,
+    "ratio": 52.72727272727273,
+    "gymName": "Warwick",
+    "percentage": 12.12121212121212,
+    "gymId": "856830"
+  },
+  {
+    "id": "e3c205f5-7458-468e-b61c-4faa48b04e52",
+    "created": "2025-04-18 20:28:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "29042cc7-60ca-4eda-9414-00aeca2236df",
+    "created": "2025-04-18 20:31:26",
+    "count": 19,
+    "ratio": 61.05263157894737,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "4be3777b-5dc1-414b-8182-8c47a83ed110",
+    "created": "2025-04-18 20:33:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "1e405a88-4b3d-4216-aff8-cd84562ad7fa",
+    "created": "2025-04-18 20:36:26",
+    "count": 16,
+    "ratio": 72.5,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "988b6e63-c806-4cc9-8ad6-93a1de967bad",
+    "created": "2025-04-18 20:38:20",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "2519b2a7-0f0f-4095-9855-b6d3161dc1b2",
+    "created": "2025-04-18 20:41:26",
+    "count": 22,
+    "ratio": 52.72727272727273,
+    "gymName": "Warwick",
+    "percentage": 12.12121212121212,
+    "gymId": "856830"
+  },
+  {
+    "id": "cc83d562-dc1d-48a7-95cf-518777cc2344",
+    "created": "2025-04-18 20:43:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c3479402-2ed5-4e2f-ac71-04a2437712a1",
+    "created": "2025-04-18 20:46:26",
+    "count": 20,
+    "ratio": 58,
+    "gymName": "Warwick",
+    "percentage": 3.3333333333333326,
+    "gymId": "856830"
+  },
+  {
+    "id": "33eea159-fd63-4149-a7ac-4861b371afa7",
+    "created": "2025-04-18 20:48:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b54c0cac-3477-4e33-b456-69e863b42a2b",
+    "created": "2025-04-18 20:51:26",
+    "count": 20,
+    "ratio": 58,
+    "gymName": "Warwick",
+    "percentage": 3.3333333333333326,
+    "gymId": "856830"
+  },
+  {
+    "id": "4654a3ec-00a6-4c32-87c8-0ca2de6e82af",
+    "created": "2025-04-18 20:53:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "5ebfc9f4-ffbd-4b9d-8aac-8a9628266d33",
+    "created": "2025-04-18 20:56:26",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "35e5c2f7-b55e-4560-a32a-043ae7bba048",
+    "created": "2025-04-18 20:58:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c7e90404-48da-497d-bd5b-8e7acdbd545d",
+    "created": "2025-04-18 21:01:26",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "013f2465-efec-418e-9e47-3cb517a4c3a3",
+    "created": "2025-04-18 21:03:21",
+    "count": 1,
+    "ratio": 1160,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "4be9706b-82e1-47c7-9872-0e7be1f4db49",
+    "created": "2025-04-18 21:06:26",
+    "count": 17,
+    "ratio": 68.23529411764706,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e3f19d9e-e58f-41b2-97a0-7463e40db141",
+    "created": "2025-04-18 21:08:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "d9432a71-1de8-47fb-9120-764606e02cef",
+    "created": "2025-04-18 21:11:26",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "9cbe3548-86fb-41ba-9dca-60f81370c1dd",
+    "created": "2025-04-18 21:13:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "8275c03f-5469-4347-bad4-e1d4878bf054",
+    "created": "2025-04-18 21:16:26",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "ad8a8680-e5fd-402b-89f9-cd5cd2b5db62",
+    "created": "2025-04-18 21:18:21",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "00ee517f-a43e-4ef6-9d55-e517765b751d",
+    "created": "2025-04-18 21:21:26",
+    "count": 20,
+    "ratio": 58,
+    "gymName": "Warwick",
+    "percentage": 3.3333333333333326,
+    "gymId": "856830"
+  },
+  {
+    "id": "ae90f9dd-f08d-4be8-8b64-ed9e8ffad24e",
+    "created": "2025-04-18 21:23:20",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "2f3813d4-1501-4fdd-994f-5972087e7d2e",
+    "created": "2025-04-18 21:26:26",
+    "count": 19,
+    "ratio": 61.05263157894737,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "0567e72a-82d5-4230-bbfe-c9e5128784ba",
+    "created": "2025-04-18 21:28:21",
+    "count": 4,
+    "ratio": 290,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "8c67c4ad-a2a2-4e6d-9879-bf7393af7b09",
+    "created": "2025-04-18 21:31:26",
+    "count": 19,
+    "ratio": 61.05263157894737,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "45ef81c6-3e51-4625-a85c-4ec66be8ba9a",
+    "created": "2025-04-18 21:33:21",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "14193921-fa57-466e-8a4a-9276c5db0c3b",
+    "created": "2025-04-18 21:36:26",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "e0396d75-c55e-40cc-bb01-d50fd46adce8",
+    "created": "2025-04-18 21:38:21",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "8f38c444-3d1a-4611-8c18-5e2d9ec2ad2d",
+    "created": "2025-04-18 21:41:26",
+    "count": 15,
+    "ratio": 77.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "ac074aa8-4411-41fa-9319-92c78f3d6095",
+    "created": "2025-04-18 21:43:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "6c974666-bf20-41aa-8f3d-0cafce103385",
+    "created": "2025-04-18 21:46:26",
+    "count": 13,
+    "ratio": 89.23076923076923,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "0931fef5-77d6-4558-985a-8d652c6eca6a",
+    "created": "2025-04-18 21:48:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "8a13fdf4-d87f-4441-bcab-24c4b7d7c5c8",
+    "created": "2025-04-18 21:51:26",
+    "count": 12,
+    "ratio": 96.66666666666669,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "674d7f67-3c32-4f72-9a58-67d4526b3693",
+    "created": "2025-04-18 21:53:21",
+    "count": 8,
+    "ratio": 145,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e888a89c-c39c-4c6f-aaf2-3e2da452991f",
+    "created": "2025-04-18 21:56:26",
+    "count": 11,
+    "ratio": 105.45454545454544,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "f524ac09-2f22-4d18-b61f-49fb8a71ac33",
+    "created": "2025-04-18 21:58:21",
+    "count": 9,
+    "ratio": 128.88888888888889,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "615f7658-3648-4103-88d9-bd744b10afb9",
+    "created": "2025-04-18 22:01:26",
+    "count": 11,
+    "ratio": 105.45454545454544,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "22dc8cbf-b4cd-480d-af6e-c1acf266dee2",
+    "created": "2025-04-18 22:03:21",
+    "count": 11,
+    "ratio": 105.45454545454544,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "fd3a37fb-af91-47ba-be40-ea596d1de758",
+    "created": "2025-04-18 22:06:26",
+    "count": 12,
+    "ratio": 96.66666666666669,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "7a15382e-16c8-425c-986d-d5809ffdf446",
+    "created": "2025-04-18 22:08:21",
+    "count": 13,
+    "ratio": 89.23076923076923,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b752bf4d-257a-4110-a699-006c0a932ed6",
+    "created": "2025-04-18 22:11:26",
+    "count": 8,
+    "ratio": 145,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "2769d0b3-381c-48c6-b81c-88594bbb5c55",
+    "created": "2025-04-18 22:13:21",
+    "count": 13,
+    "ratio": 89.23076923076923,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "628ed7f7-1f8c-42e3-99a4-7c2dc48713af",
+    "created": "2025-04-18 22:16:26",
+    "count": 8,
+    "ratio": 145,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "bcad3404-9a54-449a-a654-c7d32017abcb",
+    "created": "2025-04-18 22:18:21",
+    "count": 16,
+    "ratio": 72.5,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "03619772-3583-428e-8596-b541f97c12fb",
+    "created": "2025-04-18 22:21:26",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a87d7803-9368-4db9-8646-7de16e14814a",
+    "created": "2025-04-18 22:23:20",
+    "count": 16,
+    "ratio": 72.5,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "fd29aaea-1610-4c4d-b740-05b88ea564a9",
+    "created": "2025-04-18 22:26:26",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e37dd2cb-ba31-4ec9-9ea9-c70ba3fb7753",
+    "created": "2025-04-18 22:28:21",
+    "count": 14,
+    "ratio": 82.85714285714286,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "f79d79f1-88ba-4c2c-9eb7-60527249a703",
+    "created": "2025-04-18 22:31:26",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "613fafca-e1f1-4426-8911-9c9890ae49e0",
+    "created": "2025-04-18 22:33:21",
+    "count": 15,
+    "ratio": 77.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "2f85ce57-0d35-493e-aae1-686607231420",
+    "created": "2025-04-18 22:36:26",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c96a9289-e9fd-4eb8-99f3-f9ca93fc461f",
+    "created": "2025-04-18 22:38:20",
+    "count": 17,
+    "ratio": 68.23529411764706,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "1472343a-fdfd-40fc-beec-fb9fb6aefd0d",
+    "created": "2025-04-18 22:41:26",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "b34731c7-43c2-49c6-87b5-e3a3ee028cff",
+    "created": "2025-04-18 22:43:20",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "8cd8b32c-e631-43ab-b723-923346ec5d11",
+    "created": "2025-04-18 22:46:26",
+    "count": 4,
+    "ratio": 290,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c5f89474-3a1d-447a-b53f-9088623f2204",
+    "created": "2025-04-18 22:48:21",
+    "count": 22,
+    "ratio": 52.72727272727273,
+    "gymName": "Warwick",
+    "percentage": 12.12121212121212,
+    "gymId": "856830"
+  },
+  {
+    "id": "da5b92c1-51bc-45c8-90fc-317c35b70ee5",
+    "created": "2025-04-18 22:51:26",
+    "count": 4,
+    "ratio": 290,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a2dc77e3-2166-47de-8658-9848fb5177eb",
+    "created": "2025-04-18 22:53:21",
+    "count": 24,
+    "ratio": 48.333333333333336,
+    "gymName": "Warwick",
+    "percentage": 19.444444444444443,
+    "gymId": "856830"
+  },
+  {
+    "id": "822612a6-4a01-4c8e-a84d-d2d4eb9377cc",
+    "created": "2025-04-18 22:56:26",
+    "count": 4,
+    "ratio": 290,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9529366d-c656-430d-9546-efa303e29881",
+    "created": "2025-04-18 22:58:21",
+    "count": 28,
+    "ratio": 41.42857142857143,
+    "gymName": "Warwick",
+    "percentage": 30.952380952380956,
+    "gymId": "856830"
+  },
+  {
+    "id": "c233292f-26f2-4a15-ae45-031c4733a62c",
+    "created": "2025-04-18 23:01:26",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "faed759b-cff9-43d2-995a-1f32af36cd5e",
+    "created": "2025-04-18 23:03:21",
+    "count": 30,
+    "ratio": 38.66666666666666,
+    "gymName": "Warwick",
+    "percentage": 35.555555555555564,
+    "gymId": "856830"
+  },
+  {
+    "id": "c6ebfa18-1085-40a9-9221-cd8c9aa91333",
+    "created": "2025-04-18 23:06:26",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "18c47963-f455-49af-a0f7-5d253dd89742",
+    "created": "2025-04-18 23:08:21",
+    "count": 28,
+    "ratio": 41.42857142857143,
+    "gymName": "Warwick",
+    "percentage": 30.952380952380956,
+    "gymId": "856830"
+  },
+  {
+    "id": "9f445fe3-f8a0-47e1-a5d9-72d888615273",
+    "created": "2025-04-18 23:11:26",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e0774952-9a79-4676-98b9-82912397caf8",
+    "created": "2025-04-18 23:13:21",
+    "count": 32,
+    "ratio": 36.25,
+    "gymName": "Warwick",
+    "percentage": 39.583333333333336,
+    "gymId": "856830"
+  },
+  {
+    "id": "f7fb2ea7-c04d-4b27-9837-ebe5ab601ca9",
+    "created": "2025-04-18 23:16:26",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "4ec0ea1d-75cc-4ca8-bdab-36d36d232723",
+    "created": "2025-04-18 23:18:21",
+    "count": 32,
+    "ratio": 36.25,
+    "gymName": "Warwick",
+    "percentage": 39.583333333333336,
+    "gymId": "856830"
+  },
+  {
+    "id": "9b9fa16c-1cab-4bb6-a32f-dff61cca5524",
+    "created": "2025-04-18 23:21:26",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9d344a05-1cb5-4994-abcc-6dd1fb0ecef0",
+    "created": "2025-04-18 23:23:21",
+    "count": 34,
+    "ratio": 34.11764705882353,
+    "gymName": "Warwick",
+    "percentage": 43.13725490196079,
+    "gymId": "856830"
+  },
+  {
+    "id": "549bb811-9145-4905-9587-3dd38ab3f592",
+    "created": "2025-04-18 23:26:26",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "d2953cff-f8b7-40f1-82ff-31dd92ca6c30",
+    "created": "2025-04-18 23:28:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "f2f47366-f401-4cd8-915a-98638b18c395",
+    "created": "2025-04-18 23:31:26",
+    "count": 2,
+    "ratio": 580,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "5011aaff-7e43-4fac-8b5c-dd82d0467120",
+    "created": "2025-04-18 23:33:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "fb09c538-ca5b-40c3-ad1f-38981b4d065e",
+    "created": "2025-04-18 23:36:26",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9be28cb4-07bb-4162-82e5-316448624fe2",
+    "created": "2025-04-18 23:38:20",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "6e2c1ac8-982a-4c3b-90a1-f9be8e3b89ec",
+    "created": "2025-04-18 23:41:26",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "5b50fb77-c411-4002-b247-88d5cf5ae56e",
+    "created": "2025-04-18 23:43:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "35f0c943-e82a-4e58-a351-7801a463add4",
+    "created": "2025-04-18 23:46:26",
+    "count": 3,
+    "ratio": 386.6666666666667,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c8489f34-c4e2-4a61-b464-e7372614094a",
+    "created": "2025-04-18 23:48:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "29a7969a-ac72-4be5-ac67-e07c2f3730ab",
+    "created": "2025-04-18 23:53:20",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "a7a3ced3-0e32-429c-b6cd-f40f8a67cff4",
+    "created": "2025-04-18 23:58:21",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "337be3fb-67cb-46e6-865c-1938948a2f5d",
+    "created": "2025-04-19 00:03:21",
+    "count": 52,
+    "ratio": 22.307692307692307,
+    "gymName": "Warwick",
+    "percentage": 62.82051282051282,
+    "gymId": "856830"
+  },
+  {
+    "id": "d35e1120-7cf2-4dda-ac0c-7b62455c9308",
+    "created": "2025-04-19 00:08:21",
+    "count": 55,
+    "ratio": 21.09090909090909,
+    "gymName": "Warwick",
+    "percentage": 64.84848484848484,
+    "gymId": "856830"
+  },
+  {
+    "id": "0de64260-b7c1-4cb3-b36f-a4882239bc78",
+    "created": "2025-04-19 00:13:21",
+    "count": 58,
+    "ratio": 20,
+    "gymName": "Warwick",
+    "percentage": 66.66666666666667,
+    "gymId": "856830"
+  },
+  {
+    "id": "a185b5b5-47f9-4c9d-b017-ee26d8b14039",
+    "created": "2025-04-19 00:18:21",
+    "count": 59,
+    "ratio": 19.661016949152543,
+    "gymName": "Warwick",
+    "percentage": 67.23163841807909,
+    "gymId": "856830"
+  },
+  {
+    "id": "dfdf725b-9e76-43ba-a3f7-f01d1b8a5a7b",
+    "created": "2025-04-19 00:23:21",
+    "count": 61,
+    "ratio": 19.016393442622952,
+    "gymName": "Warwick",
+    "percentage": 68.30601092896174,
+    "gymId": "856830"
+  },
+  {
+    "id": "d551888b-4185-4bde-aeee-da87cbd4221e",
+    "created": "2025-04-19 00:28:21",
+    "count": 62,
+    "ratio": 18.70967741935484,
+    "gymName": "Warwick",
+    "percentage": 68.81720430107528,
+    "gymId": "856830"
+  },
+  {
+    "id": "ac27fc7e-b901-4fb9-a291-2cd5574bd92b",
+    "created": "2025-04-19 00:33:21",
+    "count": 59,
+    "ratio": 19.661016949152543,
+    "gymName": "Warwick",
+    "percentage": 67.23163841807909,
+    "gymId": "856830"
+  },
+  {
+    "id": "31b3cd90-d2ea-4609-8a29-f926b4ed2b48",
+    "created": "2025-04-19 00:38:21",
+    "count": 59,
+    "ratio": 19.661016949152543,
+    "gymName": "Warwick",
+    "percentage": 67.23163841807909,
+    "gymId": "856830"
+  },
+  {
+    "id": "e6867a9b-c767-4829-b1f1-dbb54551d9c3",
+    "created": "2025-04-19 00:43:21",
+    "count": 55,
+    "ratio": 21.09090909090909,
+    "gymName": "Warwick",
+    "percentage": 64.84848484848484,
+    "gymId": "856830"
+  },
+  {
+    "id": "4a5e2e55-69e4-4caf-b8f7-e9771ec627ee",
+    "created": "2025-04-19 00:48:20",
+    "count": 53,
+    "ratio": 21.88679245283019,
+    "gymName": "Warwick",
+    "percentage": 63.52201257861635,
+    "gymId": "856830"
+  },
+  {
+    "id": "1e7bd391-1d3b-4d8b-b4d6-93896f9272a7",
+    "created": "2025-04-19 00:53:21",
+    "count": 54,
+    "ratio": 21.48148148148148,
+    "gymName": "Warwick",
+    "percentage": 64.19753086419753,
+    "gymId": "856830"
+  },
+  {
+    "id": "44ab46db-90ca-4f8b-afd5-d764cc09720e",
+    "created": "2025-04-19 00:58:21",
+    "count": 52,
+    "ratio": 22.307692307692307,
+    "gymName": "Warwick",
+    "percentage": 62.82051282051282,
+    "gymId": "856830"
+  },
+  {
+    "id": "07350fb7-59b5-4bc3-84c2-8cc02eff48da",
+    "created": "2025-04-19 01:03:20",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "efeaa657-09a3-41ae-9e5a-ad5a6062c157",
+    "created": "2025-04-19 01:08:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "718b2b23-5034-4288-96a2-bd4032a019ce",
+    "created": "2025-04-19 01:13:21",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "e33207cc-4e34-41c6-b526-4e72de38c45a",
+    "created": "2025-04-19 01:18:21",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "f3ab8301-a22f-42fd-9ff8-069780f1b550",
+    "created": "2025-04-19 01:23:21",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "e9c439bf-22fc-41ea-9de7-546adb6dc788",
+    "created": "2025-04-19 01:28:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "0c5e873a-7c6e-4d71-92e3-12a8d0b9837d",
+    "created": "2025-04-19 01:33:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "3423d54a-bbd2-4bf5-81d3-ff21a55e1220",
+    "created": "2025-04-19 01:38:21",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "f4574f98-b63b-4286-b7bd-92bb883fcf93",
+    "created": "2025-04-19 01:43:21",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "85f60f3b-7e7b-4e33-a599-27a3b4078b71",
+    "created": "2025-04-19 01:48:21",
+    "count": 59,
+    "ratio": 19.661016949152543,
+    "gymName": "Warwick",
+    "percentage": 67.23163841807909,
+    "gymId": "856830"
+  },
+  {
+    "id": "2a6f0fd3-0e91-4424-87c3-4028d4795a26",
+    "created": "2025-04-19 01:53:21",
+    "count": 59,
+    "ratio": 19.661016949152543,
+    "gymName": "Warwick",
+    "percentage": 67.23163841807909,
+    "gymId": "856830"
+  },
+  {
+    "id": "8c9ae669-6325-4ff2-96d5-feb17b204541",
+    "created": "2025-04-19 01:58:21",
+    "count": 58,
+    "ratio": 20,
+    "gymName": "Warwick",
+    "percentage": 66.66666666666667,
+    "gymId": "856830"
+  },
+  {
+    "id": "aff4879b-ca91-4d8f-9a17-b9b47dd8ca19",
+    "created": "2025-04-19 02:03:21",
+    "count": 60,
+    "ratio": 19.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 67.77777777777779,
+    "gymId": "856830"
+  },
+  {
+    "id": "a633eb2c-8b40-4132-b8e8-9376b53c3764",
+    "created": "2025-04-19 02:08:20",
+    "count": 64,
+    "ratio": 18.125,
+    "gymName": "Warwick",
+    "percentage": 69.79166666666667,
+    "gymId": "856830"
+  },
+  {
+    "id": "455cc9f0-a270-4ee9-8a70-0dc49df8a9f3",
+    "created": "2025-04-19 02:13:21",
+    "count": 62,
+    "ratio": 18.70967741935484,
+    "gymName": "Warwick",
+    "percentage": 68.81720430107528,
+    "gymId": "856830"
+  },
+  {
+    "id": "9753a2d9-3453-4d29-b5b5-94e14d6c415e",
+    "created": "2025-04-19 02:18:21",
+    "count": 58,
+    "ratio": 20,
+    "gymName": "Warwick",
+    "percentage": 66.66666666666667,
+    "gymId": "856830"
+  },
+  {
+    "id": "c60763b2-1fd2-4531-91e0-46a8ff144d5d",
+    "created": "2025-04-19 02:23:21",
+    "count": 57,
+    "ratio": 20.350877192982452,
+    "gymName": "Warwick",
+    "percentage": 66.08187134502924,
+    "gymId": "856830"
+  },
+  {
+    "id": "9a54d25a-ae27-49e2-80b9-40b3f511a86d",
+    "created": "2025-04-19 02:28:21",
+    "count": 60,
+    "ratio": 19.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 67.77777777777779,
+    "gymId": "856830"
+  },
+  {
+    "id": "199726b9-461c-48ed-8450-55c5d1bfd880",
+    "created": "2025-04-19 02:33:21",
+    "count": 57,
+    "ratio": 20.350877192982452,
+    "gymName": "Warwick",
+    "percentage": 66.08187134502924,
+    "gymId": "856830"
+  },
+  {
+    "id": "1f6c8ef4-61e2-494d-a797-ab1eb62c6b87",
+    "created": "2025-04-19 02:38:21",
+    "count": 55,
+    "ratio": 21.09090909090909,
+    "gymName": "Warwick",
+    "percentage": 64.84848484848484,
+    "gymId": "856830"
+  },
+  {
+    "id": "1a5df670-6907-436e-89a1-0160ffc2874c",
+    "created": "2025-04-19 02:43:21",
+    "count": 56,
+    "ratio": 20.714285714285715,
+    "gymName": "Warwick",
+    "percentage": 65.47619047619048,
+    "gymId": "856830"
+  },
+  {
+    "id": "6a8aa48e-aa63-479a-8c39-1d4d218794f4",
+    "created": "2025-04-19 02:48:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "46695858-e11e-4306-8ac1-2be82a727a98",
+    "created": "2025-04-19 02:53:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "ff6dc4a1-fd00-440a-a851-2c12e4629745",
+    "created": "2025-04-19 02:58:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "ed50f5c8-f57f-4bd2-a356-270ffac6a07a",
+    "created": "2025-04-19 03:03:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "2e5a83a5-11e6-4be2-ae14-ef5144ba49b8",
+    "created": "2025-04-19 03:08:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "fb239b82-e40e-4c3f-83c7-e63fa9276ffb",
+    "created": "2025-04-19 03:13:21",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "14ff8601-e506-43ce-872b-63dc7803f97a",
+    "created": "2025-04-19 03:18:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "650fa28c-4ee1-4e3d-8b4f-0ffac8fd3ace",
+    "created": "2025-04-19 03:23:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "fcc33dd0-d036-427b-9075-98b014e4b2dc",
+    "created": "2025-04-19 03:28:20",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "1c0eebdc-9e02-4243-9538-4c0ee8c476e5",
+    "created": "2025-04-19 03:33:21",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "22d2b8f5-db30-40dc-92ff-f5e104bf8a25",
+    "created": "2025-04-19 03:38:20",
+    "count": 53,
+    "ratio": 21.88679245283019,
+    "gymName": "Warwick",
+    "percentage": 63.52201257861635,
+    "gymId": "856830"
+  },
+  {
+    "id": "a22e45f7-0034-41ed-8937-b32acef072e0",
+    "created": "2025-04-19 03:43:21",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "08d8691d-10b4-4a82-bfba-c3b9fb117cc1",
+    "created": "2025-04-19 03:48:21",
+    "count": 50,
+    "ratio": 23.2,
+    "gymName": "Warwick",
+    "percentage": 61.33333333333333,
+    "gymId": "856830"
+  },
+  {
+    "id": "9c0aa815-f0e4-4c1b-a884-ff48722f1087",
+    "created": "2025-04-19 03:53:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "8a1c6393-6dcd-493d-93bb-769af8db02ed",
+    "created": "2025-04-19 03:58:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "7282969f-4e9b-42a2-9930-d5ba362e4cbc",
+    "created": "2025-04-19 04:03:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "eb4cc42c-c745-4245-9eec-d4381285b3a7",
+    "created": "2025-04-19 04:08:21",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "21bee808-0a6f-4c90-b2aa-f1bf79ab26d3",
+    "created": "2025-04-19 04:13:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "d99861a9-f82a-4523-a686-76b6a31ccc1d",
+    "created": "2025-04-19 04:18:21",
+    "count": 40,
+    "ratio": 29,
+    "gymName": "Warwick",
+    "percentage": 51.66666666666666,
+    "gymId": "856830"
+  },
+  {
+    "id": "b2d58912-d2fb-4662-be7f-4b6913ed069f",
+    "created": "2025-04-19 04:23:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "ddd2ce87-7c00-43e7-884d-d341998157a3",
+    "created": "2025-04-19 04:28:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "3a946a1a-4bb9-463d-ab86-98caf9231cdc",
+    "created": "2025-04-19 04:33:20",
+    "count": 35,
+    "ratio": 33.142857142857146,
+    "gymName": "Warwick",
+    "percentage": 44.76190476190476,
+    "gymId": "856830"
+  },
+  {
+    "id": "cb45e468-67a5-49a7-bae3-7f44c3825514",
+    "created": "2025-04-19 04:38:20",
+    "count": 31,
+    "ratio": 37.41935483870968,
+    "gymName": "Warwick",
+    "percentage": 37.634408602150536,
+    "gymId": "856830"
+  },
+  {
+    "id": "26bb29e8-8a0c-40d9-b954-4996079e3d03",
+    "created": "2025-04-19 04:43:21",
+    "count": 31,
+    "ratio": 37.41935483870968,
+    "gymName": "Warwick",
+    "percentage": 37.634408602150536,
+    "gymId": "856830"
+  },
+  {
+    "id": "f55e9ce9-90c6-4f41-9966-883d89bd79be",
+    "created": "2025-04-19 04:48:21",
+    "count": 30,
+    "ratio": 38.66666666666666,
+    "gymName": "Warwick",
+    "percentage": 35.555555555555564,
+    "gymId": "856830"
+  },
+  {
+    "id": "998aeda2-1eee-4871-82e0-5a2b464306b1",
+    "created": "2025-04-19 04:53:20",
+    "count": 34,
+    "ratio": 34.11764705882353,
+    "gymName": "Warwick",
+    "percentage": 43.13725490196079,
+    "gymId": "856830"
+  },
+  {
+    "id": "624db311-7ed9-4d18-865c-de3fc3fbe5b8",
+    "created": "2025-04-19 04:58:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "730d8c63-ff8d-45c1-8988-cf3a3eeef988",
+    "created": "2025-04-19 05:03:21",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "56f166b0-b83d-4946-a4ae-e11d040f7164",
+    "created": "2025-04-19 05:08:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "c90078f3-3a16-4cfb-8a35-0060ed97d3d2",
+    "created": "2025-04-19 05:13:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "b7c290b5-2f70-4951-b51a-6e9984e27e0d",
+    "created": "2025-04-19 05:18:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "ec8abb57-a8f5-47c0-b39e-316e0b62e74c",
+    "created": "2025-04-19 05:23:21",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "1d8e41b9-b16a-4f17-8582-58dacdc8e7a7",
+    "created": "2025-04-19 05:28:21",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "6bc4b01a-67d5-4e01-bdc2-70ad28d37315",
+    "created": "2025-04-19 05:33:21",
+    "count": 51,
+    "ratio": 22.745098039215687,
+    "gymName": "Warwick",
+    "percentage": 62.091503267973856,
+    "gymId": "856830"
+  },
+  {
+    "id": "de285155-46cf-4666-b9c0-4e70f4485e84",
+    "created": "2025-04-19 05:38:21",
+    "count": 52,
+    "ratio": 22.307692307692307,
+    "gymName": "Warwick",
+    "percentage": 62.82051282051282,
+    "gymId": "856830"
+  },
+  {
+    "id": "f857727b-a797-4cd2-8beb-99574baba288",
+    "created": "2025-04-19 05:43:21",
+    "count": 52,
+    "ratio": 22.307692307692307,
+    "gymName": "Warwick",
+    "percentage": 62.82051282051282,
+    "gymId": "856830"
+  },
+  {
+    "id": "e75425b2-51e2-4154-9e27-f45d46b63b18",
+    "created": "2025-04-19 05:48:20",
+    "count": 56,
+    "ratio": 20.714285714285715,
+    "gymName": "Warwick",
+    "percentage": 65.47619047619048,
+    "gymId": "856830"
+  },
+  {
+    "id": "9a451f53-14b4-405e-88dd-86456c782398",
+    "created": "2025-04-19 05:53:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "c9f512d2-165b-4e24-9ec5-c91754a84e15",
+    "created": "2025-04-19 05:58:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "c6330001-84e1-4f3c-9782-a372aa117b17",
+    "created": "2025-04-19 06:03:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "d50bd180-8d3a-4df2-942e-9773ca341295",
+    "created": "2025-04-19 06:08:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "00c233aa-bb19-432c-95dd-08bb414679a6",
+    "created": "2025-04-19 06:13:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "ec8b1a6d-1be7-41a9-b611-256af2ebfb2f",
+    "created": "2025-04-19 06:18:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "81037fba-7f5b-4dce-a9ba-96517bbe73d7",
+    "created": "2025-04-19 06:23:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "22cec9ce-0141-406a-bf28-e7912f45db74",
+    "created": "2025-04-19 06:28:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "f347f592-2cb0-48d6-84ad-7144c63bf518",
+    "created": "2025-04-19 06:33:21",
+    "count": 43,
+    "ratio": 26.976744186046517,
+    "gymName": "Warwick",
+    "percentage": 55.03875968992248,
+    "gymId": "856830"
+  },
+  {
+    "id": "b3abe614-9ff8-4444-a84c-97cb8942ec77",
+    "created": "2025-04-19 06:38:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "c7fe86a0-b34b-49cf-b419-c38c1efb724e",
+    "created": "2025-04-19 06:43:21",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "c2540f96-2fba-4714-94ae-a7d0e1a66b9c",
+    "created": "2025-04-19 06:48:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "34a974f9-365d-4d99-b1de-e672471cf137",
+    "created": "2025-04-19 06:53:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "e1d72228-34c7-4309-9946-208ea5a09057",
+    "created": "2025-04-19 06:58:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "f656b96b-4dd4-4071-ad4b-3e6c714744ef",
+    "created": "2025-04-19 07:03:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "91f4bf1b-382f-425a-91db-b6c08888fc0c",
+    "created": "2025-04-19 07:08:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "15664177-1d18-40a0-a10e-4e2f840e45d9",
+    "created": "2025-04-19 07:13:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "3ff80043-bebe-45bb-b3ac-618841fc0ca7",
+    "created": "2025-04-19 07:18:21",
+    "count": 48,
+    "ratio": 24.166666666666668,
+    "gymName": "Warwick",
+    "percentage": 59.72222222222222,
+    "gymId": "856830"
+  },
+  {
+    "id": "fdbcec4a-e14d-4388-998e-d397df9bbd3a",
+    "created": "2025-04-19 07:23:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "dea883a1-02a4-465f-9f5d-a1869ae5c6d0",
+    "created": "2025-04-19 07:28:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "100851f1-d19c-45f5-ac61-1f82b41389bc",
+    "created": "2025-04-19 07:33:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "10429291-f6a7-484d-b740-3ba10dcf5a79",
+    "created": "2025-04-19 07:38:21",
+    "count": 47,
+    "ratio": 24.680851063829788,
+    "gymName": "Warwick",
+    "percentage": 58.86524822695035,
+    "gymId": "856830"
+  },
+  {
+    "id": "c0fa2244-ec2d-49d3-897a-0a303b37595e",
+    "created": "2025-04-19 07:43:21",
+    "count": 49,
+    "ratio": 23.6734693877551,
+    "gymName": "Warwick",
+    "percentage": 60.544217687074834,
+    "gymId": "856830"
+  },
+  {
+    "id": "cb7017a7-421c-45bf-ae21-cb337a59991e",
+    "created": "2025-04-19 07:48:21",
+    "count": 46,
+    "ratio": 25.217391304347824,
+    "gymName": "Warwick",
+    "percentage": 57.971014492753625,
+    "gymId": "856830"
+  },
+  {
+    "id": "86c4d54f-f82c-41f6-8e5b-26e670cd3487",
+    "created": "2025-04-19 07:53:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "a7cd7687-86b5-47e7-991e-00510a08de50",
+    "created": "2025-04-19 07:58:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "ebce7c13-6408-4a50-b09a-3c88dc68cfca",
+    "created": "2025-04-19 08:03:21",
+    "count": 43,
+    "ratio": 26.976744186046517,
+    "gymName": "Warwick",
+    "percentage": 55.03875968992248,
+    "gymId": "856830"
+  },
+  {
+    "id": "c54d6145-ac8c-409c-b28b-9f53b9dc4b51",
+    "created": "2025-04-19 08:08:21",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "5ebde6b1-4d9e-4bf0-bb95-1d97e803a684",
+    "created": "2025-04-19 08:13:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "6c23e250-238e-4de3-b302-83e3134a854e",
+    "created": "2025-04-19 08:18:21",
+    "count": 35,
+    "ratio": 33.142857142857146,
+    "gymName": "Warwick",
+    "percentage": 44.76190476190476,
+    "gymId": "856830"
+  },
+  {
+    "id": "2e371242-2ba5-44c2-ae7a-56c25908cdf5",
+    "created": "2025-04-19 08:23:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "a9677ece-b6a3-44eb-9d96-36defe6df9e3",
+    "created": "2025-04-19 08:28:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "c83cc8f4-c7c2-4a30-9ee0-031edd7d4362",
+    "created": "2025-04-19 08:33:21",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "15a571ba-0102-4edb-9384-6c64acded178",
+    "created": "2025-04-19 08:38:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "95a51a27-1ad9-42b1-8ef3-d994a867ce54",
+    "created": "2025-04-19 08:43:21",
+    "count": 33,
+    "ratio": 35.15151515151515,
+    "gymName": "Warwick",
+    "percentage": 41.41414141414141,
+    "gymId": "856830"
+  },
+  {
+    "id": "11ffa2b5-2eda-41b0-8c1b-a3b4bb12063a",
+    "created": "2025-04-19 08:48:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "b9d24ae1-3e16-426e-9237-b5161526fa63",
+    "created": "2025-04-19 08:53:21",
+    "count": 35,
+    "ratio": 33.142857142857146,
+    "gymName": "Warwick",
+    "percentage": 44.76190476190476,
+    "gymId": "856830"
+  },
+  {
+    "id": "d72dafa4-5b6c-4276-ada7-a57d2950cca1",
+    "created": "2025-04-19 08:58:21",
+    "count": 33,
+    "ratio": 35.15151515151515,
+    "gymName": "Warwick",
+    "percentage": 41.41414141414141,
+    "gymId": "856830"
+  },
+  {
+    "id": "b54d6fe8-4f60-437b-96e0-893ffb1d6e12",
+    "created": "2025-04-19 09:03:21",
+    "count": 35,
+    "ratio": 33.142857142857146,
+    "gymName": "Warwick",
+    "percentage": 44.76190476190476,
+    "gymId": "856830"
+  },
+  {
+    "id": "5cb4f175-71be-46d2-8288-2ff0a8305179",
+    "created": "2025-04-19 09:08:21",
+    "count": 42,
+    "ratio": 27.61904761904762,
+    "gymName": "Warwick",
+    "percentage": 53.96825396825397,
+    "gymId": "856830"
+  },
+  {
+    "id": "8751df5b-b74f-4663-baf1-73be4b59dae4",
+    "created": "2025-04-19 09:13:21",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "f1ffdd50-9c75-4cbe-81b7-6c1ab6ee8273",
+    "created": "2025-04-19 09:18:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "ce26ac45-0799-494b-bb53-606550cb9cd1",
+    "created": "2025-04-19 09:23:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "8c954e0d-571d-44f3-81a7-02f9173bec8f",
+    "created": "2025-04-19 09:28:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "f3cd22a8-665b-4f4c-bf7d-d68fc14d5de5",
+    "created": "2025-04-19 09:33:21",
+    "count": 38,
+    "ratio": 30.526315789473685,
+    "gymName": "Warwick",
+    "percentage": 49.122807017543856,
+    "gymId": "856830"
+  },
+  {
+    "id": "4a1cd046-0bfb-45bb-979f-f68ce71f3cf6",
+    "created": "2025-04-19 09:38:21",
+    "count": 40,
+    "ratio": 29,
+    "gymName": "Warwick",
+    "percentage": 51.66666666666666,
+    "gymId": "856830"
+  },
+  {
+    "id": "1a9e25d1-86dc-4afc-97f3-3fbe46ab5079",
+    "created": "2025-04-19 09:43:21",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "6801f829-a6f5-4b3f-8832-bdf7141919d3",
+    "created": "2025-04-19 09:48:21",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "5544a8da-1d83-4452-83de-4dad495cf869",
+    "created": "2025-04-19 09:53:21",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "cb816c4a-140c-47a6-9462-22ca97071c1e",
+    "created": "2025-04-19 09:58:21",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "7ea3ba7f-a47b-49ac-ba6c-d63da81ac3c7",
+    "created": "2025-04-19 10:03:21",
+    "count": 41,
+    "ratio": 28.29268292682927,
+    "gymName": "Warwick",
+    "percentage": 52.84552845528455,
+    "gymId": "856830"
+  },
+  {
+    "id": "3139918b-c824-441f-8de1-c8b11cdb315a",
+    "created": "2025-04-19 10:08:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "89adc9a0-f321-4bab-9cde-f7a316f3e323",
+    "created": "2025-04-19 10:13:22",
+    "count": 40,
+    "ratio": 29,
+    "gymName": "Warwick",
+    "percentage": 51.66666666666666,
+    "gymId": "856830"
+  },
+  {
+    "id": "37d63f9e-e17a-49b0-a7a9-431665a7ca9d",
+    "created": "2025-04-19 10:18:21",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "f33030a5-30fa-4629-b3ef-3c5ebfa61f4b",
+    "created": "2025-04-19 10:23:21",
+    "count": 43,
+    "ratio": 26.976744186046517,
+    "gymName": "Warwick",
+    "percentage": 55.03875968992248,
+    "gymId": "856830"
+  },
+  {
+    "id": "fc901a6d-a82a-488d-8ac2-bad10f4a9834",
+    "created": "2025-04-19 10:28:21",
+    "count": 45,
+    "ratio": 25.77777777777778,
+    "gymName": "Warwick",
+    "percentage": 57.03703703703704,
+    "gymId": "856830"
+  },
+  {
+    "id": "b2a01c7e-1839-46d0-967b-065c9b793f8b",
+    "created": "2025-04-19 10:33:21",
+    "count": 44,
+    "ratio": 26.363636363636363,
+    "gymName": "Warwick",
+    "percentage": 56.060606060606055,
+    "gymId": "856830"
+  },
+  {
+    "id": "53947e09-4940-4874-8149-008232303e3a",
+    "created": "2025-04-19 10:38:21",
+    "count": 39,
+    "ratio": 29.743589743589745,
+    "gymName": "Warwick",
+    "percentage": 50.427350427350426,
+    "gymId": "856830"
+  },
+  {
+    "id": "35a0b25f-17fd-40a5-a88b-c57c8a4008cf",
+    "created": "2025-04-19 10:43:21",
+    "count": 37,
+    "ratio": 31.35135135135135,
+    "gymName": "Warwick",
+    "percentage": 47.74774774774775,
+    "gymId": "856830"
+  },
+  {
+    "id": "5d90f181-77e5-443e-b36f-d097538c6032",
+    "created": "2025-04-19 10:48:21",
+    "count": 33,
+    "ratio": 35.15151515151515,
+    "gymName": "Warwick",
+    "percentage": 41.41414141414141,
+    "gymId": "856830"
+  },
+  {
+    "id": "7d507e19-df6a-4446-a282-01bba25a0963",
+    "created": "2025-04-19 10:53:21",
+    "count": 29,
+    "ratio": 40,
+    "gymName": "Warwick",
+    "percentage": 33.333333333333336,
+    "gymId": "856830"
+  },
+  {
+    "id": "15b34a3b-6112-4f3c-8dac-c83cbd53f08c",
+    "created": "2025-04-19 10:58:21",
+    "count": 27,
+    "ratio": 42.96296296296296,
+    "gymName": "Warwick",
+    "percentage": 28.395061728395067,
+    "gymId": "856830"
+  },
+  {
+    "id": "e05669cc-feac-4a89-86d4-fb35c04a34a9",
+    "created": "2025-04-19 11:03:21",
+    "count": 28,
+    "ratio": 41.42857142857143,
+    "gymName": "Warwick",
+    "percentage": 30.952380952380956,
+    "gymId": "856830"
+  },
+  {
+    "id": "598c900b-d538-43b8-a026-c9a758f7ee3f",
+    "created": "2025-04-19 11:08:21",
+    "count": 26,
+    "ratio": 44.61538461538461,
+    "gymName": "Warwick",
+    "percentage": 25.64102564102565,
+    "gymId": "856830"
+  },
+  {
+    "id": "f7a0b8e6-9b33-42ef-a342-7280476daa9c",
+    "created": "2025-04-19 11:13:21",
+    "count": 26,
+    "ratio": 44.61538461538461,
+    "gymName": "Warwick",
+    "percentage": 25.64102564102565,
+    "gymId": "856830"
+  },
+  {
+    "id": "bd029085-3523-48e2-b38c-48f8edd18a4b",
+    "created": "2025-04-19 11:18:21",
+    "count": 28,
+    "ratio": 41.42857142857143,
+    "gymName": "Warwick",
+    "percentage": 30.952380952380956,
+    "gymId": "856830"
+  },
+  {
+    "id": "4e569f27-441d-4969-a023-25584c756934",
+    "created": "2025-04-19 11:23:21",
+    "count": 25,
+    "ratio": 46.4,
+    "gymName": "Warwick",
+    "percentage": 22.666666666666668,
+    "gymId": "856830"
+  },
+  {
+    "id": "f5736e2d-e5ae-405b-a9af-589f4ca558cf",
+    "created": "2025-04-19 11:28:21",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "88bc7484-cfe6-4102-8c06-b6a213c8f6b5",
+    "created": "2025-04-19 11:33:21",
+    "count": 20,
+    "ratio": 58,
+    "gymName": "Warwick",
+    "percentage": 3.3333333333333326,
+    "gymId": "856830"
+  },
+  {
+    "id": "6ad61146-3611-431a-af20-030048bf5ab7",
+    "created": "2025-04-19 11:38:21",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "ffe4e6d5-e97f-4caf-8f2e-531bfdcc395b",
+    "created": "2025-04-19 11:43:21",
+    "count": 21,
+    "ratio": 55.23809523809524,
+    "gymName": "Warwick",
+    "percentage": 7.93650793650793,
+    "gymId": "856830"
+  },
+  {
+    "id": "22905e15-6a03-4b7a-8b47-a21113126853",
+    "created": "2025-04-19 11:48:21",
+    "count": 23,
+    "ratio": 50.43478260869565,
+    "gymName": "Warwick",
+    "percentage": 15.94202898550725,
+    "gymId": "856830"
+  },
+  {
+    "id": "7037b566-53af-4cf4-8819-cdcd0b0de217",
+    "created": "2025-04-19 11:53:21",
+    "count": 23,
+    "ratio": 50.43478260869565,
+    "gymName": "Warwick",
+    "percentage": 15.94202898550725,
+    "gymId": "856830"
+  },
+  {
+    "id": "6b5f872f-3826-446b-be6b-fe8b38ef43ec",
+    "created": "2025-04-19 11:58:21",
+    "count": 19,
+    "ratio": 61.05263157894737,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "17428b8c-2f73-44f3-ac3f-f85c89774c77",
+    "created": "2025-04-19 12:03:21",
+    "count": 19,
+    "ratio": 61.05263157894737,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a5d9b222-aef9-4537-8b40-811cda884ada",
+    "created": "2025-04-19 12:08:21",
+    "count": 20,
+    "ratio": 58,
+    "gymName": "Warwick",
+    "percentage": 3.3333333333333326,
+    "gymId": "856830"
+  },
+  {
+    "id": "b46081b5-7471-46c3-9c6a-056147c8938d",
+    "created": "2025-04-19 12:13:21",
+    "count": 18,
+    "ratio": 64.44444444444444,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e40e08aa-4d98-4a85-9c58-bf3cc186dbc4",
+    "created": "2025-04-19 12:18:21",
+    "count": 17,
+    "ratio": 68.23529411764706,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "0a60bf6a-d8d7-460c-8722-54615f022806",
+    "created": "2025-04-19 12:23:21",
+    "count": 16,
+    "ratio": 72.5,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "f7cb0e1b-5b87-49f7-ba1b-858127f7d274",
+    "created": "2025-04-19 12:28:21",
+    "count": 18,
+    "ratio": 64.44444444444444,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "498985fb-fa0c-4884-be4d-b8ac81172ef9",
+    "created": "2025-04-19 12:33:21",
+    "count": 18,
+    "ratio": 64.44444444444444,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "527ab206-2070-4603-a1f2-f2cc3fbdafcc",
+    "created": "2025-04-19 12:38:21",
+    "count": 18,
+    "ratio": 64.44444444444444,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "9790f989-6c37-4612-8a4e-1af96fa7f082",
+    "created": "2025-04-19 12:43:21",
+    "count": 16,
+    "ratio": 72.5,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "852711a7-546a-49b3-bb14-ff4c4bb1a092",
+    "created": "2025-04-19 12:48:21",
+    "count": 15,
+    "ratio": 77.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "148b6d37-5fd4-4c49-aec0-8a3cf46091b0",
+    "created": "2025-04-19 12:53:21",
+    "count": 15,
+    "ratio": 77.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a6e16e98-78bf-49b5-8cf1-d317bd27df7a",
+    "created": "2025-04-19 12:58:21",
+    "count": 15,
+    "ratio": 77.33333333333333,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "698ddf9a-0507-40bb-9e73-ccbb27e6bedb",
+    "created": "2025-04-19 13:03:21",
+    "count": 13,
+    "ratio": 89.23076923076923,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c95a409a-b2e4-47f7-8a9c-b20042495dc8",
+    "created": "2025-04-19 13:08:21",
+    "count": 11,
+    "ratio": 105.45454545454544,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "f17be311-4138-4b46-85c4-f459920f7423",
+    "created": "2025-04-19 13:13:21",
+    "count": 10,
+    "ratio": 116,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "997df367-dc60-494d-84c5-8bba05a768a2",
+    "created": "2025-04-19 13:18:21",
+    "count": 8,
+    "ratio": 145,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "71dc0be9-8464-4dde-a0a8-6a21cd474b17",
+    "created": "2025-04-19 13:23:21",
+    "count": 11,
+    "ratio": 105.45454545454544,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "bba7d178-df08-4a6b-b36f-5d98e14701fb",
+    "created": "2025-04-19 13:28:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "082d9e6e-38b2-4c36-9013-41fed147d195",
+    "created": "2025-04-19 13:33:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a808b33e-b7ac-465b-81b8-cfe373f0b362",
+    "created": "2025-04-19 13:38:21",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "af5e394d-e096-46cc-846a-d1d78b9cd94c",
+    "created": "2025-04-19 13:43:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "caff093f-1d46-41c5-806d-d80bb08ffbc4",
+    "created": "2025-04-19 13:48:21",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "37d95286-3638-4aba-8ee7-4471ff5f58b9",
+    "created": "2025-04-19 13:53:21",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "a8b4e144-d757-4f4f-82de-c72f83ed8f26",
+    "created": "2025-04-19 13:58:21",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "562864a7-3136-4f11-8175-d8bd7855f923",
+    "created": "2025-04-19 14:03:21",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "c4f5b6d1-3cf2-40fe-b122-40711084a667",
+    "created": "2025-04-19 14:08:21",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "eabed8f2-7391-47c9-96a4-a6ca8cdf0ab9",
+    "created": "2025-04-19 14:13:21",
+    "count": 8,
+    "ratio": 145,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "1d35dd51-a32d-4233-853a-df624c5ba615",
+    "created": "2025-04-19 14:18:21",
+    "count": 8,
+    "ratio": 145,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "506ab6be-0bed-4d00-bd60-af6f06b79a3f",
+    "created": "2025-04-19 14:23:21",
+    "count": 5,
+    "ratio": 232,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "93ecdbfb-17e1-409a-a9d6-c0eadfea85b1",
+    "created": "2025-04-19 14:28:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "34a17f33-2364-4eac-8ae1-e754c0244b0a",
+    "created": "2025-04-19 14:33:21",
+    "count": 6,
+    "ratio": 193.33333333333331,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  },
+  {
+    "id": "e40c6a8f-2406-4d21-9bee-136ec56273dd",
+    "created": "2025-04-19 14:38:21",
+    "count": 7,
+    "ratio": 165.71428571428572,
+    "gymName": "Warwick",
+    "percentage": 0,
+    "gymId": "856830"
+  }
+]
