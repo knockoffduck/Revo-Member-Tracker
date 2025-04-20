@@ -1,5 +1,7 @@
 # Revo Fitness Gym Occupancy Tracker
 
+Currently hosted on https://revotracker.dvcklab.com
+
 A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users can view the least crowded gyms and store historical data for analysis. Integrated with **Supabase** for data storage and **Tailwind CSS** for styling.
 
 ## Current and Upcoming Features
@@ -17,6 +19,15 @@ A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users
       - [x] Change Gym Preferences 
   - [x] Users can see their favorite gyms
 - [x] Dark mode toggle for better UI experience.
+
+## App Previews
+
+<img src="https://github.com/user-attachments/assets/d8f9441f-7c61-47ce-87c9-242875bae910" width="200">
+<img src="https://github.com/user-attachments/assets/b419ed44-47dc-4212-a7b0-d90d82895fff" width="200">
+<img src="https://github.com/user-attachments/assets/bc81f6ae-a9da-43ba-8cf8-e6ea57821e58" width="200">
+<img src="https://github.com/user-attachments/assets/3e1e779d-a3ad-45cc-9f14-adf72bfe68af" width="200">
+
+
 
 ## Tech Stack
 
