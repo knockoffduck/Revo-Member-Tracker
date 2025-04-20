@@ -56,7 +56,8 @@ export const getGyms = async (gyms?: string[]) => {
               gymPreferences[0].gymPreferences as string[],
             ),
           ),
-        );
+        )
+        .orderBy(desc(revoGymCount.percentage));
     }
     const result: GymResponse = {
       timestamp: latestTime[0].created,

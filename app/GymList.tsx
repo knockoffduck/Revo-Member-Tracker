@@ -98,8 +98,8 @@ export default function GymList({
           ></FormField>
         </form>
       </Form>
-      {filteredGyms?.map((gym, index) => (
-        <LocationCard key={index} gym={gym}></LocationCard>
+      {filteredGyms?.map((gym) => (
+        <LocationCard key={gym.id} gym={gym}></LocationCard>
       ))}
     </div>
   );

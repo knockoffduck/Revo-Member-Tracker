@@ -49,7 +49,8 @@ export const fetchGyms = async (formData: FormData, currentTime: string) => {
               gymPreferences[0].gymPreferences as string[],
             ),
           ),
-        );
+        )
+        .orderBy(desc(revoGymCount.percentage));
       return data;
     }
   }
