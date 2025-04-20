@@ -8,14 +8,15 @@ A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users
 - [x] Displays gyms based on member-to-area ratio (least crowded first).
 - [x] Stores historical data for trend analysis.
   - [ ] Access to older data.
-- [ ] Users can filter favorite gyms and view live stats.
-  - [ ] Create users to store favourite gyms.
+- [x] User Accounts
+  - [x] Implement Authenticaton (Better-auth)
+  - [ ] Account Creation
+    - [ ] Account Modification
+      - [ ] Change name, password
+      - [ ] Delete Account
+      - [x] Change Gym Preferences 
+  - [x] Users can see their favorite gyms
 - [x] Dark mode toggle for better UI experience.
-
-## Known Bugs
-
-- [ ] Locations not updating when no occupants
-  - [ ] On server, reference the list of gyms, and if missing gym then add value 0
 
 ## Tech Stack
 
@@ -23,6 +24,8 @@ A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users
 - **Tailwind CSS** (Styling)
 - **Supabase** (Database)
 - **Hono** (API framework)
+## Images
+
 
 ## Getting Started
 
@@ -37,9 +40,8 @@ A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users
    ```
 3. **Create environment variables:** Add the following to .env.local:
    ```
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_KEY=your-supabase-anon-key
-   SUPABASE_SERVICE_KEY=your-supabase-service-role-key
+   DATABASE_URL
+   BETTER_AUTH_SECRET
    ```
 4. **Run the app**:
    ```
@@ -48,7 +50,7 @@ A **Next.js** app that tracks live gym member statistics for Revo Fitness. Users
 
 ## Database
 
-The app uses **Supabase** for storing gym statistics.
+The app uses **MySQL** for storing gym statistics.
 
 ### `Revo Member Stats` Table:
 
