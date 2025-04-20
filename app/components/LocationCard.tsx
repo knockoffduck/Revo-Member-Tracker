@@ -38,7 +38,6 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
     return <div>ERROR...</div>;
   }
   const currentLevel = checkLevel(gym.percentage);
-  console.log(gym.gymName, currentLevel);
 
   return (
     <Link href={`/gyms/${gym.gymName}`}>

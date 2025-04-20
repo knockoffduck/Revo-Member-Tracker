@@ -55,3 +55,20 @@ export const fetchGyms = async (formData: FormData, currentTime: string) => {
     }
   }
 };
+
+export const userHasGymPreferences = async (userId: string | undefined) => {
+  if (!userId) {
+    return false;
+  }
+  const [{ gymPreferences }] = await db
+    .select({
+      gymPreferences: user.gymPreferences,
+    })
+    .from(user)
+    .where(eq(user.id, userId))
+    .limit(1);
+  if (!gymPreferences) {
+    return false;
+  }
+  return true;
+};

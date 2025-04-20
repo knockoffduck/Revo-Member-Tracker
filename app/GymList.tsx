@@ -9,7 +9,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
-import { fetchGyms } from "./actions";
+import { fetchGyms, userHasGymPreferences } from "./actions";
+import { authClient } from "@/lib/auth-client";
 
 // Convert ISO string to the local time (using browser's local timezone)
 
@@ -31,10 +32,12 @@ export default function GymList({
   query,
   gymResponse,
   currentTime,
+  hasGymPreferences,
 }: {
   query: string;
   gymResponse: GymResponse;
   currentTime: string;
+  hasGymPreferences: boolean;
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -46,11 +49,7 @@ export default function GymList({
   const [gyms, setGyms] = useState<Gym[]>(gymResponse.data);
   const latestTime = convertToLocalTime(new Date(gymResponse.timestamp));
 
-  useEffect(() => {
-    // This runs only when `id` changes after mount
-    console.log("getting gyms", gyms);
-    // …your logic here (e.g. fetch, state update, side‑effect)…
-  }, [gyms]);
+  useEffect(() => {}, [gyms]);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const formData = new FormData();
@@ -76,28 +75,31 @@ export default function GymList({
       <h4 className="text-xl font-normal text-center ">
         Last Fetched: {latestTime}
       </h4>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name="show_all"
-            render={({ field }) => (
-              <div className="flex items-center gap-2">
-                <FormControl>
-                  <Switch
-                    type="submit"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  ></Switch>
-                </FormControl>
-                <FormLabel className="text-md font-medium ">
-                  Show All Gyms
-                </FormLabel>
-              </div>
-            )}
-          ></FormField>
-        </form>
-      </Form>
+      {hasGymPreferences && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="show_all"
+              render={({ field }) => (
+                <div className="flex items-center gap-2">
+                  <FormControl>
+                    <Switch
+                      type="submit"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    ></Switch>
+                  </FormControl>
+                  <FormLabel className="text-md font-medium ">
+                    Show All Gyms
+                  </FormLabel>
+                </div>
+              )}
+            ></FormField>
+          </form>
+        </Form>
+      )}
+
       {filteredGyms?.map((gym) => (
         <LocationCard key={gym.id} gym={gym}></LocationCard>
       ))}

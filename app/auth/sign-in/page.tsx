@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { CgSpinner } from "react-icons/cg";
 import {
   Card,
   CardContent,
@@ -74,7 +75,7 @@ function Page() {
                       <Input
                         placeholder="Enter your email"
                         {...field}
-                        className="border rounded-md p-2 w-full"
+                        className="border text-sm rounded-md p-2 w-full"
                       />
                     </FormControl>
                   </FormItem>
@@ -91,7 +92,7 @@ function Page() {
                         placeholder="Enter your password"
                         type="password"
                         {...field}
-                        className="border rounded-md p-2 w-full "
+                        className="border text-sm rounded-md p-2 w-full "
                       />
                     </FormControl>
                   </FormItem>
@@ -100,8 +101,8 @@ function Page() {
 
               <div>
                 {isPending ? (
-                  <Button className="mt-4" disabled>
-                    Signing In...
+                  <Button className="mt-4 " disabled>
+                    <CgSpinner className="animate-spin" size={24} />
                   </Button>
                 ) : (
                   <Button type="submit" className="mt-4">
