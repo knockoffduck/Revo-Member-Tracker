@@ -13,14 +13,21 @@ import { userHasGymPreferences } from "./actions";
  * Handles loading and error states for data fetching.
  *
  * @param props - Component props.
+ * @param props.params - URL parameters (dynamic route segments).
  * @param props.searchParams - URL search parameters, used for filtering gyms.
  */
-export default async function Home(props: {
-  // searchParams are passed directly by Next.js in App Router
-  searchParams?: { query?: string };
-}) {
+// Updated HomePageProps to include params for better alignment with Next.js PageProps
+interface HomePageProps {
+  params: { [key: string]: string | string[] | undefined };
+  searchParams?: {
+    query?: string;
+  };
+}
+
+// Using the updated HomePageProps in the function signature
+export default async function Home({ params, searchParams }: HomePageProps) {
   // Extract search query, default to empty string if not present
-  const query = props.searchParams?.query || "";
+  const query = searchParams?.query || "";
 
   let response: GymResponse | undefined = undefined;
   let fetchError: string | null = null;
