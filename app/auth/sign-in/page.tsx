@@ -21,7 +21,6 @@ import { useActionState, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { signInEmail } from "../actions";
 

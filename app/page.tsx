@@ -45,7 +45,7 @@ export default async function Home(props: {
         ) : response ? (
           // Only render GymList if response is defined and not null/undefined
           <GymList
-            hasGymPreferences
+            hasGymPreferences={preferences}
             query={query}
             gymResponse={response}
             currentTime={response.timestamp}
