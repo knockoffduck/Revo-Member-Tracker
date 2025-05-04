@@ -1,5 +1,6 @@
 "use client";
 
+import moment from "moment-timezone";
 import { Switch } from "@/components/ui/switch";
 import { Gym, GymResponse } from "./_types";
 import { LocationCard } from "./components/LocationCard";
@@ -7,22 +8,6 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect, useMemo } from "react";
 import { fetchGyms } from "./actions"; // Assuming fetchGyms handles fetching all/preferred
-
-/**
- * Converts a date string (assumed UTC) to a locale-specific time string.
- * @param dateString - The ISO date string (e.g., from the database).
- * @returns Formatted time string (e.g., "10:30 PM").
- */
-const convertToLocalTime = (dateString: string): string => {
-  // Create Date object (interprets ISO string as UTC)
-  const date = new Date(dateString);
-  // Format to local time using browser's timezone settings
-  return date.toLocaleTimeString("en-AU", {
-    hour12: true,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
 
 /**
  * Displays a list of gyms, allowing filtering and toggling between preferred/all gyms.
@@ -52,8 +37,20 @@ export default function GymList({
   // State to track loading status during client-side fetches
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  /**
+   * Converts a date string (assumed UTC) to a locale-specific time string.
+   * @param dateString - The ISO date string (e.g., from the database).
+   * @returns Formatted time string (e.g., "10:30 PM").
+   */
+  const convertToLocalTime = (dateString: string): string => {
+    // Create Date object (interprets ISO string as UTC)
+    const utcMoment = moment.utc(dateString);
+    const localMoment = utcMoment.local();
+    const result = localMoment.format("h:mm A");
+    return result;
+  };
+
   // Format the timestamp passed from the server component
-  const latestTime = useMemo(() => convertToLocalTime(currentTime), [currentTime]);
 
   // Effect to reset displayed gyms if the initial server-fetched data changes
   // This handles cases where the parent component might refetch and pass new props
@@ -68,7 +65,9 @@ export default function GymList({
     setShowAll(checked);
     setIsLoading(true); // Set loading state
 
-    const operation = checked ? "Showing all gyms" : "Showing your preferred gyms";
+    const operation = checked
+      ? "Showing all gyms"
+      : "Showing your preferred gyms";
     toast({ title: "Updating gym list...", description: operation });
 
     try {
@@ -102,8 +101,8 @@ export default function GymList({
   const filteredGyms = useMemo(() => {
     return Array.isArray(displayedGyms)
       ? displayedGyms.filter((gym: Gym) =>
-        gym.gymName.toLowerCase().includes(query.toLowerCase())
-      )
+          gym.gymName.toLowerCase().includes(query.toLowerCase()),
+        )
       : [];
   }, [displayedGyms, query]);
 
@@ -111,7 +110,7 @@ export default function GymList({
     <div className="flex flex-col gap-6 py-6">
       {/* Display Timestamp */}
       <h4 className="text-xl font-normal text-center ">
-        Last Fetched: {latestTime}
+        Last Fetched: {convertToLocalTime(currentTime)}
       </h4>
 
       {/* "Show All" Toggle (only if user has preferences) */}
