@@ -6,34 +6,37 @@ import Header from "./components/Header";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-	title: "Revo Member Tracker",
-	description: "Find the right time to gym",
+  title: "Revo Member Tracker",
+  description: "Find the right time to gym",
 };
 
 const inter = Inter({
-	subsets: ["latin"],
-	variable: "--font-sans",
+  subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en" className={inter.className} suppressHydrationWarning>
-			<body>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<Header></Header>
-					{children}
-					<Toaster />
-				</ThemeProvider>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en" className={inter.className} suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="RevoTracker" />
+      </head>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header></Header>
+          {children}
+          <Toaster />
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }
