@@ -7,6 +7,7 @@ import AccountButton from "./AccountButton";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
+import MobileNav from "./MobileNav";
 
 export default async function Header() {
 	const session = await auth.api.getSession({
@@ -28,13 +29,18 @@ export default async function Header() {
 				/>
 			</Link>
 
-			{/* Dark mode toggle - hidden on mobile */}
-			<div className="absolute top-8 left-8 z-50">
+			{/* Mobile Menu - Visible on mobile only */}
+			<div className="absolute top-8 left-4 z-50 md:hidden">
+				<MobileNav />
+			</div>
+
+			{/* Dark mode toggle - Visible on desktop only */}
+			<div className="hidden md:block absolute top-8 left-8 z-50">
 				<ModeToggle />
 			</div>
 
-            {/* Navigation Links - Absolute position for now to match layout style */}
-            <div className="absolute top-8 left-20 z-50 md:left-24 flex gap-2"> 
+            {/* Navigation Links - Visible on desktop only */}
+            <div className="hidden md:flex absolute top-8 left-24 z-50 gap-2"> 
                 <Link href="/gyms">
                     <Button variant="ghost">App</Button>
                 </Link>
