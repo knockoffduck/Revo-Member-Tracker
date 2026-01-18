@@ -30,7 +30,7 @@ export default function AboutPage() {
           <div className="bg-muted/50 p-8 rounded-lg border">
             <h3 className="font-semibold mb-2">Did You Know?</h3>
             <p className="text-sm text-muted-foreground">
-              Peak times aren't just about the hour of the day. They fluctuate based on location size, equipment availability, and even the weather. We help you see the bigger picture.
+              Peak times aren&apos;t just about the hour of the day. They fluctuate based on location size, equipment availability, and even the weather. We help you see the bigger picture.
             </p>
           </div>
         </section>
@@ -42,7 +42,7 @@ export default function AboutPage() {
               Our Intelligent Approach
             </h2>
           <p className="text-muted-foreground leading-relaxed">
-            Revo Member Tracker doesn't just scrape numbers; it contextualizes them. We calculate the <strong>Occupancy Ratio</strong> based on the specific capacity of each gym location.
+            Revo Member Tracker doesn&apos;t just scrape numbers; it contextualizes them. We calculate the <strong>Occupancy Ratio</strong> based on the specific capacity of each gym location.
           </p>
           <ul className="grid gap-4 md:grid-cols-3 mt-6">
              <li className="p-4 rounded-md bg-card border shadow-sm">

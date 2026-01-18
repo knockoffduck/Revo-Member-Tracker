@@ -1,4 +1,4 @@
-import { Gym, GymResponse } from "@/app/_types";
+import { Gym, GymResponse } from "@/app/gyms/_types";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";

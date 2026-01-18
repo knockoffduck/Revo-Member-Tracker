@@ -24,7 +24,7 @@ export default function HowToUsePage() {
                         Each card represents a Revo Fitness location. At a glance, you can see the <strong>Gym Name</strong> and the current real-time <strong>Occupancy</strong> (number of members present).
                     </p>
                     <p>
-                        We analyze this number against the gym's specific capacity to determine how "full" it feels.
+                        We analyze this number against the gym&apos;s specific capacity to determine how &quot;full&quot; it feels.
                     </p>
                 </div>
                 {/* Mock Card Visual */}
@@ -61,7 +61,7 @@ export default function HowToUsePage() {
                         <CardTitle className="text-yellow-600">Yellow: Medium</CardTitle>
                     </CardHeader>
                     <CardContent className="text-muted-foreground">
-                        Moderate traffic. You might wait for a bench or rack, but it's manageable.
+                        Moderate traffic. You might wait for a bench or rack, but it&apos;s manageable.
                     </CardContent>
                 </Card>
                  <Card className="border-l-4 border-l-red-500">

@@ -28,7 +28,7 @@ import { TooltipProps } from "recharts";
 import { IoTrendingUp } from "react-icons/io5";
 import { ValueType } from "tailwindcss/types/config";
 import { NameType } from "recharts/types/component/DefaultTooltipContent";
-import { Gym } from "../_types";
+import { Gym } from "../gyms/_types";
 
 const chartConfig = {
   desktop: {
