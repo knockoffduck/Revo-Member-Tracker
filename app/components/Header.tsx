@@ -16,7 +16,7 @@ export default async function Header() {
 
 
 	return (
-		<div className="relative flex pt-8 justify-center">
+		<div className="relative flex pt-8 justify-center w-full">
 			{/* Logo with Link */}
 			<Link href="/" className="text-4xl font-bold mb-6 text-center">
 				<NextImage
