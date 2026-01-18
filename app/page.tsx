@@ -1,54 +1,66 @@
-import { getGyms } from "@/lib/fetchData"; // Assuming getGyms is here
-import SearchGyms from "./SearchGyms"; // Corrected import path assumption
-import GymList from "./GymList"; // Corrected import path assumption
-import { GymResponse } from "./_types"; // Assuming type is here
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { userHasGymPreferences } from "./actions";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, BarChart3, Clock, MapPin } from "lucide-react";
 
-export default async function Home(props: {
-    searchParams?: Promise<{ query?: string }>;
-}) {
-    const searchParams = await props.searchParams;
-    const query = searchParams?.query || "";
-    let response: GymResponse | undefined = undefined;
-    let fetchError: string | null = null;
-    // --- User Session and Preferences ---
-    const session = await auth.api.getSession({
-        headers: await headers(), // Required for server-side session retrieval
-    });
-    const userId = session?.user?.id;
-    // Check if the logged-in user has gym preferences set
-    const preferences = userId ? await userHasGymPreferences(userId) : false;
-
-    try {
-        // Let TypeScript infer the type or explicitly type as potentially undefined
-        response = await getGyms();
-    } catch (error) {
-        console.error("Failed to fetch gyms:", error);
-        fetchError = "Could not load gym data. Please try again later.";
-    }
-
-    return (
-        <div className="w-full px-8 justify-center pt-6 gap-6 ">
-            <div className="flex flex-col gap-6">
-                <SearchGyms />
-                {fetchError ? (
-                    <p className="text-red-500">{fetchError}</p>
-                ) : response ? (
-                    // Only render GymList if response is defined and not null/undefined
-                    <GymList
-                        hasGymPreferences={preferences}
-                        query={query}
-                        gymResponse={response}
-                        currentTime={response.timestamp}
-                    />
-                ) : (
-                    // Optional: Handle the case where response is undefined (e.g., loading or no data)
-                    // You might want a more sophisticated loading state here
-                    <p>Loading gyms...</p>
-                )}
-            </div>
+export default function LandingPage() {
+  return (
+    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
+      {/* Hero Section */}
+      <section className="flex-1 flex flex-col items-center justify-center space-y-10 py-24 px-6 text-center md:py-32 bg-gradient-to-b from-background to-muted/20">
+        <div className="space-y-4 max-w-3xl">
+          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+            Track Your Gains, Not Crowds
+          </h1>
+          <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+            Real-time capacity tracking for Revo Fitness gyms. Find the perfect time to train and avoid the rush.
+          </p>
         </div>
-    );
+        <div className="flex gap-4">
+          <Link href="/gyms">
+            <Button size="lg" className="h-12 px-8 text-lg gap-2">
+              Find Your Gym <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+          <Link href="https://revofitness.com.au" target="_blank" rel="noreferrer">
+             <Button variant="outline" size="lg" className="h-12 px-8 text-lg">
+              Visit Revo
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="container mx-auto py-24 px-6">
+        <div className="grid gap-12 md:grid-cols-3">
+          <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="p-3 rounded-full bg-primary/10 text-primary">
+              <BarChart3 className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold">Live Capacity</h3>
+            <p className="text-muted-foreground">
+              See exactly how busy your gym is right now before you leave the house.
+            </p>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="p-3 rounded-full bg-primary/10 text-primary">
+              <Clock className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold">Peak Times</h3>
+            <p className="text-muted-foreground">
+              Analyze historical data to identify the quietest times to workout.
+            </p>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="p-3 rounded-full bg-primary/10 text-primary">
+              <MapPin className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold">Multiple Locations</h3>
+            <p className="text-muted-foreground">
+              Track any Revo Fitness location. Save your favorites for quick access.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }

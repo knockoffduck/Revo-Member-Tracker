@@ -3,11 +3,11 @@
 import moment from "moment-timezone";
 import { Switch } from "@/components/ui/switch";
 import { Gym, GymResponse } from "./_types";
-import { LocationCard } from "./components/LocationCard";
+import { LocationCard } from "@/app/components/LocationCard";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect, useMemo } from "react";
-import { fetchGyms } from "./actions"; // Assuming fetchGyms handles fetching all/preferred
+import { fetchGyms } from "@/app/actions";
 
 /**
  * Displays a list of gyms, allowing filtering and toggling between preferred/all gyms.
