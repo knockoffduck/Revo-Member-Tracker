@@ -11,7 +11,7 @@ import { revoGyms } from "@/app/db/schema";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Use environment variable for base URL if available, otherwise fallback
   // In production, ensure NEXT_PUBLIC_BASE_URL is set in your environment variables.
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://revo-tracker.com'
+  const baseUrl = 'https://revotracker.dvcklab.com'
 
   // Fetch all gyms from the revoGyms table to include dynamic routes
   let gymEntries: MetadataRoute.Sitemap = []
