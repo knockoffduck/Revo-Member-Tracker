@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import React from "react";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
+import moment from "moment-timezone";
 
 type Gym = {
   id: string;
@@ -33,6 +34,12 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
     }
   };
 
+  const convertToLocalTime = (dateString: string): string => {
+    const utcMoment = moment.utc(dateString);
+    const localMoment = utcMoment.local();
+    return localMoment.format("h:mm A");
+  };
+
   // Check if gym.percentage is null or undefined
   if (gym.percentage === null || gym.percentage === undefined) {
     return <div>ERROR...</div>;
@@ -50,7 +57,11 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
           className={`h-8 rounded-lg`}
           color={currentLevel.colour}
         ></Progress>
+        <p className="text-xs text-muted-foreground mt-2">
+          Last updated: {convertToLocalTime(gym.created)}
+        </p>
       </Card>
     </Link>
   );
 };
+

@@ -22,7 +22,7 @@ export default function SearchGyms() {
 		<div>
 			<Input
 				defaultValue={searchParams.get("query")?.toString()}
-				placeholder="search"
+				placeholder="Search for a Gym"
 				onChange={(e) => {
 					handleSearch(e.target.value);
 				}}

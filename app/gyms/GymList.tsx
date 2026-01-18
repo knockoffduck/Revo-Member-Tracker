@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect, useMemo } from "react";
 import { fetchGyms } from "@/app/actions";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 /**
  * Displays a list of gyms, allowing filtering and toggling between preferred/all gyms.
@@ -36,6 +38,11 @@ export default function GymList({
   const [showAll, setShowAll] = useState<boolean>(!hasGymPreferences);
   // State to track loading status during client-side fetches
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  // State for sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: "gymName" | "percentage";
+    direction: "asc" | "desc";
+  } | null>(null);
 
   /**
    * Converts a date string (assumed UTC) to a locale-specific time string.
@@ -97,21 +104,49 @@ export default function GymList({
     }
   };
 
-  // Filter the displayed gyms based on the search query
-  const filteredGyms = useMemo(() => {
-    return Array.isArray(displayedGyms)
-      ? displayedGyms.filter((gym: Gym) =>
-          gym.gymName.toLowerCase().includes(query.toLowerCase()),
-        )
-      : [];
-  }, [displayedGyms, query]);
+  const handleSort = (key: "gymName" | "percentage") => {
+    setSortConfig((current) => {
+      if (current?.key === key && current.direction === "asc") {
+        return { key, direction: "desc" };
+      }
+      return { key, direction: "asc" };
+    });
+  };
+
+  // Filter and sort the displayed gyms
+  const processedGyms = useMemo(() => {
+    let gyms = Array.isArray(displayedGyms) ? [...displayedGyms] : [];
+
+    // Filter
+    if (query) {
+      gyms = gyms.filter((gym: Gym) =>
+        gym.gymName.toLowerCase().includes(query.toLowerCase()),
+      );
+    }
+
+    // Sort
+    if (sortConfig) {
+      gyms.sort((a, b) => {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        // Handle possible null values for percentage
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+
+        if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return gyms;
+  }, [displayedGyms, query, sortConfig]);
 
   return (
     <div className="flex flex-col gap-6 py-6">
       {/* Display Timestamp */}
-      <h4 className="text-xl font-normal text-center ">
-        Last Fetched: {convertToLocalTime(currentTime)}
-      </h4>
+
 
       {/* "Show All" Toggle (only if user has preferences) */}
       {hasGymPreferences && (
@@ -128,12 +163,48 @@ export default function GymList({
         </div>
       )}
 
+      {/* Sort Buttons */}
+      <div className="flex gap-2 justify-center">
+        <Button
+          variant={sortConfig?.key === "gymName" ? "default" : "outline"}
+          onClick={() => handleSort("gymName")}
+          className="w-32"
+        >
+          Name
+          {sortConfig?.key === "gymName" ? (
+            sortConfig.direction === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+        <Button
+          variant={sortConfig?.key === "percentage" ? "default" : "outline"}
+          onClick={() => handleSort("percentage")}
+          className="w-32"
+        >
+          Occupancy
+          {sortConfig?.key === "percentage" ? (
+            sortConfig.direction === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      </div>
+
       {/* Loading Indicator */}
       {isLoading && <p className="text-center">Loading...</p>}
 
       {/* Gym List */}
-      {!isLoading && filteredGyms.length > 0 ? (
-        filteredGyms.map((gym) => <LocationCard key={gym.id} gym={gym} />)
+      {!isLoading && processedGyms.length > 0 ? (
+        processedGyms.map((gym) => <LocationCard key={gym.id} gym={gym} />)
       ) : !isLoading ? (
         // Message when no gyms match the filter or no data
         <p className="text-center text-gray-500">
