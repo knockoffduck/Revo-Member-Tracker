@@ -36,11 +36,13 @@ export default function GymList({
   // State for the "Show All" toggle (only relevant if user has preferences)
   // Default to false (showing preferred) if preferences exist
   const [showAll, setShowAll] = useState<boolean>(!hasGymPreferences);
+  const [selectedState, setSelectedState] = useState<string>("All");
+
   // State to track loading status during client-side fetches
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // State for sorting
   const [sortConfig, setSortConfig] = useState<{
-    key: "gymName" | "percentage";
+    key: "gymName" | "percentage" | "areaSize";
     direction: "asc" | "desc";
   } | null>(null);
 
@@ -104,7 +106,7 @@ export default function GymList({
     }
   };
 
-  const handleSort = (key: "gymName" | "percentage") => {
+  const handleSort = (key: "gymName" | "percentage" | "areaSize") => {
     setSortConfig((current) => {
       if (current?.key === key && current.direction === "asc") {
         return { key, direction: "desc" };
@@ -113,15 +115,28 @@ export default function GymList({
     });
   };
 
+  // Extract unique states for filter dropdown
+  const uniqueStates = useMemo(() => {
+    const states = displayedGyms
+      .map((gym) => gym.state)
+      .filter((state): state is string => !!state); // Filter out null/undefined
+    return Array.from(new Set(states)).sort();
+  }, [displayedGyms]);
+
   // Filter and sort the displayed gyms
   const processedGyms = useMemo(() => {
     let gyms = Array.isArray(displayedGyms) ? [...displayedGyms] : [];
 
-    // Filter
+    // Filter by Search Query
     if (query) {
       gyms = gyms.filter((gym: Gym) =>
         gym.gymName.toLowerCase().includes(query.toLowerCase()),
       );
+    }
+
+    // Filter by State
+    if (selectedState && selectedState !== "All") {
+      gyms = gyms.filter((gym) => gym.state === selectedState);
     }
 
     // Sort
@@ -141,7 +156,7 @@ export default function GymList({
     }
 
     return gyms;
-  }, [displayedGyms, query, sortConfig]);
+  }, [displayedGyms, query, selectedState, sortConfig]);
 
   return (
     <div className="flex flex-col gap-6 py-6">
@@ -163,40 +178,80 @@ export default function GymList({
         </div>
       )}
 
-      {/* Sort Buttons */}
-      <div className="flex gap-2 justify-center">
-        <Button
-          variant={sortConfig?.key === "gymName" ? "default" : "outline"}
-          onClick={() => handleSort("gymName")}
-          className="w-32"
-        >
-          Name
-          {sortConfig?.key === "gymName" ? (
-            sortConfig.direction === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
+      {/* Controls: Sort and Filter */}
+      <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+        {/* Sort Buttons */}
+        <div className="flex gap-2 justify-center flex-wrap">
+          <Button
+            variant={sortConfig?.key === "gymName" ? "default" : "outline"}
+            onClick={() => handleSort("gymName")}
+            className="w-28"
+            size="sm"
+          >
+            Name
+            {sortConfig?.key === "gymName" ? (
+              sortConfig.direction === "asc" ? (
+                <ArrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <ArrowDown className="ml-2 h-4 w-4" />
+              )
             ) : (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            )
-          ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          )}
-        </Button>
-        <Button
-          variant={sortConfig?.key === "percentage" ? "default" : "outline"}
-          onClick={() => handleSort("percentage")}
-          className="w-32"
-        >
-          Occupancy
-          {sortConfig?.key === "percentage" ? (
-            sortConfig.direction === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            variant={sortConfig?.key === "percentage" ? "default" : "outline"}
+            onClick={() => handleSort("percentage")}
+            className="w-28"
+            size="sm"
+          >
+            Occupancy
+            {sortConfig?.key === "percentage" ? (
+              sortConfig.direction === "asc" ? (
+                <ArrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <ArrowDown className="ml-2 h-4 w-4" />
+              )
             ) : (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            )
-          ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          )}
-        </Button>
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            variant={sortConfig?.key === "areaSize" ? "default" : "outline"}
+            onClick={() => handleSort("areaSize")}
+            className="w-28"
+            size="sm"
+          >
+            Size
+            {sortConfig?.key === "areaSize" ? (
+              sortConfig.direction === "asc" ? (
+                <ArrowUp className="ml-2 h-4 w-4" />
+              ) : (
+                <ArrowDown className="ml-2 h-4 w-4" />
+              )
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+
+        {/* State Filter */}
+        <div className="flex items-center gap-2">
+          <Label htmlFor="state-filter" className="whitespace-nowrap font-medium">State:</Label>
+          <select
+            id="state-filter"
+            value={selectedState}
+            onChange={(e) => setSelectedState(e.target.value)}
+            className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="All">All States</option>
+            {uniqueStates.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Loading Indicator */}
@@ -208,7 +263,7 @@ export default function GymList({
       ) : !isLoading ? (
         // Message when no gyms match the filter or no data
         <p className="text-center text-gray-500">
-          {query ? "No gyms match your search." : "No gym data available."}
+          {query || selectedState !== "All" ? "No gyms match your filters." : "No gym data available."}
         </p>
       ) : null}
     </div>

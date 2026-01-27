@@ -12,6 +12,8 @@ type Gym = {
   gymName: string;
   percentage: number | null;
   gymId: string;
+  areaSize: number;
+  state: string;
 };
 
 export const LocationCard = ({ gym }: { gym: Gym }) => {
@@ -57,9 +59,14 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
           className={`h-8 rounded-lg`}
           color={currentLevel.colour}
         ></Progress>
-        <p className="text-xs text-muted-foreground mt-2">
-          Last updated: {convertToLocalTime(gym.created)}
-        </p>
+        <div className="flex w-full justify-between mt-2 px-1">
+          <p className="text-xs text-muted-foreground">
+            Size: {gym.areaSize}m²
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Last updated: {convertToLocalTime(gym.created)}
+          </p>
+        </div>
       </Card>
     </Link>
   );

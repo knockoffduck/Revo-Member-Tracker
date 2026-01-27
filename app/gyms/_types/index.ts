@@ -6,6 +6,8 @@ export type Gym = {
 	gymName: string;
 	percentage: number;
 	gymId: string;
+	areaSize: number;
+	state: string;
 };
 
 export type GymResponse = {

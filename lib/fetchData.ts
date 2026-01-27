@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { db } from "@/app/db/database";
-import { revoGymCount, user } from "@/app/db/schema";
+import { revoGymCount, revoGyms, user } from "@/app/db/schema";
 import { and, asc, desc, eq, gte, inArray, lte } from "drizzle-orm";
 import { auth } from "./auth";
 import { headers } from "next/headers";
@@ -48,8 +48,19 @@ export const getGyms = async (gyms?: string[]) => {
         // If no user is logged in, fetch all gyms for the latest timestamp
         if (!userId) {
             latestData = await db
-                .select()
+                .select({
+                    id: revoGymCount.id,
+                    created: revoGymCount.created,
+                    count: revoGymCount.count,
+                    ratio: revoGymCount.ratio,
+                    gymName: revoGymCount.gymName,
+                    percentage: revoGymCount.percentage,
+                    gymId: revoGymCount.gymId,
+                    areaSize: revoGyms.areaSize,
+                    state: revoGyms.state,
+                })
                 .from(revoGymCount)
+                .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
                 .where(eq(revoGymCount.created, latestTimestamp))
                 .orderBy(asc(revoGymCount.percentage)); // Order by occupancy percentage
         } else {
@@ -69,15 +80,37 @@ export const getGyms = async (gyms?: string[]) => {
                 gymPreferences.length === 0
             ) {
                 latestData = await db
-                    .select()
+                    .select({
+                        id: revoGymCount.id,
+                        created: revoGymCount.created,
+                        count: revoGymCount.count,
+                        ratio: revoGymCount.ratio,
+                        gymName: revoGymCount.gymName,
+                        percentage: revoGymCount.percentage,
+                        gymId: revoGymCount.gymId,
+                        areaSize: revoGyms.areaSize,
+                        state: revoGyms.state,
+                    })
                     .from(revoGymCount)
+                    .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
                     .where(eq(revoGymCount.created, latestTimestamp))
                     .orderBy(asc(revoGymCount.percentage));
             } else {
                 // If user has preferences, fetch only the preferred gyms for the latest timestamp
                 latestData = await db
-                    .select()
+                    .select({
+                        id: revoGymCount.id,
+                        created: revoGymCount.created,
+                        count: revoGymCount.count,
+                        ratio: revoGymCount.ratio,
+                        gymName: revoGymCount.gymName,
+                        percentage: revoGymCount.percentage,
+                        gymId: revoGymCount.gymId,
+                        areaSize: revoGyms.areaSize,
+                        state: revoGyms.state,
+                    })
                     .from(revoGymCount)
+                    .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
                     .where(
                         and(
                             eq(revoGymCount.created, latestTimestamp),
@@ -120,8 +153,19 @@ export const getGymStats = async (gymName: string) => {
 
         // Fetch records from the database
         const data = await db
-            .select()
+            .select({
+                id: revoGymCount.id,
+                created: revoGymCount.created,
+                count: revoGymCount.count,
+                ratio: revoGymCount.ratio,
+                gymName: revoGymCount.gymName,
+                percentage: revoGymCount.percentage,
+                gymId: revoGymCount.gymId,
+                areaSize: revoGyms.areaSize,
+                state: revoGyms.state,
+            })
             .from(revoGymCount)
+            .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
             .where(
                 and(
                     // Filter by the specified gym name

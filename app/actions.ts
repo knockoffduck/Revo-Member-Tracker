@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/app/db/database";
-import { revoGymCount, user } from "@/app/db/schema"; // Removed unused revoGyms
+import { revoGymCount, revoGyms, user } from "@/app/db/schema"; // Added revoGyms
 import { auth } from "@/lib/auth";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -25,8 +25,19 @@ export const fetchGyms = async (showAllGyms: boolean, currentTime: string) => {
 
 		// Base query to select gyms for the specific timestamp, ordered by percentage
 		const baseQuery = db
-			.select()
+			.select({
+				id: revoGymCount.id,
+				created: revoGymCount.created,
+				count: revoGymCount.count,
+				ratio: revoGymCount.ratio,
+				gymName: revoGymCount.gymName,
+				percentage: revoGymCount.percentage,
+				gymId: revoGymCount.gymId,
+				areaSize: revoGyms.areaSize,
+				state: revoGyms.state,
+			})
 			.from(revoGymCount)
+			.innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
 			.where(eq(revoGymCount.created, currentTime))
 			.orderBy(desc(revoGymCount.percentage));
 
@@ -59,9 +70,21 @@ export const fetchGyms = async (showAllGyms: boolean, currentTime: string) => {
 		}
 
 		// Fetch gyms filtered by user preferences
+		// Fetch gyms filtered by user preferences
 		const data = await db
-			.select()
+			.select({
+				id: revoGymCount.id,
+				created: revoGymCount.created,
+				count: revoGymCount.count,
+				ratio: revoGymCount.ratio,
+				gymName: revoGymCount.gymName,
+				percentage: revoGymCount.percentage,
+				gymId: revoGymCount.gymId,
+				areaSize: revoGyms.areaSize,
+				state: revoGyms.state,
+			})
 			.from(revoGymCount)
+			.innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
 			.where(
 				and(
 					eq(revoGymCount.created, currentTime),
