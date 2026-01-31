@@ -26,6 +26,15 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="RevoTracker" />
       </head>
       <body>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-K1LEB4FNGE"></script>
+          <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-K1LEB4FNGE');
+          </script>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
