@@ -4,9 +4,10 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { db } from "@/app/db/database";
 import { revoGymCount, revoGyms, user } from "@/app/db/schema";
-import { and, asc, desc, eq, gte, inArray, lte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte, ne } from "drizzle-orm";
 import { auth } from "./auth";
 import { headers } from "next/headers";
+import { calculateDistance, getPostcodeCoordinates } from "./postcodeData";
 
 // Extend dayjs with necessary plugins for timezone handling
 dayjs.extend(utc);
@@ -367,3 +368,226 @@ export const getGymDetails = async (gymName: string): Promise<GymDetails | null>
         return null;
     }
 }
+
+export type NearbyGym = {
+    gymName: string;
+    percentage: number;
+    distanceKm: number;
+    state: string;
+};
+
+/**
+ * Fetches nearby gyms that are less crowded than the current gym.
+ * @param gymName - The name of the reference gym.
+ * @param radiusKm - Maximum distance in kilometres (default: 20).
+ * @param maxResults - Maximum number of results to return (default: 5).
+ * @returns A Promise resolving to an array of nearby gyms sorted by crowd level (ascending).
+ */
+export const getNearbyGyms = async (
+    gymName: string,
+    radiusKm: number = 20,
+    maxResults: number = 5
+): Promise<NearbyGym[]> => {
+    try {
+        // Get the reference gym's details including postcode
+        const referenceGym = await db
+            .select({
+                postcode: revoGyms.postcode,
+                latitude: revoGyms.latitude,
+                longitude: revoGyms.longitude,
+            })
+            .from(revoGyms)
+            .where(eq(revoGyms.name, gymName))
+            .limit(1);
+
+        if (!referenceGym || referenceGym.length === 0) {
+            console.warn(`Reference gym not found: ${gymName}`);
+            return [];
+        }
+
+        const refGym = referenceGym[0];
+
+        // Get coordinates - use stored lat/lng or fallback to postcode lookup
+        let refLat = refGym.latitude;
+        let refLng = refGym.longitude;
+
+        if (!refLat || !refLng) {
+            const coords = getPostcodeCoordinates(refGym.postcode);
+            if (!coords) {
+                console.warn(`No coordinates found for postcode: ${refGym.postcode}`);
+                return [];
+            }
+            refLat = coords.lat;
+            refLng = coords.lng;
+        }
+
+        // Get the latest timestamp
+        const latestTimeResult = await db
+            .select({ created: revoGymCount.created })
+            .from(revoGymCount)
+            .orderBy(desc(revoGymCount.created))
+            .limit(1);
+
+        if (!latestTimeResult || latestTimeResult.length === 0) {
+            return [];
+        }
+        const latestTimestamp = latestTimeResult[0].created;
+
+        // Get all active gyms except the reference gym with their current crowd levels
+        const allGyms = await db
+            .select({
+                gymName: revoGymCount.gymName,
+                percentage: revoGymCount.percentage,
+                postcode: revoGyms.postcode,
+                latitude: revoGyms.latitude,
+                longitude: revoGyms.longitude,
+                state: revoGyms.state,
+            })
+            .from(revoGymCount)
+            .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
+            .where(
+                and(
+                    eq(revoGymCount.created, latestTimestamp),
+                    eq(revoGyms.active, 1),
+                    ne(revoGyms.name, gymName)
+                )
+            );
+
+        // Calculate distances and filter by radius
+        const nearbyGyms: NearbyGym[] = [];
+
+        for (const gym of allGyms) {
+            let gymLat = gym.latitude;
+            let gymLng = gym.longitude;
+
+            // Fallback to postcode lookup if no stored coordinates
+            if (!gymLat || !gymLng) {
+                const coords = getPostcodeCoordinates(gym.postcode);
+                if (!coords) continue; // Skip if no coordinates available
+                gymLat = coords.lat;
+                gymLng = coords.lng;
+            }
+
+            const distance = calculateDistance(refLat, refLng, gymLat, gymLng);
+
+            if (distance <= radiusKm) {
+                nearbyGyms.push({
+                    gymName: gym.gymName,
+                    percentage: gym.percentage,
+                    distanceKm: Math.round(distance * 10) / 10, // Round to 1 decimal
+                    state: gym.state as string,
+                });
+            }
+        }
+
+        // Sort by percentage (ascending - less crowded first), then by distance
+        nearbyGyms.sort((a, b) => {
+            if (a.percentage !== b.percentage) {
+                return a.percentage - b.percentage;
+            }
+            return a.distanceKm - b.distanceKm;
+        });
+
+        return nearbyGyms.slice(0, maxResults);
+    } catch (error) {
+        console.error(`Error fetching nearby gyms for ${gymName}:`, error);
+        return [];
+    }
+};
+
+/**
+ * Fetches nearby gyms based on a postcode instead of a gym name.
+ * @param postcode - The reference postcode.
+ * @param radiusKm - Maximum distance in kilometres (default: 20).
+ * @param maxResults - Maximum number of results to return (default: 5).
+ * @returns A Promise resolving to an array of nearby gyms sorted by crowd level (ascending).
+ */
+export const getNearbyGymsByPostcode = async (
+    postcode: number,
+    radiusKm: number = 20,
+    maxResults: number = 5
+): Promise<NearbyGym[]> => {
+    try {
+        // Get coordinates from postcode
+        const coords = getPostcodeCoordinates(postcode);
+        if (!coords) {
+            console.warn(`No coordinates found for postcode: ${postcode}`);
+            return [];
+        }
+
+        const refLat = coords.lat;
+        const refLng = coords.lng;
+
+        // Get the latest timestamp
+        const latestTimeResult = await db
+            .select({ created: revoGymCount.created })
+            .from(revoGymCount)
+            .orderBy(desc(revoGymCount.created))
+            .limit(1);
+
+        if (!latestTimeResult || latestTimeResult.length === 0) {
+            return [];
+        }
+        const latestTimestamp = latestTimeResult[0].created;
+
+        // Get all active gyms with their current crowd levels
+        const allGyms = await db
+            .select({
+                gymName: revoGymCount.gymName,
+                percentage: revoGymCount.percentage,
+                postcode: revoGyms.postcode,
+                latitude: revoGyms.latitude,
+                longitude: revoGyms.longitude,
+                state: revoGyms.state,
+            })
+            .from(revoGymCount)
+            .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
+            .where(
+                and(
+                    eq(revoGymCount.created, latestTimestamp),
+                    eq(revoGyms.active, 1)
+                )
+            );
+
+        // Calculate distances and filter by radius
+        const nearbyGyms: NearbyGym[] = [];
+
+        for (const gym of allGyms) {
+            let gymLat = gym.latitude;
+            let gymLng = gym.longitude;
+
+            // Fallback to postcode lookup if no stored coordinates
+            if (!gymLat || !gymLng) {
+                const gymCoords = getPostcodeCoordinates(gym.postcode);
+                if (!gymCoords) continue;
+                gymLat = gymCoords.lat;
+                gymLng = gymCoords.lng;
+            }
+
+            const distance = calculateDistance(refLat, refLng, gymLat, gymLng);
+
+            if (distance <= radiusKm) {
+                nearbyGyms.push({
+                    gymName: gym.gymName,
+                    percentage: gym.percentage,
+                    distanceKm: Math.round(distance * 10) / 10,
+                    state: gym.state as string,
+                });
+            }
+        }
+
+        // Sort by percentage (ascending), then by distance
+        nearbyGyms.sort((a, b) => {
+            if (a.percentage !== b.percentage) {
+                return a.percentage - b.percentage;
+            }
+            return a.distanceKm - b.distanceKm;
+        });
+
+        return nearbyGyms.slice(0, maxResults);
+    } catch (error) {
+        console.error(`Error fetching nearby gyms for postcode ${postcode}:`, error);
+        return [];
+    }
+};
+

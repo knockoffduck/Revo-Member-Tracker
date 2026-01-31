@@ -27,6 +27,8 @@ export const revoGyms = mysqlTable("Revo_Gyms", {
 	postcode: int().notNull(),
 	active: tinyint().notNull(),
 	timezone: varchar({ length: 50 }).default('Australia/Perth').notNull(),
+	longitude: double(),
+	latitude: double(),
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "Revo_Gyms_id"}),
@@ -130,8 +132,8 @@ export const motherboards = mysqlTable("motherboards", {
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "motherboards_id"}),
-	unique("mid").on(table.mid),
 	unique("model_name").on(table.modelName),
+	unique("mid").on(table.mid),
 ]);
 
 export const session = mysqlTable("session", {

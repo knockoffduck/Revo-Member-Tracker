@@ -3,6 +3,7 @@ import { Gym } from "../gyms/_types";
 import Chart from "@/app/components/Chart";
 import GymInfoCard from "@/app/components/GymInfoCard";
 import CrowdLevelBadge from "@/app/components/CrowdLevelBadge";
+import NearbyGymsCard from "@/app/components/NearbyGymsCard";
 import moment from "moment-timezone";
 
 export default async function GymContent({ gymName }: { gymName: string }) {
@@ -47,6 +48,9 @@ export default async function GymContent({ gymName }: { gymName: string }) {
             {gymDetails && <GymInfoCard details={gymDetails} />}
 
             <Chart data={localisedData} trendData={trendData} />
+
+            <NearbyGymsCard gymName={gymName} />
         </div>
     );
 }
+
