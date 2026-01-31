@@ -10,10 +10,10 @@ interface NearbyGymsCardProps {
 
 /**
  * Displays a card showing nearby gyms that are less crowded.
- * Fetches gyms within 20km radius sorted by crowd level (ascending).
+ * Fetches gyms within 10km radius sorted by crowd level (ascending).
  */
 export default async function NearbyGymsCard({ gymName }: NearbyGymsCardProps) {
-    const nearbyGyms = await getNearbyGyms(gymName, 20, 5);
+    const nearbyGyms = await getNearbyGyms(gymName, 10, 5);
 
     // Don't render if no nearby gyms found
     if (nearbyGyms.length === 0) {
