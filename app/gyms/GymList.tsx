@@ -228,7 +228,7 @@ export default function GymList({
   };
 
   // Helper for Sort Buttons
-  const SortButton = ({ label, sortKey: btnKey, icon: Icon }: { label: string, sortKey: "gymName" | "percentage" | "areaSize", icon: any }) => {
+  const SortButton = ({ label, sortKey: btnKey, icon: Icon }: { label: string, sortKey: "gymName" | "percentage" | "areaSize", icon: React.ElementType }) => {
     const isActive = sortKey === btnKey;
     return (
       <button

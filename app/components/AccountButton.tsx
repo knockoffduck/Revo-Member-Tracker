@@ -23,13 +23,12 @@ export default function AccountButton() {
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
-					router.push("/auth/sign-in"); // redirect to login page
-					router.refresh(); // Refresh server components/data
+					router.push("/auth/sign-in");
+					router.refresh();
 				},
 			},
 		});
-
-	}
+	};
 
 	return (
 		<div>
@@ -40,10 +39,8 @@ export default function AccountButton() {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
-					<DropdownMenuLabel>My Account</DropdownMenuLabel>
-					<DropdownMenuSeparator />
 					<DropdownMenuItem>
-						<Link href="/account/gympreferences">My Gyms</Link>
+						<Link href="/account">My Account</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={handleSignOut}
