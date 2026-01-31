@@ -8,6 +8,7 @@ export type Gym = {
 	gymId: string;
 	areaSize: number;
 	state: string;
+	timezone: string;
 };
 
 export type GymResponse = {

@@ -3,7 +3,7 @@
 import { db } from "@/app/db/database";
 import { revoGymCount, revoGyms, user } from "@/app/db/schema"; // Added revoGyms
 import { auth } from "@/lib/auth";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 // Removed unused NextResponse
 
@@ -16,14 +16,52 @@ import { headers } from "next/headers";
  * @returns A Promise resolving to an array of Gym objects.
  * @throws Will throw an error if database fetching fails.
  */
-export const fetchGyms = async (showAllGyms: boolean, currentTime: string) => {
+export const fetchGyms = async (
+	showAllGyms: boolean,
+	currentTime: string,
+	sort: { key: string; direction: "asc" | "desc" } = {
+		key: "percentage",
+		direction: "asc",
+	}
+) => {
 	try {
 		const session = await auth.api.getSession({
 			headers: await headers(),
 		});
 		const userId = session?.user?.id;
 
-		// Base query to select gyms for the specific timestamp, ordered by percentage
+		// Determine OrderBy Clause
+		let orderByClause;
+		if (sort.key === "gymName") {
+			orderByClause =
+				sort.direction === "asc"
+					? asc(revoGymCount.gymName)
+					: desc(revoGymCount.gymName);
+		} else if (sort.key === "percentage") {
+			orderByClause =
+				sort.direction === "asc"
+					? asc(revoGymCount.percentage)
+					: desc(revoGymCount.percentage);
+		} else if (sort.key === "areaSize") {
+			orderByClause =
+				sort.direction === "asc"
+					? asc(revoGyms.areaSize)
+					: desc(revoGyms.areaSize);
+		} else {
+			// Fallback
+			orderByClause = asc(revoGymCount.percentage);
+		}
+
+		// Determine Base Filter (Timestamp + AreaSize check if sorting by size)
+		const baseConditions = [
+			eq(revoGymCount.created, currentTime),
+			eq(revoGyms.active, 1),
+		];
+		if (sort.key === "areaSize") {
+			baseConditions.push(gte(revoGyms.areaSize, 1)); // Ensure valid area size
+		}
+
+		// Base query to select gyms for the specific timestamp, ordered and filtered
 		const baseQuery = db
 			.select({
 				id: revoGymCount.id,
@@ -38,8 +76,8 @@ export const fetchGyms = async (showAllGyms: boolean, currentTime: string) => {
 			})
 			.from(revoGymCount)
 			.innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
-			.where(eq(revoGymCount.created, currentTime))
-			.orderBy(desc(revoGymCount.percentage));
+			.where(and(...baseConditions))
+			.orderBy(orderByClause);
 
 		// If user is not logged in OR wants to see all gyms, execute the base query
 		if (!userId || showAllGyms) {
@@ -70,7 +108,6 @@ export const fetchGyms = async (showAllGyms: boolean, currentTime: string) => {
 		}
 
 		// Fetch gyms filtered by user preferences
-		// Fetch gyms filtered by user preferences
 		const data = await db
 			.select({
 				id: revoGymCount.id,
@@ -87,11 +124,11 @@ export const fetchGyms = async (showAllGyms: boolean, currentTime: string) => {
 			.innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
 			.where(
 				and(
-					eq(revoGymCount.created, currentTime),
-					inArray(revoGymCount.gymName, gymPreferences as string[]) // Safe cast after Array.isArray check
+					...baseConditions,
+					inArray(revoGymCount.gymName, gymPreferences as string[])
 				)
 			)
-			.orderBy(desc(revoGymCount.percentage));
+			.orderBy(orderByClause);
 
 		return data;
 	} catch (error) {

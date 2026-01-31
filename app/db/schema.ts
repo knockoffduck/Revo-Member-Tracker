@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, primaryKey, varchar, datetime, int, double, text, timestamp, index, unique, tinyint, json } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, foreignKey, primaryKey, varchar, datetime, int, double, text, timestamp, unique, tinyint, json } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const revoGymCount = mysqlTable("Revo_Gym_Count", {
@@ -6,11 +6,14 @@ export const revoGymCount = mysqlTable("Revo_Gym_Count", {
 	created: datetime({ mode: 'string'}).notNull(),
 	count: int().notNull(),
 	ratio: double().notNull(),
-	gymName: text("gym_name").notNull(),
+	gymName: varchar("gym_name", { length: 191 }).notNull(),
 	percentage: double().notNull(),
 	gymId: varchar("gym_id", { length: 36 }).notNull().references(() => revoGyms.id),
 },
 (table) => [
+	index("idx_revo_gym_count_created").on(table.created),
+	index("idx_revogym_gym_created").on(table.gymName, table.created),
+	index("idx_revogym_gym_created_desc").on(table.gymName, table.created),
 	primaryKey({ columns: [table.id], name: "Revo_Gym_Count_id"}),
 ]);
 
@@ -22,6 +25,8 @@ export const revoGyms = mysqlTable("Revo_Gyms", {
 	lastUpdated: datetime("last_updated", { mode: 'string'}).notNull(),
 	address: text().notNull(),
 	postcode: int().notNull(),
+	active: tinyint().notNull(),
+	timezone: varchar({ length: 50 }).default('Australia/Perth').notNull(),
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "Revo_Gyms_id"}),
@@ -73,6 +78,16 @@ export const categories = mysqlTable("categories", {
 	primaryKey({ columns: [table.id], name: "categories_id"}),
 ]);
 
+export const gymTrendCache = mysqlTable("gym_trend_cache", {
+	gymId: varchar("gym_id", { length: 36 }).notNull(),
+	dayOfWeek: int("day_of_week").notNull(),
+	trendData: json("trend_data").notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	primaryKey({ columns: [table.gymId, table.dayOfWeek], name: "gym_trend_cache_gym_id_day_of_week"}),
+]);
+
 export const itemSets = mysqlTable("item_sets", {
 	id: varchar({ length: 36 }).notNull(),
 	dateFetched: varchar("date_fetched", { length: 255 }),
@@ -115,8 +130,8 @@ export const motherboards = mysqlTable("motherboards", {
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "motherboards_id"}),
-	unique("model_name").on(table.modelName),
 	unique("mid").on(table.mid),
+	unique("model_name").on(table.modelName),
 ]);
 
 export const session = mysqlTable("session", {

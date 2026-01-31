@@ -17,22 +17,13 @@ type Gym = {
 };
 
 export const LocationCard = ({ gym }: { gym: Gym }) => {
-  const levels = {
-    low: { percentage: 12.5, colour: "bg-green-600" },
-    medium: { percentage: 25, colour: "bg-yellow-600" },
-    high: { percentage: 37.5, colour: "bg-orange-600" },
-    full: { percentage: 50, colour: "bg-red-600" },
-  };
-
   const checkLevel = (percentage: number) => {
-    if (percentage <= levels.low.percentage) {
-      return levels.low;
-    } else if (percentage <= levels.medium.percentage) {
-      return levels.medium;
-    } else if (percentage <= levels.high.percentage) {
-      return levels.high;
+    if (percentage < 30) {
+      return { colour: "bg-green-600" };
+    } else if (percentage <= 70) {
+      return { colour: "bg-yellow-600" };
     } else {
-      return levels.full;
+      return { colour: "bg-red-600" };
     }
   };
 
@@ -55,7 +46,7 @@ export const LocationCard = ({ gym }: { gym: Gym }) => {
         <h3 className="text-4xl">{gym.count}</h3>
         <Progress
           value={gym.percentage}
-          max={60}
+          max={100}
           className={`h-8 rounded-lg`}
           color={currentLevel.colour}
         ></Progress>

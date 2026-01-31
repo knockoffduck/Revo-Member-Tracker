@@ -1,15 +1,8 @@
-import Chart from "@/app/components/Chart";
-import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
-import { getGymStats } from "@/lib/fetchData";
-import Link from "next/link";
-import { IoArrowBackOutline } from "react-icons/io5";
-
-function getPreviousDate(date: Date): Date {
-  const previousDate = new Date(date);
-  previousDate.setDate(date.getDate() - 1);
-  return previousDate;
-}
+import GymContent from "@/app/components/GymContent";
+import GymContentSkeleton from "@/app/components/GymContentSkeleton";
+import BackButton from "@/app/components/BackButton";
 
 export default async function page(props: {
   params: Promise<{ name: string }>;
@@ -17,43 +10,21 @@ export default async function page(props: {
   const params = await props.params;
   const gymName = decodeURIComponent(params.name);
 
-  const data = await getGymStats(gymName);
-
-  // const groupedData: {
-  // 	[key: string]: {
-  // 		member_count: number[];
-  // 		member_ratio: number[];
-  // 		percentage: number[];
-  // 	};
-  // } = {};
-
-  const convertToLocalTime = (date: Date): string => {
-    const offsetMinutes = date.getTimezoneOffset();
-    const localDate = new Date(date.getTime() - offsetMinutes * 60 * 1000);
-    return localDate.toISOString();
-  };
-
-  const localisedData = data.map((item) => {
-    const localTime = convertToLocalTime(new Date(item.created));
-    const localisedItem = {
-      ...item,
-      created: localTime,
-    };
-    return localisedItem;
-  });
-
   return (
     <Card className="px-8 pt-6 border-0 flex flex-col justify- w-full">
-      <Link href={"/"}>
-        <Button>
-          <IoArrowBackOutline></IoArrowBackOutline>
-        </Button>
-      </Link>
-      <CardHeader className="text-center font-bold text-2xl">
-        {gymName}
+      <div className="w-fit">
+        <BackButton />
+      </div>
+
+      {/* Header with Gym Name */}
+      {/* CrowdLevelBadge is now inside GymContent to allow Name to load instantly */}
+      <CardHeader className="text-center font-bold text-2xl flex flex-col items-center gap-2 pb-0 mb-2">
+        <h1>{gymName}</h1>
       </CardHeader>
 
-      <Chart data={localisedData}></Chart>
+      <Suspense fallback={<GymContentSkeleton />}>
+        <GymContent gymName={gymName} />
+      </Suspense>
     </Card>
   );
 }

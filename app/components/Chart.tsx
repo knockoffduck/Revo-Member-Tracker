@@ -1,19 +1,17 @@
 "use client";
 import {
   Area,
-  AreaChart,
+  ComposedChart,
   CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
+  Line,
 } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,80 +20,96 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from "@/components/ui/chart";
-import { TooltipProps } from "recharts";
 
-import { IoTrendingUp } from "react-icons/io5";
-import { ValueType } from "tailwindcss/types/config";
-import { NameType } from "recharts/types/component/DefaultTooltipContent";
 import { Gym } from "../gyms/_types";
+import { TrendSlot } from "@/lib/fetchData";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
+  count: {
+    label: "Current",
     color: "hsl(var(--chart-2))",
+  },
+  average: {
+    label: "Average Trend",
+    color: "hsl(var(--muted-foreground))",
   },
 } satisfies ChartConfig;
 
-type CountAverages = {
-  time: string;
-  avg_member_count: number;
-  avg_member_ratio: number;
-  avg_percentage: number;
+type ChartProps = {
+  data: Gym[];
+  trendData?: TrendSlot[];
 };
 
-type ResponseData = {
-  time: string;
-  aTime: string;
-  avg_member_count: number;
-  avg_member_ratio: number;
-  avg_percentage: number;
-}[];
+/**
+ * Generates a unified 24-hour timeline (00:00 to 23:30)
+ * and maps the current data onto it.
+ */
+function create24HourTimeline(
+  currentData: Gym[],
+  trendData: TrendSlot[] = [],
+): Array<{
+  created: string;
+  count: number | null;
+  average: number | null;
+}> {
+  // Create a map of current data by time interval
+  const currentByTime: Map<string, number> = new Map();
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: TooltipProps<ValueType, NameType>) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="p-2 md:p-4 bg-background/70 flex flex-col gap-2 rounded-md">
-        <p className="text-sm md:text-lg">{label}</p>
-        <p className="text-xs md:text-sm text-[hsl(var(--chart-2))]">
-          Member Count:
-          <span className="ml-2">{payload[0].value}</span>
-        </p>
-      </div>
-    );
+  for (const record of currentData) {
+    const date = new Date(record.created);
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = (date.getUTCMinutes() < 30 ? 0 : 30).toString().padStart(2, "0");
+    const timeKey = `${hours}:${minutes}`;
+    // Use the latest value for each interval
+    currentByTime.set(timeKey, record.count);
   }
-};
 
-export default function Chart({ data }: { data: Gym[] }) {
-  // Helper function to normalize time to the nearest 30-minute interval
+  // Create a map of trend data by time interval
+  const trendByTime: Map<string, number> = new Map();
+  for (const slot of trendData) {
+    trendByTime.set(slot.time, slot.average);
+  }
 
-  // const getTickValues = (data: ResponseData) => {
-  // 	// Ensure there are only 3 ticks
-  // 	const length = data.length;
-  // 	if (length <= 3) return data.map((item) => item.aTime);
+  // Generate 48 intervals for the full day
+  const timeline: Array<{ created: string; count: number | null; average: number | null }> = [];
+  const baseDate = new Date();
+  baseDate.setHours(0, 0, 0, 0);
 
-  // 	const interval = Math.floor(length / 3);
-  // 	return data
-  // 		.filter((_, index) => index % interval === 0)
-  // 		.map((item) => item.aTime);
-  // };
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const timeKey = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
 
-  // const ticks = getTickValues(data);
+      // Create a date object for this specific time slot
+      // We construct a UTC date to match our "Fake UTC" data convention
+      const slotDate = new Date(baseDate);
+      slotDate.setUTCHours(hour, minute, 0, 0);
+
+      timeline.push({
+        created: slotDate.toISOString(),
+        count: currentByTime.get(timeKey) ?? null,
+        average: trendByTime.get(timeKey) ?? null,
+      });
+    }
+  }
+
+  return timeline;
+}
+
+export default function Chart({ data, trendData = [] }: ChartProps) {
+  // Generate unified 24-hour view
+  const chartData = create24HourTimeline(data, trendData);
 
   return (
     <Card className="w-full">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>Member Count</CardTitle>
-          <CardDescription>Showing Average Member Count</CardDescription>
+          <CardDescription>
+            Today&apos;s activity vs Average
+          </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
@@ -103,11 +117,11 @@ export default function Chart({ data }: { data: Gym[] }) {
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <AreaChart
+          <ComposedChart
             width={500}
             height={400}
             accessibilityLayer
-            data={data}
+            data={chartData}
             margin={{
               left: -20,
               right: 12,
@@ -126,6 +140,7 @@ export default function Chart({ data }: { data: Gym[] }) {
                   hour: "2-digit",
                   minute: "2-digit",
                   hour12: true,
+                  timeZone: "UTC",
                 };
                 return date.toLocaleTimeString("en-AU", options);
               }}
@@ -137,27 +152,42 @@ export default function Chart({ data }: { data: Gym[] }) {
                 <ChartTooltipContent
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleTimeString("en-AU", {
-                      month: "short",
-                      day: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
+                      hour12: true,
+                      timeZone: "UTC",
                     });
                   }}
                   indicator="dot"
                 />
               }
-            ></ChartTooltip>
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+            {/* Average Trend Line */}
+            <Line
+              dataKey="average"
+              type="monotone"
+              stroke="var(--color-average)"
+              strokeWidth={2}
+              strokeDasharray="4 4"
+              dot={false}
+              connectNulls
+            />
+            {/* Current day data - filled area */}
             <Area
               dataKey="count"
               type="natural"
-              fill="var(--color-mobile)"
+              fill="var(--color-count)"
               fillOpacity={0.4}
-              stroke="var(--color-mobile)"
-              stackId="a"
+              stroke="var(--color-count)"
+              strokeWidth={2}
+              connectNulls
             />
-          </AreaChart>
+          </ComposedChart>
         </ChartContainer>
       </CardContent>
     </Card>
   );
 }
+
+

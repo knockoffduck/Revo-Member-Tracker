@@ -7,10 +7,14 @@ import { headers } from "next/headers";
 import { userHasGymPreferences } from "@/app/actions";
 
 export default async function Home(props: {
-    searchParams?: Promise<{ query?: string }>;
+    searchParams?: Promise<{ query?: string; sort?: string; order?: string; showAll?: string }>;
 }) {
     const searchParams = await props.searchParams;
     const query = searchParams?.query || "";
+    const sortKey = searchParams?.sort || "percentage";
+    const sortDirection = (searchParams?.order as "asc" | "desc") || "asc";
+    const showAll = searchParams?.showAll === "true";
+
     let response: GymResponse | undefined = undefined;
     let fetchError: string | null = null;
     // --- User Session and Preferences ---
@@ -23,7 +27,14 @@ export default async function Home(props: {
 
     try {
         // Let TypeScript infer the type or explicitly type as potentially undefined
-        response = await getGyms();
+        response = await getGyms(
+            undefined,
+            {
+                key: sortKey,
+                direction: sortDirection,
+            },
+            showAll,
+        );
     } catch (error) {
         console.error("Failed to fetch gyms:", error);
         fetchError = "Could not load gym data. Please try again later.";
