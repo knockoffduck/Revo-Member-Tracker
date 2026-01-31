@@ -233,14 +233,14 @@ export default function GymList({
     return (
       <button
         onClick={() => handleSort(btnKey)}
-        className={`flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all rounded-md border shadow-sm flex-1 sm:flex-none
+        className={`flex items-center justify-center gap-2 px-2 sm:px-3 py-2 text-sm font-medium transition-all rounded-md border shadow-sm flex-1 sm:flex-none min-w-0
           ${isActive
             ? 'bg-primary/10 border-primary/20 text-primary ring-1 ring-primary/20'
             : 'bg-card/50 border-border text-muted-foreground hover:bg-muted hover:text-foreground'
           }`}
       >
         <Icon size={14} className={isActive ? 'text-primary' : ''} />
-        <span className="truncate">{label}</span>
+        <span className={`truncate ${isActive ? 'hidden sm:inline' : ''}`}>{label}</span>
         {isActive && (
           sortDirection === 'asc' ? <ArrowUp size={14} className="shrink-0" /> : <ArrowDown size={14} className="shrink-0" />
         )}
@@ -291,7 +291,7 @@ export default function GymList({
           <div className="flex flex-col lg:flex-row lg:items-center gap-5">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 lg:pr-5 lg:border-r border-border">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 sm:mb-0 sm:mr-1">Sort By</span>
-              <div className="flex gap-2 w-full">
+              <div className="flex gap-1 sm:gap-2 w-full">
                 <SortButton label="Name" sortKey="gymName" icon={ArrowUpDown} />
                 <SortButton label="Occupancy" sortKey="percentage" icon={Users} />
                 <SortButton label="Size" sortKey="areaSize" icon={Maximize2} />
