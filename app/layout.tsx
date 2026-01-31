@@ -4,6 +4,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { Inter } from "next/font/google";
 import Header from "./components/Header";
 import { Toaster } from "@/components/ui/toaster";
+import Script from "next/script"; // 1. Import the Script component
 
 export const metadata: Metadata = {
   title: "Revo Member Tracker",
@@ -26,25 +27,31 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="RevoTracker" />
       </head>
       <body>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-K1LEB4FNGE"></script>
-          <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-K1LEB4FNGE');
-          </script>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Header></Header>
+          <Header />
           {children}
           <Toaster />
         </ThemeProvider>
+
+        {/* --- Google Analytics Section --- */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-K1LEB4FNGE"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-K1LEB4FNGE');
+          `}
+        </Script>
       </body>
     </html>
   );
