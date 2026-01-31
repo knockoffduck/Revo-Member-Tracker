@@ -11,58 +11,59 @@ import MobileNav from "./MobileNav";
 
 export default async function Header() {
 	const session = await auth.api.getSession({
-		headers: await headers()
+		headers: await headers(),
 	});
 
-
 	return (
-		<div className="relative flex pt-8 justify-center w-full">
-			{/* Logo with Link */}
-			<Link href="/" className="text-4xl font-bold mb-6 text-center">
-				<NextImage
-					src="/RevoTracker-logo.svg"
-					alt="Revo Tracker Logo"
-					width={400}
-					height={30}
-					className="text-center h-[30px] w-[130px] md:w-[400px] object-contain"
-					priority
-				/>
-			</Link>
+		<header className="w-full flex items-center justify-between py-6 px-4 md:px-8">
+			{/* Left Section: Mobile Menu (Hidden on Desktop) & Desktop Nav (Hidden on Mobile) */}
+			<div className="flex-1 flex justify-start items-center">
+				{/* Mobile Menu Trigger */}
+				<div className="md:hidden">
+					<MobileNav />
+				</div>
 
-			{/* Mobile Menu - Visible on mobile only */}
-			<div className="absolute top-8 left-4 z-50 md:hidden">
-				<MobileNav />
+				{/* Desktop Navigation Links & Theme Toggle */}
+				<div className="hidden md:flex items-center gap-2">
+					<ModeToggle />
+					<nav className="flex items-center gap-1 ml-4 justify-start">
+						<Link href="/gyms">
+							<Button variant="ghost">App</Button>
+						</Link>
+						<Link href="/about">
+							<Button variant="ghost">About</Button>
+						</Link>
+						<Link href="/how-to-use">
+							<Button variant="ghost">How to Use</Button>
+						</Link>
+					</nav>
+				</div>
 			</div>
 
-			{/* Dark mode toggle - Visible on desktop only */}
-			<div className="hidden md:block absolute top-8 left-8 z-50">
-				<ModeToggle />
+			{/* Center Section: Logo */}
+			<div className="flex-shrink-0 mx-4">
+				<Link href="/" className="flex items-center justify-center">
+					<NextImage
+						src="/RevoTracker-logo.svg"
+						alt="Revo Tracker Logo"
+						width={400}
+						height={30}
+						className="h-[30px] w-[130px] md:w-[300px] lg:w-[400px] object-contain"
+						priority
+					/>
+				</Link>
 			</div>
 
-            {/* Navigation Links - Visible on desktop only */}
-            <div className="hidden md:flex absolute top-8 left-24 z-50 gap-2"> 
-                <Link href="/gyms">
-                    <Button variant="ghost">App</Button>
-                </Link>
-                <Link href="/about">
-                    <Button variant="ghost">About</Button>
-                </Link>
-                <Link href="/how-to-use">
-                    <Button variant="ghost">How to Use</Button>
-                </Link>
-            </div>
-
-			{/* Account/Sign in button - always visible */}
-			<div className="absolute top-8 right-8 z-50">
+			{/* Right Section: Auth Buttons */}
+			<div className="flex-1 flex justify-end items-center">
 				{session ? (
-					<AccountButton></AccountButton>
+					<AccountButton />
 				) : (
 					<Link href="/auth/sign-in">
 						<Button variant="outline">Sign In</Button>
 					</Link>
 				)}
-				{/* Sign out button - only visible when signed in */}
 			</div>
-		</div>
+		</header>
 	);
 }

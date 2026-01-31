@@ -1,15 +1,15 @@
 import { getGyms } from "@/lib/fetchData"; // Assuming getGyms is here
-import SearchGyms from "./SearchGyms"; // Corrected import path assumption
 import GymList from "./GymList"; // Corrected import path assumption
 import { GymResponse } from "./_types"; // Assuming type is here
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { userHasGymPreferences } from "@/app/actions";
+import { userHasGymPreferences, getUserGymPreferences } from "@/app/actions";
 
 export default async function Home(props: {
     searchParams?: Promise<{ query?: string; sort?: string; order?: string; showAll?: string }>;
 }) {
     const searchParams = await props.searchParams;
+
     const query = searchParams?.query || "";
     const sortKey = searchParams?.sort || "percentage";
     const sortDirection = (searchParams?.order as "asc" | "desc") || "asc";
@@ -23,7 +23,8 @@ export default async function Home(props: {
     });
     const userId = session?.user?.id;
     // Check if the logged-in user has gym preferences set
-    const preferences = userId ? await userHasGymPreferences(userId) : false;
+    const hasPreferences = userId ? await userHasGymPreferences(userId) : false;
+    const userFavorites = userId ? await getUserGymPreferences(userId) : [];
 
     try {
         // Let TypeScript infer the type or explicitly type as potentially undefined
@@ -43,13 +44,14 @@ export default async function Home(props: {
     return (
         <div className="w-full px-8 justify-center pt-6 gap-6 ">
             <div className="flex flex-col gap-6">
-                <SearchGyms />
                 {fetchError ? (
                     <p className="text-red-500">{fetchError}</p>
                 ) : response ? (
                     // Only render GymList if response is defined and not null/undefined
                     <GymList
-                        hasGymPreferences={preferences}
+                        hasGymPreferences={hasPreferences}
+                        userFavorites={userFavorites}
+                        isAuthenticated={!!userId}
                         query={query}
                         gymResponse={response}
                         currentTime={response.timestamp}

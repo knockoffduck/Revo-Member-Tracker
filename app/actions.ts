@@ -170,3 +170,34 @@ export const userHasGymPreferences = async (
 		return false;
 	}
 };
+
+/**
+ * Server Action to get a user's gym preferences list.
+ *
+ * @param userId - The ID of the user to check.
+ * @returns A Promise resolving to an array of gym names.
+ */
+export const getUserGymPreferences = async (
+	userId: string | undefined
+): Promise<string[]> => {
+	if (!userId) {
+		return [];
+	}
+
+	try {
+		const result = await db
+			.select({ gymPreferences: user.gymPreferences })
+			.from(user)
+			.where(eq(user.id, userId))
+			.limit(1);
+
+		const gymPreferences = result[0]?.gymPreferences;
+		if (Array.isArray(gymPreferences)) {
+			return gymPreferences as string[];
+		}
+		return [];
+	} catch (error) {
+		console.error(`Error fetching gym preferences for user ${userId}:`, error);
+		return [];
+	}
+};
