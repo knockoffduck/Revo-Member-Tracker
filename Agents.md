@@ -69,6 +69,7 @@ Revo Member Tracker is a Next.js 15 application designed to track gym membership
 - **Authentication**: Secure user authentication managed by Better Auth, with schemas defined in `auth-schema.ts`.
 - **Database**: Type-safe database interactions using Drizzle ORM with MySQL.
 - **Responsive Design**: Mobile-first UI built with Tailwind CSS.
+- **Updates System**: Admin announcements system using Markdown. Admins can create posts via `/updates/create` (restricted).
 
 ## Development Commands
 - `bun run dev`: Start development server.

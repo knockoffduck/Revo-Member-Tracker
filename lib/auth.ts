@@ -22,6 +22,11 @@ export const auth = betterAuth({
 		}
 	},
 	user: {
+		additionalFields: {
+			isAdmin: {
+				type: "boolean",
+			},
+		},
 		changeEmail: {
 			enabled: true,
 			updateEmailWithoutVerification: true

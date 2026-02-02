@@ -30,6 +30,9 @@ export default async function Header() {
 						<Link href="/gyms">
 							<Button variant="ghost">App</Button>
 						</Link>
+						<Link href="/updates">
+							<Button variant="ghost">Updates</Button>
+						</Link>
 						<Link href="/about">
 							<Button variant="ghost">About</Button>
 						</Link>

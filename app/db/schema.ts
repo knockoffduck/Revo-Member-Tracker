@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, foreignKey, primaryKey, varchar, datetime, int, double, text, timestamp, unique, tinyint, json } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, index, foreignKey, primaryKey, varchar, datetime, int, double, text, timestamp, unique, longtext, mysqlEnum, tinyint, json } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const revoGymCount = mysqlTable("Revo_Gym_Count", {
@@ -51,6 +51,24 @@ export const account = mysqlTable("account", {
 },
 (table) => [
 	primaryKey({ columns: [table.id], name: "account_id"}),
+]);
+
+export const announcements = mysqlTable("announcements", {
+	id: int().autoincrement().notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	slug: varchar({ length: 255 }).notNull(),
+	summary: text(),
+	content: longtext().notNull(),
+	category: mysqlEnum(['feature','fix','update','event']).default('update'),
+	status: mysqlEnum(['draft','published','archived']).default('draft'),
+	authorId: int("author_id"),
+	publishedAt: timestamp("published_at", { mode: 'string' }),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	primaryKey({ columns: [table.id], name: "announcements_id"}),
+	unique("slug").on(table.slug),
 ]);
 
 export const biosLinks = mysqlTable("bios_links", {
@@ -169,6 +187,7 @@ export const user = mysqlTable("user", {
 	email: varchar({ length: 255 }).notNull(),
 	emailVerified: tinyint("email_verified").notNull(),
 	image: text(),
+	isAdmin: tinyint("is_admin").default(0),
 	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).notNull(),
 	gymPreferences: json("gym_preferences"),
