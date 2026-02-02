@@ -52,7 +52,7 @@ export async function createAnnouncement(data: {
     }
 
     // Check if user is admin
-    if (!(session.user as any).isAdmin) {
+    if (!(session.user as { isAdmin?: boolean }).isAdmin) {
         throw new Error("Forbidden: Admin access required");
     }
 
@@ -85,5 +85,5 @@ export async function isAdmin() {
         headers: await headers(),
     });
     console.log(session)
-    return !!(session?.user as any)?.isAdmin;
+    return !!(session?.user as { isAdmin?: boolean })?.isAdmin;
 }

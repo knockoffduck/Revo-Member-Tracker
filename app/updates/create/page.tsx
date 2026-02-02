@@ -69,7 +69,7 @@ export default function CreateUpdatePage() {
                     <Label htmlFor="category">Category</Label>
                     <Select
                         value={formData.category}
-                        onValueChange={(val: any) =>
+                        onValueChange={(val: "feature" | "fix" | "update" | "event") =>
                             setFormData({ ...formData, category: val })
                         }
                     >

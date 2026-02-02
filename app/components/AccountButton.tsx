@@ -33,7 +33,7 @@ export default function AccountButton() {
 		});
 	};
 
-	const isAdmin = (session?.user as any)?.isAdmin;
+	const isAdmin = (session?.user as { isAdmin?: boolean })?.isAdmin;
 
 	return (
 		<div>

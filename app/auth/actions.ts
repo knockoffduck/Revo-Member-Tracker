@@ -42,6 +42,7 @@ export const signUpEmail = async (formData: FormData) => {
 			name,
 			email,
 			password,
+			isAdmin: false,
 		},
 		asResponse: true,
 	});
