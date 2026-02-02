@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { Inter } from "next/font/google";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script"; // 1. Import the Script component
 
@@ -26,7 +27,7 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-title" content="RevoTracker" />
       </head>
-      <body>
+      <body className="flex flex-col min-h-screen">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -34,7 +35,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
           <Toaster />
         </ThemeProvider>
 

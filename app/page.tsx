@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, Clock, MapPin } from "lucide-react";
+import { DevNote } from "./components/DevNote";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
+    <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center space-y-10 py-24 px-6 text-center md:py-32 bg-gradient-to-b from-background to-muted/20">
         <div className="space-y-4 max-w-3xl">
@@ -61,6 +62,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }
