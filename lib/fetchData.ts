@@ -68,6 +68,16 @@ export const getGyms = async (
                 sort.direction === "asc"
                     ? asc(revoGyms.areaSize)
                     : desc(revoGyms.areaSize);
+        } else if (sort.key === "count") {
+            orderByClause =
+                sort.direction === "asc"
+                    ? asc(revoGymCount.count)
+                    : desc(revoGymCount.count);
+        } else if (sort.key === "rackAmount") {
+            orderByClause =
+                sort.direction === "asc"
+                    ? asc(revoGyms.squatRacks)
+                    : desc(revoGyms.squatRacks);
         } else {
             // Fallback
             orderByClause = asc(revoGymCount.percentage);
@@ -81,6 +91,10 @@ export const getGyms = async (
 
         if (sort.key === "areaSize") {
             baseConditions.push(gte(revoGyms.areaSize, 1));
+        }
+
+        if (sort.key === "rackAmount") {
+            baseConditions.push(gte(revoGyms.squatRacks, 1));
         }
 
         let latestData: Gym[] = [];
@@ -99,6 +113,7 @@ export const getGyms = async (
                     areaSize: revoGyms.areaSize,
                     state: revoGyms.state,
                     timezone: revoGyms.timezone,
+                    squatRacks: revoGyms.squatRacks,
                 })
                 .from(revoGymCount)
                 .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
@@ -132,6 +147,7 @@ export const getGyms = async (
                         areaSize: revoGyms.areaSize,
                         state: revoGyms.state,
                         timezone: revoGyms.timezone,
+                        squatRacks: revoGyms.squatRacks,
                     })
                     .from(revoGymCount)
                     .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
@@ -151,6 +167,7 @@ export const getGyms = async (
                         areaSize: revoGyms.areaSize,
                         state: revoGyms.state,
                         timezone: revoGyms.timezone,
+                        squatRacks: revoGyms.squatRacks,
                     })
                     .from(revoGymCount)
                     .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
@@ -166,6 +183,15 @@ export const getGyms = async (
                     )
                     .orderBy(orderByClause);
             }
+        }
+
+        // Apply client-side sorting for perRack (calculated field)
+        if (sort.key === "perRack") {
+            latestData.sort((a, b) => {
+                const ratioA = a.squatRacks > 0 ? a.count / a.squatRacks : Infinity;
+                const ratioB = b.squatRacks > 0 ? b.count / b.squatRacks : Infinity;
+                return sort.direction === "asc" ? ratioA - ratioB : ratioB - ratioA;
+            });
         }
 
         // Structure the response
@@ -216,6 +242,7 @@ export const getGymStats = async (gymName: string) => {
                 areaSize: revoGyms.areaSize,
                 state: revoGyms.state,
                 timezone: revoGyms.timezone,
+                squatRacks: revoGyms.squatRacks,
             })
             .from(revoGymCount)
             .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))

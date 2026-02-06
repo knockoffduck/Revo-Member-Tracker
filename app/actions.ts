@@ -5,6 +5,7 @@ import { revoGymCount, revoGyms, user } from "@/app/db/schema"; // Added revoGym
 import { auth } from "@/lib/auth";
 import { and, asc, desc, eq, gte, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
+import { Gym } from "@/app/gyms/_types";
 // Removed unused NextResponse
 
 /**
@@ -47,18 +48,31 @@ export const fetchGyms = async (
 				sort.direction === "asc"
 					? asc(revoGyms.areaSize)
 					: desc(revoGyms.areaSize);
+		} else if (sort.key === "count") {
+			orderByClause =
+				sort.direction === "asc"
+					? asc(revoGymCount.count)
+					: desc(revoGymCount.count);
+		} else if (sort.key === "rackAmount") {
+			orderByClause =
+				sort.direction === "asc"
+					? asc(revoGyms.squatRacks)
+					: desc(revoGyms.squatRacks);
 		} else {
 			// Fallback
 			orderByClause = asc(revoGymCount.percentage);
 		}
 
-		// Determine Base Filter (Timestamp + AreaSize check if sorting by size)
+		// Determine Base Filter (Timestamp + AreaSize/RackAmount check if sorting by those)
 		const baseConditions = [
 			eq(revoGymCount.created, currentTime),
 			eq(revoGyms.active, 1),
 		];
 		if (sort.key === "areaSize") {
 			baseConditions.push(gte(revoGyms.areaSize, 1)); // Ensure valid area size
+		}
+		if (sort.key === "rackAmount") {
+			baseConditions.push(gte(revoGyms.squatRacks, 1)); // Ensure valid rack count
 		}
 
 		// Base query to select gyms for the specific timestamp, ordered and filtered
@@ -73,15 +87,30 @@ export const fetchGyms = async (
 				gymId: revoGymCount.gymId,
 				areaSize: revoGyms.areaSize,
 				state: revoGyms.state,
+				timezone: revoGyms.timezone,
+				squatRacks: revoGyms.squatRacks,
 			})
 			.from(revoGymCount)
 			.innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
 			.where(and(...baseConditions))
 			.orderBy(orderByClause);
 
+		// Helper function to apply client-side sorting for perRack
+		const applyPerRackSort = (data: Gym[]) => {
+			if (sort.key === "perRack") {
+				return data.sort((a, b) => {
+					const ratioA = a.squatRacks > 0 ? a.count / a.squatRacks : Infinity;
+					const ratioB = b.squatRacks > 0 ? b.count / b.squatRacks : Infinity;
+					return sort.direction === "asc" ? ratioA - ratioB : ratioB - ratioA;
+				});
+			}
+			return data;
+		};
+
 		// If user is not logged in OR wants to see all gyms, execute the base query
 		if (!userId || showAllGyms) {
-			return await baseQuery;
+			const data = await baseQuery;
+			return applyPerRackSort(data);
 		}
 
 		// --- User is logged in and wants to see preferred gyms ---
@@ -104,7 +133,8 @@ export const fetchGyms = async (
 			console.warn(
 				`User ${userId} has no valid gym preferences set. Fetching all gyms.`
 			);
-			return await baseQuery;
+			const data = await baseQuery;
+			return applyPerRackSort(data);
 		}
 
 		// Fetch gyms filtered by user preferences
@@ -119,6 +149,8 @@ export const fetchGyms = async (
 				gymId: revoGymCount.gymId,
 				areaSize: revoGyms.areaSize,
 				state: revoGyms.state,
+				timezone: revoGyms.timezone,
+				squatRacks: revoGyms.squatRacks,
 			})
 			.from(revoGymCount)
 			.innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
@@ -130,7 +162,7 @@ export const fetchGyms = async (
 			)
 			.orderBy(orderByClause);
 
-		return data;
+		return applyPerRackSort(data);
 	} catch (error) {
 		console.error("Error in fetchGyms server action:", error);
 		// Re-throw the error to be handled by the calling client component

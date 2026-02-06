@@ -1,15 +1,12 @@
 "use client";
 
-import { Gym, GymResponse } from "./_types";
+import { Gym, GymResponse, SortKey, SORT_OPTIONS, getSortLabel } from "./_types";
 import { LocationCard } from "@/app/components/LocationCard";
 import { toast } from "@/hooks/use-toast";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   Search,
-  ArrowUpDown,
   ChevronDown,
-  Users,
-  Maximize2,
   ArrowUp,
   ArrowDown
 } from "lucide-react";
@@ -87,7 +84,7 @@ export default function GymList({
   }, [columns]);
 
   // Derive state from URL params
-  const sortKey = (searchParams.get("sort") as "gymName" | "percentage" | "areaSize") || "percentage";
+  const sortKey = (searchParams.get("sort") as SortKey) || "percentage";
   const sortDirection = (searchParams.get("order") as "asc" | "desc") || "asc";
   const showAllParam = searchParams.get("showAll") === "true";
   const selectedState = searchParams.get("state") || "All States";
@@ -158,20 +155,34 @@ export default function GymList({
     return () => clearTimeout(timer);
   }, [localSearchQuery, router, searchParams]);
 
-  const handleSort = (key: "gymName" | "percentage" | "areaSize") => {
+  const handleSort = (key: SortKey) => {
     const params = new URLSearchParams(searchParams.toString());
-    let newDirection = "asc";
+    let newDirection: "asc" | "desc" = "asc";
 
-    // Default to desc for numbers, asc for name, if switching to it
+    // Determine default direction based on sort key
     if (key !== sortKey) {
-      if (key === 'gymName') newDirection = 'asc';
-      else newDirection = 'desc';
+      // When switching to a new sort key, use logical default
+      if (key === 'gymName') {
+        newDirection = 'asc'; // A-Z
+      } else if (key === 'areaSize' || key === 'rackAmount') {
+        newDirection = 'desc'; // Largest/Most first
+      } else {
+        newDirection = 'asc'; // Least crowded/fewest first
+      }
     } else {
-      // Toggling direction
+      // Toggling direction on same key
       newDirection = sortDirection === "asc" ? "desc" : "asc";
     }
 
     params.set("sort", key);
+    params.set("order", newDirection);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  // Toggle direction without changing sort key
+  const handleToggleDirection = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    const newDirection = sortDirection === "asc" ? "desc" : "asc";
     params.set("order", newDirection);
     router.replace(`?${params.toString()}`, { scroll: false });
   };
@@ -227,31 +238,39 @@ export default function GymList({
     4: "grid-cols-4",
   };
 
-  // Helper for Sort Buttons
-  const SortButton = ({ label, sortKey: btnKey, icon: Icon }: { label: string, sortKey: "gymName" | "percentage" | "areaSize", icon: React.ElementType }) => {
-    const isActive = sortKey === btnKey;
-    return (
-      <button
-        onClick={() => handleSort(btnKey)}
-        className={`flex items-center justify-center gap-2 px-2 sm:px-3 py-2 text-sm font-medium transition-all rounded-md border shadow-sm flex-1 sm:flex-none min-w-0
-          ${isActive
-            ? 'bg-primary/10 border-primary/20 text-primary ring-1 ring-primary/20'
-            : 'bg-card/50 border-border text-muted-foreground hover:bg-muted hover:text-foreground'
-          }`}
-      >
-        <Icon size={14} className={isActive ? 'text-primary' : ''} />
-        <span className={`truncate ${isActive ? 'hidden sm:inline' : ''}`}>{label}</span>
-        {isActive && (
-          sortDirection === 'asc' ? <ArrowUp size={14} className="shrink-0" /> : <ArrowDown size={14} className="shrink-0" />
-        )}
-      </button>
-    );
-  };
+  // Dropdown state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  // Group sort options by section
+  const occupancyOptions = SORT_OPTIONS.filter(opt => opt.section === 'occupancy');
+  const facilitiesOptions = SORT_OPTIONS.filter(opt => opt.section === 'facilities');
+  const generalOptions = SORT_OPTIONS.filter(opt => opt.section === 'general');
+
+  // Get current sort label
+  const currentSortLabel = getSortLabel(sortKey);
 
   return (
     <div className="bg-background p-4 md:p-8 min-h-screen text-foreground">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-card/80 backdrop-blur-md p-5 rounded-2xl border border-border shadow-2xl space-y-6 mb-8">
+        <div className="bg-card/80 backdrop-blur-md p-5 rounded-2xl border border-border shadow-2xl space-y-6 mb-8 relative z-20">
 
           {/* Top Row: Search and Quick Toggles */}
           <div className="flex w-full flex-col md:flex-row gap-4 items-center justify-between">
@@ -288,13 +307,136 @@ export default function GymList({
           <div className="h-px bg-border hidden md:block" />
 
           {/* Bottom Row: Sort and Selects */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 lg:pr-5 lg:border-r border-border">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-5 relative z-10">
+            {/* Custom Sort Dropdown */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 lg:pr-5 lg:border-r border-border" ref={dropdownRef}>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 sm:mb-0 sm:mr-1">Sort By</span>
-              <div className="flex gap-1 sm:gap-2 w-full">
-                <SortButton label="Name" sortKey="gymName" icon={ArrowUpDown} />
-                <SortButton label="Occupancy" sortKey="percentage" icon={Users} />
-                <SortButton label="Size" sortKey="areaSize" icon={Maximize2} />
+              
+              {/* Dropdown Container */}
+              <div className="relative z-[100]">
+                {/* Dropdown Trigger - using div instead of button to allow nested button */}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center justify-between gap-3 px-4 py-2.5 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors min-w-[180px]"
+                  >
+                    <span className="text-sm font-medium text-card-foreground">{currentSortLabel}</span>
+                    <ChevronDown 
+                      size={16} 
+                      className={`text-muted-foreground transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+                  <button
+                    onClick={handleToggleDirection}
+                    className="p-2.5 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                    title={`Change to ${sortDirection === 'asc' ? 'descending' : 'ascending'}`}
+                  >
+                    {sortDirection === 'asc' ? (
+                      <ArrowUp size={16} className="text-muted-foreground" />
+                    ) : (
+                      <ArrowDown size={16} className="text-muted-foreground" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-2 z-[60] bg-card/95 backdrop-blur-md rounded-xl border border-border shadow-2xl min-w-[200px] py-2">
+                    {/* Occupancy Section */}
+                    <div className="px-3 py-2">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Occupancy</span>
+                      <div className="mt-1 space-y-0.5">
+                        {occupancyOptions.map((option) => (
+                          <button
+                            key={option.key}
+                            onClick={() => {
+                              handleSort(option.key);
+                              setIsDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
+                              sortKey === option.key
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-card-foreground hover:bg-muted/50'
+                            }`}
+                          >
+                            <span>{option.label}</span>
+                            {sortKey === option.key && (
+                              sortDirection === 'asc' ? (
+                                <ArrowUp size={14} className="text-primary" />
+                              ) : (
+                                <ArrowDown size={14} className="text-primary" />
+                              )
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="h-px bg-border mx-3 my-2" />
+
+                    {/* Facilities Section */}
+                    <div className="px-3 py-2">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Facilities</span>
+                      <div className="mt-1 space-y-0.5">
+                        {facilitiesOptions.map((option) => (
+                          <button
+                            key={option.key}
+                            onClick={() => {
+                              handleSort(option.key);
+                              setIsDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
+                              sortKey === option.key
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-card-foreground hover:bg-muted/50'
+                            }`}
+                          >
+                            <span>{option.label}</span>
+                            {sortKey === option.key && (
+                              sortDirection === 'asc' ? (
+                                <ArrowUp size={14} className="text-primary" />
+                              ) : (
+                                <ArrowDown size={14} className="text-primary" />
+                              )
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="h-px bg-border mx-3 my-2" />
+
+                    {/* General Section */}
+                    <div className="px-3 py-2">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">General</span>
+                      <div className="mt-1 space-y-0.5">
+                        {generalOptions.map((option) => (
+                          <button
+                            key={option.key}
+                            onClick={() => {
+                              handleSort(option.key);
+                              setIsDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
+                              sortKey === option.key
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-card-foreground hover:bg-muted/50'
+                            }`}
+                          >
+                            <span>{option.label}</span>
+                            {sortKey === option.key && (
+                              sortDirection === 'asc' ? (
+                                <ArrowUp size={14} className="text-primary" />
+                              ) : (
+                                <ArrowDown size={14} className="text-primary" />
+                              )
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

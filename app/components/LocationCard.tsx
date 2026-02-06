@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Clock, MapPin, ArrowUpRight } from 'lucide-react';
+import { Heart, Clock, MapPin, ArrowUpRight, Dumbbell } from 'lucide-react';
 import Link from "next/link";
 import moment from "moment-timezone";
 
@@ -13,6 +13,7 @@ type Gym = {
   gymId: string;
   areaSize: number;
   state: string;
+  squatRacks: number;
 };
 
 interface LocationCardProps {
@@ -29,7 +30,8 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
     count,
     areaSize: size,
     created,
-    percentage: rawPercentage
+    percentage: rawPercentage,
+    squatRacks
   } = gym;
 
   // Internal state removed in favor of controlled props
@@ -73,6 +75,24 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
   // Logic: const estimatedCapacity = Math.floor(size / 5);
   // Actually, size is areaSize. The prompt uses size / 5.
   const estimatedCapacity = Math.floor(size / 5);
+
+  // Calculate N Squat Rank (people per squat rack)
+  const squatRank = squatRacks > 0 ? Math.round((count / squatRacks) * 10) / 10 : 0;
+  
+  // Determine squat rack crowdedness
+  // Assuming ~25% of gym users actually use squat racks
+  let squatStatusColor = "text-emerald-400";
+  let squatStatusLabel = "Available";
+  
+  if (squatRacks > 0) {
+    if (squatRank > 6 && squatRank <= 12) {
+      squatStatusColor = "text-amber-400";
+      squatStatusLabel = "Getting Busy";
+    } else if (squatRank > 12) {
+      squatStatusColor = "text-red-400";
+      squatStatusLabel = "Crowded";
+    }
+  }
 
   return (
     <Link href={`/gyms/${name}`} className={`block w-full max-w-sm group ${className || ''}`}>
@@ -139,8 +159,27 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
           </div>
         </div>
 
+        {/* --- SQUAT RACK STATUS --- */}
+        {squatRacks > 0 && (
+          <div className="bg-muted/30 border-t border-border p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-md bg-secondary">
+                <Dumbbell className={`w-4 h-4 ${squatStatusColor}`} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-card-foreground">Squat Racks</span>
+                <span className="text-xs text-muted-foreground">{squatRacks} racks</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-sm font-semibold text-card-foreground">~{Math.round(squatRank)}</span>
+              <span className="text-xs text-muted-foreground ml-1">people per rack</span>
+            </div>
+          </div>
+        )}
+
         {/* --- FOOTER / METADATA --- */}
-        <div className="bg-muted/30 border-t border-border p-4 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="bg-muted/50 border-t border-border p-4 flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5" title="Gym Floor Size">
             <MapPin className="w-3.5 h-3.5" />
             <span>{size}m²</span>
