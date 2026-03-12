@@ -29,7 +29,7 @@ export const auth = betterAuth({
 		},
 		changeEmail: {
 			enabled: true,
-			updateEmailWithoutVerification: true
+			updateEmailWithoutVerification: true,
 		},
 		deleteUser: {
 			enabled: true,

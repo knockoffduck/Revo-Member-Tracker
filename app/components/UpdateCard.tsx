@@ -51,7 +51,7 @@ export default function UpdateCard({
             </CardHeader>
             <CardContent>
                 <div className="prose dark:prose-invert max-w-none">
-                    <ReactMarkdown>{content}</ReactMarkdown>
+                    <ReactMarkdown skipHtml>{content}</ReactMarkdown>
                 </div>
             </CardContent>
         </Card>

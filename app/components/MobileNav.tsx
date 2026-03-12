@@ -38,6 +38,11 @@ export default function MobileNav() {
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem asChild>
+					<Link href="/support" className="w-full cursor-pointer">
+						Support
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem asChild>
 					<Link href="/how-to-use" className="w-full cursor-pointer">
 						How to Use
 					</Link>

@@ -1,24 +1,45 @@
 "use server";
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { enforceRateLimit } from "@/lib/security";
 import { z } from "zod";
 
 const DUMMY_DOMAIN = "@revo.local";
+const passwordSchema = z
+	.string()
+	.min(10, { message: "Password must be at least 10 characters long" })
+	.regex(/[a-z]/, { message: "Password must include a lowercase letter" })
+	.regex(/[A-Z]/, { message: "Password must include an uppercase letter" })
+	.regex(/\d/, { message: "Password must include a number" });
 
 const signUpSchema = z.object({
 	name: z
 		.string()
-		.min(2, { message: "Name must be at least 2 characters long" }),
-	email: z.string().min(3, { message: "Please enter a valid email or username" }),
-	password: z.string().min(6),
+		.trim()
+		.min(2, { message: "Name must be at least 2 characters long" })
+		.max(80, { message: "Name must be 80 characters or fewer" }),
+	email: z
+		.string()
+		.trim()
+		.min(3, { message: "Please enter a valid email or username" })
+		.max(255, { message: "Email or username is too long" }),
+	password: passwordSchema,
 });
 
 const signInSchema = z.object({
-	email: z.string().min(3, { message: "Please enter a valid email or username" }),
-	password: z.string().min(6),
+	email: z
+		.string()
+		.trim()
+		.min(3, { message: "Please enter a valid email or username" })
+		.max(255, { message: "Email or username is too long" }),
+	password: z.string().min(1, { message: "Password is required" }),
 });
 
 export const signUpEmail = async (formData: FormData) => {
+	await enforceRateLimit("auth:sign-up", {
+		limit: 5,
+		windowMs: 15 * 60 * 1000,
+	});
+
 	const rawData = Object.fromEntries(formData);
 	const validationResult = signUpSchema.safeParse(rawData);
 	if (!validationResult.success) {
@@ -29,7 +50,8 @@ export const signUpEmail = async (formData: FormData) => {
 		};
 	}
 	// If validation succeeds, proceed with authentication logic
-	const { name, password } = validationResult.data;
+	const { password } = validationResult.data;
+	const name = validationResult.data.name.trim();
 	let { email } = validationResult.data;
 
 	// If email doesn't look like an email, append dummy domain
@@ -62,6 +84,11 @@ export const signUpEmail = async (formData: FormData) => {
 };
 
 export const signInEmail = async (formData: FormData) => {
+	await enforceRateLimit("auth:sign-in", {
+		limit: 10,
+		windowMs: 15 * 60 * 1000,
+	});
+
 	const rawData = Object.fromEntries(formData);
 	const validationResult = signInSchema.safeParse(rawData);
 	if (!validationResult.success) {

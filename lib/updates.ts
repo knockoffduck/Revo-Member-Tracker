@@ -3,9 +3,17 @@
 import { db } from "@/app/db/database";
 import { announcements } from "@/app/db/schema";
 import { desc, eq } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { requireAdminSession } from "@/lib/authz";
+import { enforceRateLimit } from "@/lib/security";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const announcementSchema = z.object({
+	title: z.string().trim().min(3).max(120),
+	content: z.string().trim().min(10).max(10000),
+	category: z.enum(["feature", "fix", "update", "event"]),
+	status: z.enum(["draft", "published"]),
+});
 
 export async function getAnnouncements() {
     try {
@@ -43,33 +51,33 @@ export async function createAnnouncement(data: {
     category: "feature" | "fix" | "update" | "event";
     status: "draft" | "published";
 }) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
+    await enforceRateLimit("updates:create", {
+        limit: 10,
+        windowMs: 15 * 60 * 1000,
     });
 
-    if (!session?.user) {
-        throw new Error("Unauthorized");
-    }
+    await requireAdminSession();
 
-    // Check if user is admin
-    if (!(session.user as { isAdmin?: boolean }).isAdmin) {
-        throw new Error("Forbidden: Admin access required");
+    const validationResult = announcementSchema.safeParse(data);
+    if (!validationResult.success) {
+        return { success: false, error: "Invalid announcement data" };
     }
 
     try {
-        const slug = data.title
+        const { title, content, category, status } = validationResult.data;
+        const slug = title
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)+/g, "");
 
         await db.insert(announcements).values({
-            title: data.title,
+            title,
             slug: `${slug}-${Date.now()}`, // Ensure uniqueness
-            content: data.content,
-            category: data.category,
-            status: data.status,
-            publishedAt: data.status === "published" ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null,
-            summary: data.content.slice(0, 150) + "...", // Auto-generate summary
+            content,
+            category,
+            status,
+            publishedAt: status === "published" ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null,
+            summary: `${content.slice(0, 150).trim()}...`,
         });
 
         revalidatePath("/updates");
@@ -81,9 +89,10 @@ export async function createAnnouncement(data: {
 }
 
 export async function isAdmin() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    console.log(session)
-    return !!(session?.user as { isAdmin?: boolean })?.isAdmin;
+    try {
+        const session = await requireAdminSession();
+        return !!session.user;
+    } catch {
+        return false;
+    }
 }

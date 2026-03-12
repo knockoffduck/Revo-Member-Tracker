@@ -34,6 +34,9 @@ export default async function Header() {
 						<Link href="/about">
 							<Button variant="ghost">About</Button>
 						</Link>
+						<Link href="/support">
+							<Button variant="ghost">Support</Button>
+						</Link>
 						<Link href="/how-to-use">
 							<Button variant="ghost">How to Use</Button>
 						</Link>
