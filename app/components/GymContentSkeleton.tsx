@@ -9,6 +9,18 @@ export default function GymContentSkeleton() {
                 <Skeleton className="h-6 w-24 rounded-full bg-primary/20" />
             </div>
 
+            <div className="flex flex-col items-center gap-3 rounded-xl border px-4 py-4 sm:flex-row sm:justify-between">
+                <Skeleton className="h-8 w-28 bg-primary/20" />
+                <div className="flex flex-col items-center gap-2">
+                    <Skeleton className="h-4 w-32 bg-primary/20" />
+                    <Skeleton className="h-3 w-40 bg-primary/20" />
+                </div>
+                <div className="flex gap-2">
+                    <Skeleton className="h-8 w-16 bg-primary/20" />
+                    <Skeleton className="h-8 w-24 bg-primary/20" />
+                </div>
+            </div>
+
             {/* Gym Info Card Skeleton */}
             <Card className="mt-4">
                 <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">

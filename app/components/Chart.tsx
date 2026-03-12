@@ -41,6 +41,9 @@ const chartConfig = {
 type ChartProps = {
   data: Gym[];
   trendData?: TrendSlot[];
+  description?: string;
+  emptyMessage?: string;
+  currentCount?: number | null;
 };
 
 /**
@@ -98,96 +101,117 @@ function create24HourTimeline(
   return timeline;
 }
 
-export default function Chart({ data, trendData = [] }: ChartProps) {
+export default function Chart({
+  data,
+  trendData = [],
+  description = "Today's activity vs Average",
+  emptyMessage = "No activity data available for this day.",
+  currentCount,
+}: ChartProps) {
   // Generate unified 24-hour view
   const chartData = create24HourTimeline(data, trendData);
+  const hasCurrentData = data.length > 0;
+  const formattedCurrentCount =
+    typeof currentCount === "number"
+      ? new Intl.NumberFormat("en-AU").format(currentCount)
+      : null;
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
+      <CardHeader className="flex items-start justify-between gap-4 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>Member Count</CardTitle>
-          <CardDescription>
-            Today&apos;s activity vs Average
-          </CardDescription>
+          <CardDescription>{description}</CardDescription>
         </div>
+        {formattedCurrentCount ? (
+          <div className="shrink-0 text-center sm:text-right">
+            <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
+              Current
+            </p>
+            <p className="text-3xl font-semibold leading-none tracking-tight sm:text-4xl">
+              {formattedCurrentCount}
+            </p>
+          </div>
+        ) : null}
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
-        >
-          <ComposedChart
-            width={500}
-            height={400}
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: -20,
-              right: 12,
-            }}
+        {hasCurrentData ? (
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-[250px] w-full"
           >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="created"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                const options: Intl.DateTimeFormatOptions = {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                  timeZone: "UTC",
-                };
-                return date.toLocaleTimeString("en-AU", options);
+            <ComposedChart
+              width={500}
+              height={400}
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                left: -20,
+                right: 12,
               }}
-            />
-            <YAxis tickLine={false} tickMargin={8} tickCount={3} />
-            <ChartTooltip
-              cursor={false}
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleTimeString("en-AU", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                      timeZone: "UTC",
-                    });
-                  }}
-                  indicator="dot"
-                />
-              }
-            />
-            <ChartLegend content={<ChartLegendContent />} />
-            {/* Average Trend Line */}
-            <Line
-              dataKey="average"
-              type="monotone"
-              stroke="var(--color-average)"
-              strokeWidth={2}
-              strokeDasharray="4 4"
-              dot={false}
-              connectNulls
-            />
-            {/* Current day data - filled area */}
-            <Area
-              dataKey="count"
-              type="natural"
-              fill="var(--color-count)"
-              fillOpacity={0.4}
-              stroke="var(--color-count)"
-              strokeWidth={2}
-              connectNulls
-            />
-          </ComposedChart>
-        </ChartContainer>
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="created"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  const options: Intl.DateTimeFormatOptions = {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                    timeZone: "UTC",
+                  };
+                  return date.toLocaleTimeString("en-AU", options);
+                }}
+              />
+              <YAxis tickLine={false} tickMargin={8} tickCount={3} />
+              <ChartTooltip
+                cursor={false}
+                content={
+                  <ChartTooltipContent
+                    labelFormatter={(value) => {
+                      return new Date(value).toLocaleTimeString("en-AU", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                        timeZone: "UTC",
+                      });
+                    }}
+                    indicator="dot"
+                  />
+                }
+              />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Line
+                dataKey="average"
+                type="monotone"
+                stroke="var(--color-average)"
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={false}
+                connectNulls
+              />
+              <Area
+                dataKey="count"
+                type="natural"
+                fill="var(--color-count)"
+                fillOpacity={0.4}
+                stroke="var(--color-count)"
+                strokeWidth={2}
+                connectNulls
+              />
+            </ComposedChart>
+          </ChartContainer>
+        ) : (
+          <div className="flex h-[250px] items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 px-6 text-center">
+            <p className="max-w-sm text-sm text-muted-foreground">{emptyMessage}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 }
-
-

@@ -1,5 +1,6 @@
 import { Gym, GymResponse } from "@/app/gyms/_types";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { db } from "@/app/db/database";
@@ -8,14 +9,96 @@ import { and, asc, desc, eq, gte, inArray, lte, ne } from "drizzle-orm";
 import { auth } from "./auth";
 import { headers } from "next/headers";
 import { calculateDistance, getPostcodeCoordinates } from "./postcodeData";
+import { unstable_cache } from "next/cache";
 
 // Extend dayjs with necessary plugins for timezone handling
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 // Disable caching for Next.js fetch requests made by functions in this file
 // Ensures fresh data is always fetched.
 export const revalidate = 0;
+const TRENDS_CACHE_TTL_MS = 60 * 60 * 1000;
+
+const DATE_FORMAT = "YYYY-MM-DD";
+
+const isValidDateParam = (value?: string) =>
+    !!value && dayjs(value, DATE_FORMAT, true).isValid();
+
+export const resolveGymDate = (timezone: string, date?: string) => {
+    const todayInGymTz = dayjs().tz(timezone).startOf("day");
+
+    if (!isValidDateParam(date)) {
+        return {
+            selectedDay: todayInGymTz,
+            today: todayInGymTz.format(DATE_FORMAT),
+        };
+    }
+
+    const requestedDay = dayjs.tz(date, DATE_FORMAT, timezone).startOf("day");
+
+    if (requestedDay.isAfter(todayInGymTz)) {
+        return {
+            selectedDay: todayInGymTz,
+            today: todayInGymTz.format(DATE_FORMAT),
+        };
+    }
+
+    return {
+        selectedDay: requestedDay,
+        today: todayInGymTz.format(DATE_FORMAT),
+    };
+};
+
+export type GymMeta = {
+    id: string;
+    timezone: string;
+    address: string;
+    postcode: number;
+    state: string;
+    areaSize: number;
+    latitude: number | null;
+    longitude: number | null;
+    squatRacks: number;
+};
+
+let trendsCache:
+    | {
+          data: Record<string, GymTrend[]>;
+          expiresAt: number;
+      }
+    | null = null;
+let trendsCachePromise: Promise<Record<string, GymTrend[]>> | null = null;
+
+const fetchGymMeta = async (gymName: string): Promise<GymMeta | null> => {
+    const result = await db
+        .select({
+            id: revoGyms.id,
+            timezone: revoGyms.timezone,
+            address: revoGyms.address,
+            postcode: revoGyms.postcode,
+            state: revoGyms.state,
+            areaSize: revoGyms.areaSize,
+            latitude: revoGyms.latitude,
+            longitude: revoGyms.longitude,
+            squatRacks: revoGyms.squatRacks,
+        })
+        .from(revoGyms)
+        .where(eq(revoGyms.name, gymName))
+        .limit(1);
+
+    return result[0] || null;
+};
+
+export const getGymMeta = async (gymName: string): Promise<GymMeta | null> => {
+    try {
+        return await fetchGymMeta(gymName);
+    } catch (error) {
+        console.error(`Error fetching gym metadata for ${gymName}:`, error);
+        return null;
+    }
+};
 
 /**
  * Fetches the latest gym occupancy data.
@@ -212,25 +295,25 @@ export const getGyms = async (
  * @param gymName - The name of the gym to fetch stats for.
  * @returns A Promise resolving to an array of gym occupancy records for the day, ordered by time.
  */
-export const getGymStats = async (gymName: string) => {
+export const getGymStats = async (
+    gymName: string,
+    date?: string,
+    gymMeta?: GymMeta | null,
+) => {
     const t0 = performance.now();
     try {
-        // Get the gym's timezone
-        const gymResult = await db
-            .select({ timezone: revoGyms.timezone })
-            .from(revoGyms)
-            .where(eq(revoGyms.name, gymName))
-            .limit(1);
+        const resolvedGymMeta = gymMeta ?? (await fetchGymMeta(gymName));
+        const gymTimezone = resolvedGymMeta?.timezone || "Australia/Perth";
 
-        const gymTimezone = gymResult[0]?.timezone || "Australia/Perth";
+        const { selectedDay } = resolveGymDate(gymTimezone, date);
+        const startOfDayInGymTz = selectedDay.startOf("day");
+        const endOfDayInGymTz = selectedDay.endOf("day");
 
-        // Get the current time in the gym's timezone
-        const nowInGymTz = dayjs().tz(gymTimezone);
-        // Get the start of the current day (midnight) in the gym's timezone
-        const startOfDayInGymTz = nowInGymTz.startOf("day");
+        if (!resolvedGymMeta?.id) {
+            return [];
+        }
 
-        // Fetch records from the database
-        const data = await db
+        const rows = await db
             .select({
                 id: revoGymCount.id,
                 created: revoGymCount.created,
@@ -239,28 +322,27 @@ export const getGymStats = async (gymName: string) => {
                 gymName: revoGymCount.gymName,
                 percentage: revoGymCount.percentage,
                 gymId: revoGymCount.gymId,
-                areaSize: revoGyms.areaSize,
-                state: revoGyms.state,
-                timezone: revoGyms.timezone,
-                squatRacks: revoGyms.squatRacks,
             })
             .from(revoGymCount)
-            .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
             .where(
                 and(
-                    // Filter by the specified gym name
-                    eq(revoGymCount.gymName, gymName),
-                    // Filter records created on or after the start of the day (in UTC)
+                    eq(revoGymCount.gymId, resolvedGymMeta.id),
                     gte(revoGymCount.created, startOfDayInGymTz.utc().format()),
-                    // Filter records created on or before the current time (in UTC)
-                    lte(revoGymCount.created, nowInGymTz.utc().format()),
+                    lte(revoGymCount.created, endOfDayInGymTz.utc().format()),
                 ),
             )
-            // Order chronologically
             .orderBy(asc(revoGymCount.created));
+
+        const data = rows.map((row) => ({
+            ...row,
+            gymName,
+            areaSize: resolvedGymMeta.areaSize,
+            state: resolvedGymMeta.state,
+            timezone: resolvedGymMeta.timezone,
+            squatRacks: resolvedGymMeta.squatRacks,
+        }));
         const t1 = performance.now();
 
-        // Log the time taken to fetch the data
         console.log(
             `Time taken to fetch gym stats for ${gymName}: ${t1 - t0}ms`,
         );
@@ -289,21 +371,44 @@ export type GymTrend = {
  */
 export const getAllTrends = async (): Promise<Record<string, GymTrend[]>> => {
     try {
-        const response = await fetch("https://revotrackerapi.dvcklab.com/gyms/trends", {
-            cache: 'no-store' // Ensure we get fresh data, although it shouldn't change often
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch trends: ${response.statusText}`);
+        const now = Date.now();
+        if (trendsCache && trendsCache.expiresAt > now) {
+            return trendsCache.data;
         }
 
-        const json = await response.json();
+        if (!trendsCachePromise) {
+            trendsCachePromise = (async () => {
+                const startedAt = performance.now();
+                const response = await fetch("https://revotrackerapi.dvcklab.com/gyms/trends", {
+                    cache: "no-store",
+                });
 
-        if (json.message !== "Success" || !json.data) {
-            throw new Error("Invalid trend data format");
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch trends: ${response.statusText}`);
+                }
+
+                const json = await response.json();
+
+                if (json.message !== "Success" || !json.data) {
+                    throw new Error("Invalid trend data format");
+                }
+
+                trendsCache = {
+                    data: json.data,
+                    expiresAt: Date.now() + TRENDS_CACHE_TTL_MS,
+                };
+
+                console.log(
+                    `Fetched gym trends in ${performance.now() - startedAt}ms`,
+                );
+
+                return json.data;
+            })().finally(() => {
+                trendsCachePromise = null;
+            });
         }
 
-        return json.data;
+        return await trendsCachePromise;
     } catch (error) {
         console.error("Error fetching all trends:", error);
         return {};
@@ -315,7 +420,10 @@ export const getAllTrends = async (): Promise<Record<string, GymTrend[]>> => {
  * Fetches the trend data for a specific gym and the current day of the week.
  * @param gymId - The ID of the gym (e.g., from revoGyms table or mapped locally).
  */
-export const getGymTrend = async (gymId: string): Promise<TrendSlot[]> => {
+export const getGymTrend = async (
+    gymId: string,
+    gymTimezone: string = "Australia/Perth",
+): Promise<TrendSlot[]> => {
     try {
         const allTrends = await getAllTrends();
         const gymTrends = allTrends[gymId];
@@ -324,16 +432,6 @@ export const getGymTrend = async (gymId: string): Promise<TrendSlot[]> => {
             console.warn(`No trend data found for gym ID: ${gymId}`);
             return [];
         }
-
-        // Get current day of week (0 = Sunday, 1 = Monday, etc.)
-        // Get gym's timezone
-        const gymResult = await db
-            .select({ timezone: revoGyms.timezone })
-            .from(revoGyms)
-            .where(eq(revoGyms.id, gymId))
-            .limit(1);
-
-        const gymTimezone = gymResult[0]?.timezone || "Australia/Perth";
 
         const dayOfWeek = dayjs().tz(gymTimezone).day();
 
@@ -346,29 +444,12 @@ export const getGymTrend = async (gymId: string): Promise<TrendSlot[]> => {
     }
 }
 
-/**
- * Fetches the gym ID for a given gym name.
- */
-export const getGymId = async (gymName: string): Promise<string | null> => {
-    try {
-        const result = await db
-            .select({ id: revoGyms.id })
-            .from(revoGyms)
-            .where(eq(revoGyms.name, gymName))
-            .limit(1);
-
-        return result[0]?.id || null;
-    } catch (error) {
-        console.error(`Error fetching gym ID for ${gymName}:`, error);
-        return null;
-    }
-}
-
 export type GymDetails = {
     address: string;
     postcode: number;
     state: string;
     areaSize: number;
+    timezone: string;
 };
 
 /**
@@ -378,23 +459,51 @@ export type GymDetails = {
  */
 export const getGymDetails = async (gymName: string): Promise<GymDetails | null> => {
     try {
-        const result = await db
-            .select({
-                address: revoGyms.address,
-                postcode: revoGyms.postcode,
-                state: revoGyms.state,
-                areaSize: revoGyms.areaSize,
-            })
-            .from(revoGyms)
-            .where(eq(revoGyms.name, gymName))
-            .limit(1);
+        const result = await fetchGymMeta(gymName);
 
-        return result[0] || null;
+        if (!result) {
+            return null;
+        }
+
+        return {
+            address: result.address,
+            postcode: result.postcode,
+            state: result.state,
+            areaSize: result.areaSize,
+            timezone: result.timezone,
+        };
     } catch (error) {
         console.error(`Error fetching gym details for ${gymName}:`, error);
         return null;
     }
 }
+
+export const getGymDateMeta = async (gymName: string, date?: string) => {
+    try {
+        const gymMeta = await fetchGymMeta(gymName);
+        const timezone = gymMeta?.timezone || "Australia/Perth";
+        const { selectedDay, today } = resolveGymDate(timezone, date);
+
+        return {
+            timezone,
+            selectedDate: selectedDay.format(DATE_FORMAT),
+            todayDate: today,
+            isToday: selectedDay.format(DATE_FORMAT) === today,
+        };
+    } catch (error) {
+        console.error(`Error fetching date metadata for ${gymName}:`, error);
+
+        const timezone = "Australia/Perth";
+        const today = dayjs().tz(timezone).format(DATE_FORMAT);
+
+        return {
+            timezone,
+            selectedDate: today,
+            todayDate: today,
+            isToday: true,
+        };
+    }
+};
 
 export type NearbyGym = {
     gymName: string;
@@ -522,6 +631,20 @@ export const getNearbyGyms = async (
     }
 };
 
+export const getCachedNearbyGyms = async (
+    gymName: string,
+    radiusKm: number = 20,
+    maxResults: number = 5,
+): Promise<NearbyGym[]> => {
+    const cachedFetcher = unstable_cache(
+        async () => getNearbyGyms(gymName, radiusKm, maxResults),
+        [`nearby-gyms:${gymName}:${radiusKm}:${maxResults}`],
+        { revalidate: 60 },
+    );
+
+    return cachedFetcher();
+};
+
 /**
  * Fetches nearby gyms based on a postcode instead of a gym name.
  * @param postcode - The reference postcode.
@@ -617,4 +740,3 @@ export const getNearbyGymsByPostcode = async (
         return [];
     }
 };
-

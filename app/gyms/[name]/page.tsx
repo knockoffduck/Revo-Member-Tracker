@@ -6,9 +6,12 @@ import BackButton from "@/app/components/BackButton";
 
 export default async function page(props: {
   params: Promise<{ name: string }>;
+  searchParams?: Promise<{ date?: string }>;
 }) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
   const gymName = decodeURIComponent(params.name);
+  const selectedDate = searchParams?.date;
 
   return (
     <Card className="px-8 pt-6 border-0 flex flex-col justify- w-full">
@@ -23,7 +26,7 @@ export default async function page(props: {
       </CardHeader>
 
       <Suspense fallback={<GymContentSkeleton />}>
-        <GymContent gymName={gymName} />
+        <GymContent gymName={gymName} selectedDate={selectedDate} />
       </Suspense>
     </Card>
   );

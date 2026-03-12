@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Users } from "lucide-react";
 import Link from "next/link";
-import { getNearbyGyms, NearbyGym } from "@/lib/fetchData";
+import { getCachedNearbyGyms, NearbyGym } from "@/lib/fetchData";
 import CrowdLevelBadge from "./CrowdLevelBadge";
 
 interface NearbyGymsCardProps {
@@ -13,7 +13,7 @@ interface NearbyGymsCardProps {
  * Fetches gyms within 10km radius sorted by crowd level (ascending).
  */
 export default async function NearbyGymsCard({ gymName }: NearbyGymsCardProps) {
-    const nearbyGyms = await getNearbyGyms(gymName, 10, 5);
+    const nearbyGyms = await getCachedNearbyGyms(gymName, 10, 5);
 
     // Don't render if no nearby gyms found
     if (nearbyGyms.length === 0) {

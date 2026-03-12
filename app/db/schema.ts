@@ -14,6 +14,7 @@ export const revoGymCount = mysqlTable("Revo_Gym_Count", {
 	index("idx_revo_gym_count_created").on(table.created),
 	index("idx_revogym_gym_created").on(table.gymName, table.created),
 	index("idx_revogym_gym_created_desc").on(table.gymName, table.created),
+	index("idx_revogym_gymid_created").on(table.gymId, table.created),
 	primaryKey({ columns: [table.id], name: "Revo_Gym_Count_id"}),
 ]);
 
