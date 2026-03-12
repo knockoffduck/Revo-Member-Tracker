@@ -1,13 +1,11 @@
 import { ModeToggle } from "@/components/ui/darkmode";
 import Link from "next/link";
 import NextImage from "next/image";
-import SignOutButton from "./SignOutButton";
-import SignInButton from "./SignInButton";
 import AccountButton from "./AccountButton";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Button } from "@/components/ui/button";
-import MobileNav from "./MobileNav";
+import HeaderMobileNav from "./HeaderMobileNav";
 
 export default async function Header() {
 	const session = await auth.api.getSession({
@@ -15,12 +13,12 @@ export default async function Header() {
 	});
 
 	return (
-		<header className="w-full flex items-center justify-between py-6 px-4 md:px-8">
+		<header className="w-full flex items-center justify-between px-4 py-4 md:px-8 md:py-6">
 			{/* Left Section: Mobile Menu (Hidden on Desktop) & Desktop Nav (Hidden on Mobile) */}
 			<div className="flex-1 flex justify-start items-center">
 				{/* Mobile Menu Trigger */}
 				<div className="md:hidden">
-					<MobileNav />
+					<HeaderMobileNav />
 				</div>
 
 				{/* Desktop Navigation Links & Theme Toggle */}
@@ -44,8 +42,8 @@ export default async function Header() {
 			</div>
 
 			{/* Center Section: Logo */}
-			<div className="flex-shrink-0 mx-4">
-				<Link href="/" className="flex items-center justify-center">
+			<div className="flex-shrink-0 mx-3 md:mx-4">
+				<Link href="/gyms" className="flex items-center justify-center">
 					<NextImage
 						src="/RevoTracker-logo.svg"
 						alt="Revo Tracker Logo"

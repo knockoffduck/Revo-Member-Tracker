@@ -5,20 +5,32 @@ interface CrowdLevelBadgeProps {
     size?: "sm" | "default";
 }
 
-export default function CrowdLevelBadge({ percentage, size = "default" }: CrowdLevelBadgeProps) {
-    let label: string;
-    let colorClasses: string;
-
+export const getCrowdLevelMeta = (percentage: number) => {
     if (percentage < 30) {
-        label = "Quiet";
-        colorClasses = "bg-green-500/20 text-green-600 dark:text-green-400";
-    } else if (percentage <= 70) {
-        label = "Moderate";
-        colorClasses = "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400";
-    } else {
-        label = "Busy";
-        colorClasses = "bg-red-500/20 text-red-600 dark:text-red-400";
+        return {
+            label: "Quiet",
+            textClasses: "text-green-600 dark:text-green-400",
+            colorClasses: "bg-green-500/20 text-green-600 dark:text-green-400",
+        };
     }
+
+    if (percentage <= 70) {
+        return {
+            label: "Moderate",
+            textClasses: "text-yellow-600 dark:text-yellow-400",
+            colorClasses: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400",
+        };
+    }
+
+    return {
+        label: "Busy",
+        textClasses: "text-red-600 dark:text-red-400",
+        colorClasses: "bg-red-500/20 text-red-600 dark:text-red-400",
+    };
+};
+
+export default function CrowdLevelBadge({ percentage, size = "default" }: CrowdLevelBadgeProps) {
+    const { label, colorClasses } = getCrowdLevelMeta(percentage);
 
     const sizeClasses = size === "sm"
         ? "px-2 py-0.5 text-[10px]"
@@ -36,4 +48,3 @@ export default function CrowdLevelBadge({ percentage, size = "default" }: CrowdL
         </span>
     );
 }
-

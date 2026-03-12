@@ -4,17 +4,13 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import React, { startTransition } from "react";
-import { MdAccountCircle } from "react-icons/md";
-import { toast } from "sonner";
+import { CircleUserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { Badge } from "@/components/ui/badge";
 
 export default function AccountButton() {
 
@@ -40,7 +36,7 @@ export default function AccountButton() {
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<Button variant="outline" size="icon">
-						<MdAccountCircle size={32}></MdAccountCircle>
+						<CircleUserRound className="h-6 w-6" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>

@@ -44,6 +44,7 @@ type ChartProps = {
   description?: string;
   emptyMessage?: string;
   currentCount?: number | null;
+  insight?: string | null;
 };
 
 /**
@@ -107,6 +108,7 @@ export default function Chart({
   description = "Today's activity vs Average",
   emptyMessage = "No activity data available for this day.",
   currentCount,
+  insight,
 }: ChartProps) {
   // Generate unified 24-hour view
   const chartData = create24HourTimeline(data, trendData);
@@ -125,9 +127,14 @@ export default function Chart({
             <CardDescription className="max-w-[28rem] text-sm leading-relaxed">
               {description}
             </CardDescription>
+            {insight ? (
+              <p className="pt-1 text-sm font-medium text-foreground/90">
+                {insight.charAt(0).toUpperCase() + insight.slice(1)} right now
+              </p>
+            ) : null}
           </div>
           {formattedCurrentCount ? (
-            <div className="rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-left sm:min-w-[8.5rem] sm:text-right">
+            <div className="hidden rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-left sm:block sm:min-w-[8.5rem] sm:text-right">
               <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
                 Live Count
               </p>

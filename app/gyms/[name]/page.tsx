@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import GymContent from "@/app/components/GymContent";
 import GymContentSkeleton from "@/app/components/GymContentSkeleton";
-import BackButton from "@/app/components/BackButton";
 
 export default async function page(props: {
   params: Promise<{ name: string }>;
@@ -14,14 +13,8 @@ export default async function page(props: {
   const selectedDate = searchParams?.date;
 
   return (
-    <Card className="px-8 pt-6 border-0 flex flex-col justify- w-full">
-      <div className="w-fit">
-        <BackButton />
-      </div>
-
-      {/* Header with Gym Name */}
-      {/* CrowdLevelBadge is now inside GymContent to allow Name to load instantly */}
-      <CardHeader className="text-center font-bold text-2xl flex flex-col items-center gap-2 pb-0 mb-2">
+    <Card className="flex w-full flex-col border-0 px-5 pb-8 pt-2 sm:px-8 sm:pb-10 sm:pt-4">
+      <CardHeader className="mb-1 flex flex-col items-center gap-2 px-0 pb-0 pt-2 text-center font-bold text-2xl sm:pt-4">
         <h1>{gymName}</h1>
       </CardHeader>
 

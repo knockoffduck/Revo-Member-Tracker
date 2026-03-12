@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { createAnnouncement } from "@/lib/updates";
-import ReactMarkdown from "react-markdown";
+
+const MarkdownPreview = dynamic(() => import("@/app/components/MarkdownPreview"), {
+    loading: () => <p className="text-muted-foreground italic">Loading preview...</p>,
+    ssr: false,
+});
 
 export default function CreateUpdatePage() {
     const router = useRouter();
@@ -103,7 +108,7 @@ export default function CreateUpdatePage() {
                     <Label>Preview</Label>
                     <div className="prose dark:prose-invert max-w-none mt-2">
                         {formData.content ? (
-                            <ReactMarkdown>{formData.content}</ReactMarkdown>
+                            <MarkdownPreview content={formData.content} />
                         ) : (
                             <p className="text-muted-foreground italic">Nothing to preview</p>
                         )}

@@ -8,11 +8,12 @@ import {
   TrendSlot,
 } from "@/lib/fetchData";
 import { Gym } from "../gyms/_types";
-import Chart from "@/app/components/Chart";
+import DeferredGymChart from "@/app/components/DeferredGymChart";
 import GymInfoCard from "@/app/components/GymInfoCard";
-import CrowdLevelBadge from "@/app/components/CrowdLevelBadge";
+import { getCrowdLevelMeta } from "@/app/components/CrowdLevelBadge";
 import NearbyGymsCard from "@/app/components/NearbyGymsCard";
 import GymDaySwitcher from "@/app/components/GymDaySwitcher";
+import { getTrendInsight } from "@/app/components/gym-detail-utils";
 import moment from "moment-timezone";
 
 export default async function GymContent({
@@ -45,6 +46,20 @@ export default async function GymContent({
 
   const currentPercentage = liveSnapshot?.percentage ?? 0;
   const currentMemberCount = liveSnapshot?.count ?? null;
+  const hasLiveSnapshot = !!liveSnapshot;
+  const trendInsight = getTrendInsight({
+    currentCount: currentMemberCount,
+    trendData,
+    gymTimezone: timezone,
+  });
+  const crowdLevel = getCrowdLevelMeta(currentPercentage);
+  const summaryItems = [
+    hasLiveSnapshot ? `${crowdLevel.label} now` : null,
+    typeof currentMemberCount === "number"
+      ? `${new Intl.NumberFormat("en-AU").format(currentMemberCount)} member${currentMemberCount === 1 ? "" : "s"}`
+      : null,
+    trendInsight,
+  ].filter((item): item is string => !!item);
 
   const localisedData = data.map((item: Gym) => {
     // Convert the database UTC time to the Gym's wall tim
@@ -81,9 +96,30 @@ export default async function GymContent({
 
   return (
     <div className="flex flex-col w-full gap-4">
-      <div className="flex justify-center">
-        <CrowdLevelBadge percentage={currentPercentage} />
-      </div>
+      {summaryItems.length > 0 ? (
+        <div className="flex justify-center">
+          <div className="flex max-w-full flex-wrap items-center justify-center gap-2 px-2 text-center">
+            {summaryItems.map((item, index) => (
+              <div key={item} className="flex items-center gap-2">
+                {index > 0 ? (
+                  <span className="text-sm text-muted-foreground/70" aria-hidden="true">
+                    ·
+                  </span>
+                ) : null}
+                <span
+                  className={
+                    index === 0
+                      ? `text-sm font-semibold ${crowdLevel.textClasses}`
+                      : "text-sm text-muted-foreground"
+                  }
+                >
+                  {item}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {gymMeta && (
         <GymInfoCard
@@ -97,12 +133,13 @@ export default async function GymContent({
         />
       )}
 
-      <Chart
+      <DeferredGymChart
         data={localisedData}
         trendData={trendData}
         description={chartDescription}
         emptyMessage={`No member count samples were recorded for ${selectedDayLabel}.`}
         currentCount={currentMemberCount}
+        insight={trendInsight}
       />
       <GymDaySwitcher
         gymName={gymName}

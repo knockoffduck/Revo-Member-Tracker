@@ -27,23 +27,23 @@ export default function GymDaySwitcher({
     `/gyms/${encodeURIComponent(gymName)}?date=${date}`;
 
   return (
-    <div className="rounded-xl border bg-card/80 px-4 py-4 sm:px-5">
+    <div className="rounded-xl border border-border/60 bg-card/70 px-3 py-3 sm:px-4">
       <div className="text-center">
         <p className="text-sm font-semibold text-foreground">
           {selectedDay.format("ddd, D MMM YYYY")}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="mt-1 text-xs text-muted-foreground">
           Times shown in {timezone}
         </p>
       </div>
 
-      <div className="mt-4 grid grid-cols-[auto,1fr,auto] items-center gap-2 sm:mx-auto sm:max-w-sm">
+      <div className="mt-3 grid grid-cols-[auto,1fr,auto] items-center gap-2 rounded-xl bg-muted/20 p-1 sm:mx-auto sm:max-w-md">
         <Link
           href={buildHref(previousDate)}
           scroll={false}
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "h-10 min-w-10 px-3",
+            "h-10 min-w-10 rounded-lg border-border/70 bg-background/80 px-3",
           )}
           aria-label={`View ${selectedDay.subtract(1, "day").format("D MMM YYYY")}`}
         >
@@ -54,7 +54,7 @@ export default function GymDaySwitcher({
           scroll={false}
           className={cn(
             buttonVariants({ variant: "secondary", size: "sm" }),
-            "h-10 w-full text-sm",
+            "h-10 w-full rounded-lg bg-background/60 text-sm font-medium shadow-none",
             isToday && "pointer-events-none opacity-50",
           )}
           aria-disabled={isToday}
@@ -67,7 +67,7 @@ export default function GymDaySwitcher({
           scroll={false}
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "h-10 min-w-10 px-3",
+            "h-10 min-w-10 rounded-lg border-border/70 bg-background/80 px-3",
             isToday && "pointer-events-none opacity-50",
           )}
           aria-disabled={isToday}

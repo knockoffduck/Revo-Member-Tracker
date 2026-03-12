@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
 import { Heart, Clock, MapPin, ArrowUpRight, Dumbbell } from 'lucide-react';
 import Link from "next/link";
-import moment from "moment-timezone";
 
 type Gym = {
   id: string;
@@ -23,6 +21,11 @@ interface LocationCardProps {
   onToggleFavorite?: (gymName: string) => void;
 }
 
+const timeFormatter = new Intl.DateTimeFormat(undefined, {
+  hour: "numeric",
+  minute: "2-digit",
+});
+
 export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFavorite = false, onToggleFavorite }) => {
 
   const {
@@ -41,9 +44,13 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
 
   // Format last updated time
   const convertToLocalTime = (dateString: string): string => {
-    const utcMoment = moment.utc(dateString);
-    const localMoment = utcMoment.local();
-    return localMoment.format("h:mm A");
+    const parsedDate = new Date(dateString);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "";
+    }
+
+    return timeFormatter.format(parsedDate);
   };
 
   const lastUpdated = convertToLocalTime(created);
