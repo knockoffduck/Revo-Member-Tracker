@@ -27,17 +27,7 @@ export default function GymDaySwitcher({
     `/gyms/${encodeURIComponent(gymName)}?date=${date}`;
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border bg-card/80 px-4 py-4 sm:flex-row sm:justify-between">
-      <Link
-        href={buildHref(previousDate)}
-        className={cn(
-          buttonVariants({ variant: "outline", size: "sm" }),
-          "w-full sm:w-auto",
-        )}
-      >
-        <ChevronLeft className=" h-4 w-4" />
-      </Link>
-
+    <div className="rounded-xl border bg-card/80 px-4 py-4 sm:px-5">
       <div className="text-center">
         <p className="text-sm font-semibold text-foreground">
           {selectedDay.format("ddd, D MMM YYYY")}
@@ -47,12 +37,24 @@ export default function GymDaySwitcher({
         </p>
       </div>
 
-      <div className="flex w-full items-center justify-center gap-2 sm:w-auto">
+      <div className="mt-4 grid grid-cols-[auto,1fr,auto] items-center gap-2 sm:mx-auto sm:max-w-sm">
+        <Link
+          href={buildHref(previousDate)}
+          scroll={false}
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "h-10 min-w-10 px-3",
+          )}
+          aria-label={`View ${selectedDay.subtract(1, "day").format("D MMM YYYY")}`}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Link>
         <Link
           href={`/gyms/${encodeURIComponent(gymName)}`}
+          scroll={false}
           className={cn(
             buttonVariants({ variant: "secondary", size: "sm" }),
-            "flex-1 sm:flex-none",
+            "h-10 w-full text-sm",
             isToday && "pointer-events-none opacity-50",
           )}
           aria-disabled={isToday}
@@ -62,15 +64,17 @@ export default function GymDaySwitcher({
         </Link>
         <Link
           href={buildHref(nextDate)}
+          scroll={false}
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "flex-1 sm:flex-none",
+            "h-10 min-w-10 px-3",
             isToday && "pointer-events-none opacity-50",
           )}
           aria-disabled={isToday}
           tabIndex={isToday ? -1 : undefined}
+          aria-label={`View ${selectedDay.add(1, "day").format("D MMM YYYY")}`}
         >
-          <ChevronRight className=" h-4 w-4" />
+          <ChevronRight className="h-4 w-4" />
         </Link>
       </div>
     </div>

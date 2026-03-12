@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   getGymMeta,
+  getGymLiveSnapshot,
   getGymStats,
   getGymTrend,
   resolveGymDate,
@@ -33,18 +34,17 @@ export default async function GymContent({
     isToday: selectedDay.format("YYYY-MM-DD") === today,
   };
 
-  const [data, trendData] = await Promise.all([
+  const [data, trendData, liveSnapshot] = await Promise.all([
     getGymStats(gymName, dateMeta.selectedDate, gymMeta ?? undefined),
     gymMeta?.id
       ? getGymTrend(gymMeta.id, gymMeta.timezone)
       : Promise.resolve([] as TrendSlot[]),
+    getGymLiveSnapshot(gymName, gymMeta ?? undefined),
   ]);
   const dataResolvedAt = performance.now();
 
-  // Get current percentage from most recent data point
-  const currentPercentage =
-    data.length > 0 ? data[data.length - 1].percentage : 0;
-  const currentMemberCount = data.length > 0 ? data[data.length - 1].count : null;
+  const currentPercentage = liveSnapshot?.percentage ?? 0;
+  const currentMemberCount = liveSnapshot?.count ?? null;
 
   const localisedData = data.map((item: Gym) => {
     // Convert the database UTC time to the Gym's wall tim

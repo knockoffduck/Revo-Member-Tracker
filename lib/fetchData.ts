@@ -355,6 +355,52 @@ export const getGymStats = async (
     }
 };
 
+export const getGymLiveSnapshot = async (
+    gymName: string,
+    gymMeta?: GymMeta | null,
+): Promise<Gym | null> => {
+    try {
+        const resolvedGymMeta = gymMeta ?? (await fetchGymMeta(gymName));
+
+        if (!resolvedGymMeta?.id) {
+            return null;
+        }
+
+        const rows = await db
+            .select({
+                id: revoGymCount.id,
+                created: revoGymCount.created,
+                count: revoGymCount.count,
+                ratio: revoGymCount.ratio,
+                gymName: revoGymCount.gymName,
+                percentage: revoGymCount.percentage,
+                gymId: revoGymCount.gymId,
+            })
+            .from(revoGymCount)
+            .where(eq(revoGymCount.gymId, resolvedGymMeta.id))
+            .orderBy(desc(revoGymCount.created))
+            .limit(1);
+
+        const latestRow = rows[0];
+
+        if (!latestRow) {
+            return null;
+        }
+
+        return {
+            ...latestRow,
+            gymName,
+            areaSize: resolvedGymMeta.areaSize,
+            state: resolvedGymMeta.state,
+            timezone: resolvedGymMeta.timezone,
+            squatRacks: resolvedGymMeta.squatRacks,
+        };
+    } catch (error) {
+        console.error(`Error fetching live gym snapshot for ${gymName}:`, error);
+        return null;
+    }
+};
+
 export type TrendSlot = {
     time: string;
     average: number;

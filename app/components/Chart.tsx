@@ -118,36 +118,40 @@ export default function Chart({
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex items-start justify-between gap-4 space-y-0 border-b py-5 sm:flex-row">
-        <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Member Count</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </div>
-        {formattedCurrentCount ? (
-          <div className="shrink-0 text-center sm:text-right">
-            <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
-              Current
-            </p>
-            <p className="text-3xl font-semibold leading-none tracking-tight sm:text-4xl">
-              {formattedCurrentCount}
-            </p>
+      <CardHeader className="gap-4 border-b px-4 py-4 sm:px-6 sm:py-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="grid flex-1 gap-1 text-left">
+            <CardTitle className="text-2xl sm:text-xl">Member Count</CardTitle>
+            <CardDescription className="max-w-[28rem] text-sm leading-relaxed">
+              {description}
+            </CardDescription>
           </div>
-        ) : null}
+          {formattedCurrentCount ? (
+            <div className="rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-left sm:min-w-[8.5rem] sm:text-right">
+              <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
+                Live Count
+              </p>
+              <p className="mt-1 text-4xl font-semibold leading-none tracking-tight sm:text-4xl">
+                {formattedCurrentCount}
+              </p>
+            </div>
+          ) : null}
+        </div>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="px-3 pb-4 pt-4 sm:px-6 sm:pb-6 sm:pt-6">
         {hasCurrentData ? (
           <ChartContainer
             config={chartConfig}
-            className="aspect-auto h-[250px] w-full"
+            className="aspect-auto h-[220px] w-full text-[11px] sm:h-[250px] sm:text-xs [&_.recharts-cartesian-axis-tick_text]:text-[11px] sm:[&_.recharts-cartesian-axis-tick_text]:text-xs [&_.recharts-legend-wrapper]:!bottom-0 [&_.recharts-default-legend]:flex [&_.recharts-default-legend]:flex-wrap [&_.recharts-default-legend]:items-center [&_.recharts-default-legend]:justify-center [&_.recharts-default-legend]:gap-x-4 [&_.recharts-default-legend]:gap-y-2 [&_.recharts-legend-item]:!mr-0"
           >
             <ComposedChart
-              width={500}
-              height={400}
               accessibilityLayer
               data={chartData}
               margin={{
-                left: -20,
-                right: 12,
+                top: 8,
+                left: -28,
+                right: 8,
+                bottom: 12,
               }}
             >
               <CartesianGrid vertical={false} />
@@ -155,8 +159,9 @@ export default function Chart({
                 dataKey="created"
                 tickLine={false}
                 axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
+                tickMargin={10}
+                minTickGap={42}
+                interval="preserveStartEnd"
                 tickFormatter={(value) => {
                   const date = new Date(value);
                   const options: Intl.DateTimeFormatOptions = {
@@ -168,7 +173,13 @@ export default function Chart({
                   return date.toLocaleTimeString("en-AU", options);
                 }}
               />
-              <YAxis tickLine={false} tickMargin={8} tickCount={3} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickCount={3}
+                width={28}
+              />
               <ChartTooltip
                 cursor={false}
                 content={
@@ -207,7 +218,7 @@ export default function Chart({
             </ComposedChart>
           </ChartContainer>
         ) : (
-          <div className="flex h-[250px] items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 px-6 text-center">
+          <div className="flex h-[220px] items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 px-6 text-center sm:h-[250px]">
             <p className="max-w-sm text-sm text-muted-foreground">{emptyMessage}</p>
           </div>
         )}
