@@ -38,6 +38,28 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+function getNiceAxisUpperBound(values: Array<number | null | undefined>) {
+  const numericValues = values.filter(
+    (value): value is number => typeof value === "number" && Number.isFinite(value),
+  );
+
+  if (numericValues.length === 0) {
+    return 10;
+  }
+
+  const maxValue = Math.max(...numericValues);
+
+  if (maxValue <= 10) {
+    return 10;
+  }
+
+  if (maxValue <= 50) {
+    return Math.ceil(maxValue / 5) * 5;
+  }
+
+  return Math.ceil(maxValue / 10) * 10;
+}
+
 type ChartProps = {
   data: Gym[];
   trendData?: TrendSlot[];
@@ -112,6 +134,9 @@ export default function Chart({
 }: ChartProps) {
   // Generate unified 24-hour view
   const chartData = create24HourTimeline(data, trendData);
+  const yAxisUpperBound = getNiceAxisUpperBound(
+    chartData.flatMap(({ count, average }) => [count, average]),
+  );
   const hasCurrentData = data.length > 0;
   const formattedCurrentCount =
     typeof currentCount === "number"
@@ -156,7 +181,7 @@ export default function Chart({
               data={chartData}
               margin={{
                 top: 8,
-                left: -28,
+                left: 8,
                 right: 8,
                 bottom: 12,
               }}
@@ -184,8 +209,11 @@ export default function Chart({
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
-                tickCount={3}
-                width={28}
+                allowDecimals={false}
+                tickCount={4}
+                width={44}
+                domain={[0, yAxisUpperBound]}
+                tickFormatter={(value) => new Intl.NumberFormat("en-AU").format(value)}
               />
               <ChartTooltip
                 cursor={false}
