@@ -25,20 +25,14 @@ export default function SupportPage() {
             <ShieldAlert className="h-4 w-4" />
             Support
           </div>
-          <h1 className="max-w-4xl text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[1.05] tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-foreground to-foreground/70">
-            Built for quick help,
-            <br />
-            not a ticket maze.
-          </h1>
           <p className="mt-6 max-w-2xl text-[clamp(1rem,2vw,1.25rem)] leading-relaxed text-muted-foreground">
-            If something looks off, feels broken, or you just need a reply from the person behind
-            the project, this is the straight path.
+            If something looks off, feels broken, or you just need a reply from
+            the person behind the project, this is the straight path.
           </p>
         </div>
 
         {/* Bento Grid Layout */}
         <div className="grid gap-8 lg:grid-cols[1fr_1.2fr] lg:gap-12 xl:grid-cols-[1fr_1.5fr]">
-          
           {/* Info Side */}
           <div className="flex flex-col gap-6">
             <div className="group relative overflow-hidden rounded-3xl border border-border/50 bg-card/40 p-8 pt-10 shadow-lg backdrop-blur-md transition-all duration-500 hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5">
@@ -46,9 +40,12 @@ export default function SupportPage() {
               <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Mail className="h-6 w-6" />
               </div>
-              <h2 className="mb-3 text-2xl font-semibold tracking-tight">Direct Email</h2>
+              <h2 className="mb-3 text-2xl font-semibold tracking-tight">
+                Direct Email
+              </h2>
               <p className="mb-6 text-muted-foreground leading-relaxed">
-                Skip the form entirely. Send an email directly to my inbox for the fastest response possible.
+                Skip the form entirely. Send an email directly to my inbox for
+                the fastest response possible.
               </p>
               <a
                 href="mailto:dvcklab@outlook.com"
@@ -63,9 +60,21 @@ export default function SupportPage() {
               <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary/50 text-foreground">
                 <MessageSquare className="h-6 w-6" />
               </div>
-              <h2 className="mb-3 text-2xl font-semibold tracking-tight">What to include</h2>
+              <h2 className="mb-3 text-2xl font-semibold tracking-tight">
+                What to include
+              </h2>
               <p className="text-muted-foreground leading-relaxed">
-                To help me fix issues faster, please mention the <span className="text-foreground font-medium">page you were on</span>, what you <span className="text-foreground font-medium">expected</span> to happen, and what <span className="text-foreground font-medium">actually occurred</span>.
+                To help me fix issues faster, please mention the{" "}
+                <span className="text-foreground font-medium">
+                  page you were on
+                </span>
+                , what you{" "}
+                <span className="text-foreground font-medium">expected</span> to
+                happen, and what{" "}
+                <span className="text-foreground font-medium">
+                  actually occurred
+                </span>
+                .
               </p>
             </div>
           </div>
@@ -73,19 +82,31 @@ export default function SupportPage() {
           {/* Form Side */}
           <div className="relative rounded-3xl border border-border/50 bg-card/40 p-1 shadow-xl backdrop-blur-xl">
             <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-white/5 to-white/0 dark:from-white/5 dark:to-transparent" />
-            
+
             <form
               action="https://formsubmit.co/dvcklab@outlook.com"
               method="POST"
               className="flex h-full flex-col rounded-[22px] bg-background/50 p-8 sm:p-10"
             >
-              <input type="hidden" name="_subject" value="Revo Member Tracker Support Request" />
-              <input type="hidden" name="_next" value="https://revotracker.dvcklab.com" />
+              <input
+                type="hidden"
+                name="_subject"
+                value="Revo Member Tracker Support Request"
+              />
+              <input
+                type="hidden"
+                name="_next"
+                value="https://revotracker.dvcklab.com"
+              />
               <input type="hidden" name="_captcha" value="false" />
 
               <div className="mb-8">
-                <h3 className="text-2xl font-semibold tracking-tight mb-2">Send a message</h3>
-                <p className="text-sm text-muted-foreground">Your message goes directly to Dvcklab via FormSubmit.</p>
+                <h3 className="text-2xl font-semibold tracking-tight mb-2">
+                  Send a message
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Your message goes directly to Dvcklab via FormSubmit.
+                </p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 mb-6">
@@ -167,4 +188,3 @@ export default function SupportPage() {
     </div>
   );
 }
-
