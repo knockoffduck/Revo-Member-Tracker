@@ -96,7 +96,8 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
   const estimatedCapacity = Math.floor(size / 5);
 
   // Calculate N Squat Rank (people per squat rack)
-  const squatRank = squatRacks > 0 ? Math.round((count / squatRacks) * 10) / 10 : 0;
+  const squatRank = squatRacks > 0 ? Math.max(1, Math.round((count / squatRacks) * 10) / 10) : 0;
+  const squatRankLabel = squatRank === 1 ? "person" : "people";
   
   // Determine squat rack crowdedness
   // Assuming ~25% of gym users actually use squat racks
@@ -192,7 +193,7 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
             </div>
             <div className="text-right">
               <span className="text-sm font-semibold text-card-foreground">~{Math.round(squatRank)}</span>
-              <span className="text-xs text-muted-foreground ml-1">people per rack</span>
+              <span className="text-xs text-muted-foreground ml-1">{squatRankLabel} per rack</span>
             </div>
           </div>
         )}
