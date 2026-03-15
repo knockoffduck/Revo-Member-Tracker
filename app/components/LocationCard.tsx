@@ -26,6 +26,18 @@ const timeFormatter = new Intl.DateTimeFormat(undefined, {
   minute: "2-digit",
 });
 
+const parseUtcDateString = (dateString: string): Date => {
+  const normalizedDateString = dateString.includes("T")
+    ? dateString
+    : dateString.replace(" ", "T");
+  const utcDateString =
+    /[zZ]|[+-]\d{2}:\d{2}$/.test(normalizedDateString)
+      ? normalizedDateString
+      : `${normalizedDateString}Z`;
+
+  return new Date(utcDateString);
+};
+
 export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFavorite = false, onToggleFavorite }) => {
 
   const {
@@ -44,7 +56,7 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
 
   // Format last updated time
   const convertToLocalTime = (dateString: string): string => {
-    const parsedDate = new Date(dateString);
+    const parsedDate = parseUtcDateString(dateString);
 
     if (Number.isNaN(parsedDate.getTime())) {
       return "";
