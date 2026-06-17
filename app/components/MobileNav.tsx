@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/ui/darkmode";
 
-export default function MobileNav() {
+export default function MobileNav({ isAdmin }: { isAdmin?: boolean }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -47,6 +47,16 @@ export default function MobileNav() {
 						How to Use
 					</Link>
 				</DropdownMenuItem>
+				{isAdmin && (
+					<>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem asChild>
+							<Link href="/admin/diagnostics" className="w-full cursor-pointer font-semibold text-primary">
+								Admin
+							</Link>
+						</DropdownMenuItem>
+					</>
+				)}
 				<DropdownMenuSeparator />
 				<div className="p-2 flex justify-between items-center">
 					<span className="text-sm pl-2">Theme</span>

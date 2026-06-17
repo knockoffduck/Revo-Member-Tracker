@@ -11,6 +11,7 @@ export default async function Header() {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});
+	const isAdmin = (session?.user as { isAdmin?: boolean })?.isAdmin ?? false;
 
 	return (
 		<header className="w-full flex items-center justify-between px-4 py-4 md:px-8 md:py-6">
@@ -18,7 +19,7 @@ export default async function Header() {
 			<div className="flex-1 flex justify-start items-center">
 				{/* Mobile Menu Trigger */}
 				<div className="md:hidden">
-					<HeaderMobileNav />
+					<HeaderMobileNav isAdmin={isAdmin} />
 				</div>
 
 				{/* Desktop Navigation Links & Theme Toggle */}
@@ -40,6 +41,11 @@ export default async function Header() {
 						<Link href="/how-to-use">
 							<Button variant="ghost">How to Use</Button>
 						</Link>
+						{isAdmin && (
+							<Link href="/admin/diagnostics">
+								<Button variant="ghost" className="text-primary font-semibold">Admin</Button>
+							</Link>
+						)}
 					</nav>
 				</div>
 			</div>

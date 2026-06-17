@@ -7,7 +7,7 @@ import MobileNav from "./MobileNav";
 
 const gymDetailPattern = /^\/gyms\/[^/]+$/;
 
-export default function HeaderMobileNav() {
+export default function HeaderMobileNav({ isAdmin }: { isAdmin?: boolean }) {
     const pathname = usePathname();
     const isGymDetailPage = pathname ? gymDetailPattern.test(pathname) : false;
 
@@ -15,5 +15,5 @@ export default function HeaderMobileNav() {
         return <BackButton className="-ml-1" />;
     }
 
-    return <MobileNav />;
+    return <MobileNav isAdmin={isAdmin} />;
 }

@@ -10,7 +10,7 @@ const cspDirectives = [
 	"style-src 'self' 'unsafe-inline'",
 	"img-src 'self' data: blob: https:",
 	"font-src 'self' data: https:",
-	"connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
+	"connect-src 'self' http://localhost:3001 https://revotrackerapi.dvcklab.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
 	"frame-src 'none'",
 ];
 
