@@ -51,7 +51,7 @@ const initialState = {
 };
 
 export function useApiCall(path: string, options: UseApiCallOptions = {}): UseApiCallReturn {
-	const { baseUrl } = useBaseUrl();
+	const { baseUrl, token } = useBaseUrl();
 	const [state, setState] = useState(initialState);
 	const [elapsedMs, setElapsedMs] = useState(0);
 	const startTsRef = useRef<number | null>(null);
@@ -113,6 +113,7 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 					method: optionsRef.current.method ?? "GET",
 					body: optionsRef.current.body,
 					signal: controller.signal,
+					token,
 					setState,
 				});
 			} else {
@@ -121,6 +122,7 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 					method: optionsRef.current.method ?? "GET",
 					body: optionsRef.current.body,
 					signal: controller.signal,
+					token,
 					setState,
 				});
 			}
@@ -140,7 +142,7 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 				setElapsedMs(Date.now() - startTsRef.current);
 			}
 		}
-	}, [baseUrl, startTicker, stopTicker]);
+	}, [baseUrl, token, startTicker, stopTicker]);
 
 	useEffect(() => {
 		return () => {
@@ -168,12 +170,16 @@ async function runFetch(args: {
 	method: string;
 	body: unknown;
 	signal: AbortSignal;
+	token: string;
 	setState: React.Dispatch<React.SetStateAction<typeof initialState>>;
 }) {
+	const headers: Record<string, string> = {};
+	if (args.body) headers["Content-Type"] = "application/json";
+	if (args.token) headers["Authorization"] = `Bearer ${args.token}`;
 	const init: RequestInit = {
 		method: args.method,
 		signal: args.signal,
-		headers: args.body ? { "Content-Type": "application/json" } : undefined,
+		headers,
 		body: args.body ? JSON.stringify(args.body) : undefined,
 	};
 	const res = await fetch(args.url, init);
@@ -198,12 +204,15 @@ async function runSse(args: {
 	method: string;
 	body: unknown;
 	signal: AbortSignal;
+	token: string;
 	setState: React.Dispatch<React.SetStateAction<typeof initialState>>;
 }) {
+	const headers: Record<string, string> = { Accept: "text/event-stream" };
+	if (args.token) headers["Authorization"] = `Bearer ${args.token}`;
 	const init: RequestInit = {
 		method: args.method,
 		signal: args.signal,
-		headers: { Accept: "text/event-stream" },
+		headers,
 	};
 	const res = await fetch(args.url, init);
 	if (!res.ok || !res.body) {

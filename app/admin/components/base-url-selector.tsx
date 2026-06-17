@@ -5,28 +5,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useBaseUrl } from "./base-url-context";
-import { RotateCcw, Save, Server } from "lucide-react";
+import { RotateCcw, Save, Server, KeyRound } from "lucide-react";
 
 export function BaseUrlSelector() {
-	const { baseUrl, setBaseUrl, resetBaseUrl } = useBaseUrl();
+	const { baseUrl, setBaseUrl, resetBaseUrl, token, setToken, resetToken } = useBaseUrl();
 	const [draft, setDraft] = useState(baseUrl);
+	const [draftToken, setDraftToken] = useState(token);
 	const [saved, setSaved] = useState(false);
 
 	const onSave = () => {
 		setBaseUrl(draft);
+		setToken(draftToken);
 		setSaved(true);
 		setTimeout(() => setSaved(false), 1500);
+	};
+
+	const onReset = () => {
+		resetBaseUrl();
+		resetToken();
+		setDraft(baseUrl);
+		setDraftToken("");
 	};
 
 	return (
 		<div className="rounded-lg border bg-card p-4 space-y-3">
 			<div className="flex items-center gap-2 text-sm font-medium">
 				<Server className="h-4 w-4" />
-				Backend API URL
+				Backend Connection
 			</div>
 			<div className="space-y-2">
 				<Label htmlFor="base-url" className="text-xs text-muted-foreground">
-					Defaults to localhost:3001. Persists in localStorage.
+					API URL — defaults to localhost:3001. Persists in localStorage.
 				</Label>
 				<div className="flex gap-2">
 					<Input
@@ -36,16 +45,36 @@ export function BaseUrlSelector() {
 						placeholder="http://localhost:3001"
 						className="font-mono text-sm"
 					/>
+				</div>
+			</div>
+			<div className="space-y-2">
+				<Label htmlFor="admin-token" className="text-xs text-muted-foreground">
+					Admin token — required for non-loopback backends and user management.
+				</Label>
+				<div className="flex gap-2">
+					<Input
+						id="admin-token"
+						type="password"
+						value={draftToken}
+						onChange={(e) => setDraftToken(e.target.value)}
+						placeholder="Bearer token (optional on localhost)"
+						className="font-mono text-sm"
+					/>
 					<Button onClick={onSave} size="sm" variant={saved ? "secondary" : "default"}>
 						<Save className="h-3.5 w-3.5 mr-1" />
 						{saved ? "Saved" : "Save"}
 					</Button>
-					<Button onClick={resetBaseUrl} size="sm" variant="ghost" title="Reset to default">
+					<Button onClick={onReset} size="sm" variant="ghost" title="Reset to default">
 						<RotateCcw className="h-3.5 w-3.5" />
 					</Button>
 				</div>
 				<p className="text-xs text-muted-foreground">
-					Current: <span className="font-mono text-foreground">{baseUrl}</span>
+					Current URL: <span className="font-mono text-foreground">{baseUrl}</span>
+					{token && (
+						<span className="ml-2 inline-flex items-center gap-1 text-foreground">
+							<KeyRound className="h-3 w-3" /> Token set
+						</span>
+					)}
 				</p>
 			</div>
 		</div>
