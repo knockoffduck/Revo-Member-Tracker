@@ -21,9 +21,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signUpEmail } from "@/app/auth/actions";
-import { CgSpinner } from "react-icons/cg";
 import Link from "next/link";
-import { Lock, User, Mail, ArrowRight, UserCircle } from "lucide-react";
+import { Lock, User, Mail, ArrowRight, UserCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -175,7 +174,7 @@ function Page() {
                 disabled={isPending}
               >
                 {isPending ? (
-                  <CgSpinner className="animate-spin h-5 w-5" />
+                  <Loader2 className="animate-spin h-5 w-5" />
                 ) : (
                   <span className="flex items-center gap-2">
                     Create Account <ArrowRight className="h-4 w-4" />

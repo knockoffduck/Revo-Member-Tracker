@@ -39,6 +39,8 @@ if (isProduction) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	output: "standalone",
+	distDir: ".next",
 	poweredByHeader: false,
 	reactStrictMode: true,
 	async headers() {

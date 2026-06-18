@@ -7,9 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { updateAccountEmail, updateAccountPassword } from "./actions";
-import { CgSpinner } from "react-icons/cg";
 import { useToast } from "@/hooks/use-toast";
-import { User, Lock, Trash2, AlertTriangle, ArrowRight, Save, LogOut } from "lucide-react";
+import { User, Lock, Trash2, AlertTriangle, ArrowRight, Save, LogOut, Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 interface UserData {
@@ -142,7 +141,7 @@ export function AccountContent({ user }: { user: UserData }) {
                             </CardContent>
                             <CardFooter className="border-t border-border/40 px-6 py-4 bg-muted/20">
                                 <Button type="submit" disabled={isPendingEmail} className="gap-2 transition-all">
-                                    {isPendingEmail ? <CgSpinner className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
+                                    {isPendingEmail ? <Loader2 className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
                                     Save Changes
                                 </Button>
                             </CardFooter>
@@ -190,7 +189,7 @@ export function AccountContent({ user }: { user: UserData }) {
                             </CardContent>
                             <CardFooter className="border-t border-border/40 px-6 py-4 bg-muted/20">
                                 <Button type="submit" disabled={isPendingPassword} className="gap-2">
-                                    {isPendingPassword ? <CgSpinner className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
+                                    {isPendingPassword ? <Loader2 className="animate-spin w-4 h-4" /> : <Save className="w-4 h-4" />}
                                     Update Password
                                 </Button>
                             </CardFooter>
@@ -236,7 +235,7 @@ export function AccountContent({ user }: { user: UserData }) {
                                         disabled={isPendingDelete}
                                         className="gap-2"
                                     >
-                                        {isPendingDelete ? <CgSpinner className="animate-spin w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
+                                        {isPendingDelete ? <Loader2 className="animate-spin w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
                                         Yes, delete
                                     </Button>
                                     <Button

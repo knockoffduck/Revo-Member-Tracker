@@ -2,6 +2,8 @@ import { db } from "@/app/db/database";
 import { revoGyms } from "@/app/db/schema";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
 	const data = await db.select().from(revoGyms).orderBy(revoGyms.name);
 	if (data.length === 0) {

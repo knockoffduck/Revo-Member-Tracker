@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { IoArrowBackOutline } from "react-icons/io5";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +30,7 @@ export default function BackButton({ className }: BackButtonProps) {
             aria-label="Go back"
             className={cn("h-10 w-10 rounded-full", className)}
         >
-            <IoArrowBackOutline />
+            <ArrowLeft className="h-5 w-5" />
         </Button>
     );
 }

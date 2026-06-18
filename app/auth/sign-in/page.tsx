@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { CgSpinner } from "react-icons/cg";
 import {
   Card,
   CardContent,
@@ -23,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { signInEmail } from "../actions";
-import { Lock, User, ArrowRight } from "lucide-react";
+import { Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -148,7 +147,7 @@ function Page() {
                 disabled={isPending}
               >
                 {isPending ? (
-                  <CgSpinner className="animate-spin h-5 w-5" />
+                  <Loader2 className="animate-spin h-5 w-5" />
                 ) : (
                   <span className="flex items-center gap-2">
                     Sign In <ArrowRight className="h-4 w-4" />
