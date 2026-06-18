@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, RotateCcw, FileText, AlertCircle, Wrench, CheckCircle2, Filter } from "lucide-react";
-import { useBaseUrl, buildUrl } from "../components/base-url-context";
+import { useBaseUrl, buildProxyUrl } from "../components/base-url-context";
 import { JsonViewer } from "../components/json-viewer";
 import { BaseUrlSelector } from "../components/base-url-selector";
 import { cn } from "@/lib/utils";
@@ -62,14 +62,14 @@ export default function ReportsPage() {
 		setLoadingList(true);
 		setError(null);
 		try {
-			const res = await fetch(buildUrl(baseUrl, "/admin/logs/reports"));
+			const res = await fetch(buildProxyUrl(baseUrl, "/admin/logs/reports"));
 				if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 				const json = await res.json();
 				const data = (json?.data ?? json) as ReportFile[];
 				setReports(data);
 				if (data.length > 0 && !selected) setSelected(data[0].filename);
 			} catch (e) {
-				setError(`${(e as Error).message}\nURL: ${buildUrl(baseUrl, "/admin/logs/reports")}`);
+				setError(`${(e as Error).message}\nURL: ${buildProxyUrl(baseUrl, "/admin/logs/reports")}`);
 		} finally {
 			setLoadingList(false);
 		}
@@ -79,7 +79,7 @@ export default function ReportsPage() {
 		setLoadingFull(true);
 		setError(null);
 		try {
-			const res = await fetch(buildUrl(baseUrl, `/admin/logs/reports/${encodeURIComponent(filename)}`));
+			const res = await fetch(buildProxyUrl(baseUrl, `/admin/logs/reports/${encodeURIComponent(filename)}`));
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			const json = await res.json();
 			setFull((json?.data ?? json) as FullReport);

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Pause, Play, RotateCcw, ScrollText, Search, Trash2 } from "lucide-react";
-import { useBaseUrl, buildUrl } from "../components/base-url-context";
+import { useBaseUrl, buildProxyUrl } from "../components/base-url-context";
 import { JsonViewer } from "../components/json-viewer";
 import { BaseUrlSelector } from "../components/base-url-selector";
 import { cn } from "@/lib/utils";
@@ -66,7 +66,7 @@ function ScrapeLogView() {
 	const fetchLog = async () => {
 		setLoading(true);
 		setError(null);
-		const url = buildUrl(baseUrl, "/admin/logs/scrape");
+		const url = buildProxyUrl(baseUrl, "/admin/logs/scrape");
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -236,7 +236,7 @@ function ServerLogStream() {
 		setLines([]);
 		setStreaming(true);
 		try {
-			const url = buildUrl(baseUrl, "/admin/logs/stream");
+			const url = buildProxyUrl(baseUrl, "/admin/logs/stream");
 			const res = await fetch(url, {
 				method: "GET",
 				headers: { Accept: "text/event-stream" },

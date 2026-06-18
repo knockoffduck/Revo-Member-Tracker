@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { buildUrl, useBaseUrl } from "./base-url-context";
+import { buildProxyUrl, useBaseUrl } from "./base-url-context";
 
 export type ApiCallStatus = "idle" | "running" | "success" | "error" | "cancelled";
 
@@ -51,7 +51,7 @@ const initialState = {
 };
 
 export function useApiCall(path: string, options: UseApiCallOptions = {}): UseApiCallReturn {
-	const { baseUrl, token } = useBaseUrl();
+	const { baseUrl } = useBaseUrl();
 	const [state, setState] = useState(initialState);
 	const [elapsedMs, setElapsedMs] = useState(0);
 	const startTsRef = useRef<number | null>(null);
@@ -104,7 +104,7 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 		setState({ ...initialState, status: "running" });
 		startTicker();
 
-		const url = buildUrl(baseUrl, pathRef.current, optionsRef.current.query);
+		const url = buildProxyUrl(baseUrl, pathRef.current, optionsRef.current.query);
 
 		try {
 			if (optionsRef.current.streamSse) {
@@ -113,7 +113,6 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 					method: optionsRef.current.method ?? "GET",
 					body: optionsRef.current.body,
 					signal: controller.signal,
-					token,
 					setState,
 				});
 			} else {
@@ -122,7 +121,6 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 					method: optionsRef.current.method ?? "GET",
 					body: optionsRef.current.body,
 					signal: controller.signal,
-					token,
 					setState,
 				});
 			}
@@ -142,7 +140,7 @@ export function useApiCall(path: string, options: UseApiCallOptions = {}): UseAp
 				setElapsedMs(Date.now() - startTsRef.current);
 			}
 		}
-	}, [baseUrl, token, startTicker, stopTicker]);
+	}, [baseUrl, startTicker, stopTicker]);
 
 	useEffect(() => {
 		return () => {
@@ -170,12 +168,10 @@ async function runFetch(args: {
 	method: string;
 	body: unknown;
 	signal: AbortSignal;
-	token: string;
 	setState: React.Dispatch<React.SetStateAction<typeof initialState>>;
 }) {
 	const headers: Record<string, string> = {};
 	if (args.body) headers["Content-Type"] = "application/json";
-	if (args.token) headers["Authorization"] = `Bearer ${args.token}`;
 	const init: RequestInit = {
 		method: args.method,
 		signal: args.signal,
@@ -204,15 +200,15 @@ async function runSse(args: {
 	method: string;
 	body: unknown;
 	signal: AbortSignal;
-	token: string;
 	setState: React.Dispatch<React.SetStateAction<typeof initialState>>;
 }) {
 	const headers: Record<string, string> = { Accept: "text/event-stream" };
-	if (args.token) headers["Authorization"] = `Bearer ${args.token}`;
+	if (args.body) headers["Content-Type"] = "application/json";
 	const init: RequestInit = {
 		method: args.method,
 		signal: args.signal,
 		headers,
+		body: args.body ? JSON.stringify(args.body) : undefined,
 	};
 	const res = await fetch(args.url, init);
 	if (!res.ok || !res.body) {

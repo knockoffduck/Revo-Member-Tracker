@@ -65,11 +65,19 @@ Small adjustments to existing files:
 
 ## 3. Authentication & authorization
 
-The admin section has two layers:
+The admin section has three layers:
 
-1. **Frontend gate** — `app/admin/layout.tsx` calls `isAdmin()` from `lib/updates.ts` (which wraps `requireAdminSession()` from `lib/authz.ts`). Non-admins are redirected to `/?admin=forbidden`. This re-uses the existing Better Auth `isAdmin` flag on the `user` table.
+1. **Frontend page gate** — `app/admin/layout.tsx` calls `isAdmin()` from `lib/updates.ts` (which wraps `requireAdminSession()` from `lib/authz.ts`). Non-admins are redirected to `/?admin=forbidden`. This re-uses the existing Better Auth `isAdmin` flag on the `user` table.
 
-2. **Backend gate** — every `/admin/*` route goes through an auth check in `src/admin.ts` that accepts a request if **either**:
+2. **Server-side API proxy** — every admin dashboard request to the backend is routed through `POST|GET /api/admin/proxy`. This route:
+   - Validates the current user is a signed-in admin via Better Auth (`requireAdminSession()`).
+   - Validates the requested backend base URL against an allowlist (`ADMIN_API_URLS`, falling back to `NEXT_PUBLIC_ADMIN_API_URL`, then `http://localhost:3001`).
+   - Attaches the real backend `ADMIN_TOKEN` from the server environment (`ADMIN_API_TOKEN`) as `Authorization: Bearer <token>`.
+   - Proxies the request and streams SSE responses back to the browser.
+
+   The admin token never leaves the server, so you do not need to paste it into the dashboard UI.
+
+3. **Backend gate** — every `/admin/*` route in `Revo-Tracker-API` still accepts a request if **either**:
    - The request is from loopback (default; toggle with `ADMIN_ALLOW_LOOPBACK=0`), or
    - An `ADMIN_TOKEN` env var is set and the request sends `Authorization: Bearer <token>` (or `?token=<token>`).
 
@@ -196,7 +204,16 @@ For a deployed frontend, set `NEXT_PUBLIC_ADMIN_API_URL=https://your-api-domain.
 
 ### Frontend (Dokploy)
 
-No special config needed — the admin pages are part of the existing Next.js app. Just make sure the user you sign in with has `is_admin = 1` in the production database. The **Base URL** selector in the UI lets you point the dashboard at any backend (including the local one or a staging one) without redeploying.
+No special config is needed for the admin pages themselves, but the server-side proxy needs to know the backend token and allowed backend URLs:
+
+```env
+ADMIN_API_TOKEN=<same-value-as-backend-ADMIN_TOKEN>
+ADMIN_API_URLS=https://revotrackerapi.dvcklab.com,http://localhost:3001
+```
+
+`ADMIN_API_URLS` is a comma-separated allowlist of backend base URLs the dashboard is allowed to proxy to. If it is not set, the proxy falls back to `NEXT_PUBLIC_ADMIN_API_URL` and then `http://localhost:3001`.
+
+The browser no longer needs the admin token, so the token input has been removed from the dashboard UI.
 
 ### Backend
 
@@ -272,8 +289,9 @@ Next.js injects a strict `Content-Security-Policy` via `next.config.mjs`. The da
 | `Revo-Member-Tracker/app/admin/reports/page.tsx` | Report browser |
 | `Revo-Member-Tracker/app/admin/components/api-call-card.tsx` | Per-endpoint UI |
 | `Revo-Member-Tracker/app/admin/components/script-runner-card.tsx` | Per-script UI |
-| `Revo-Member-Tracker/app/admin/components/use-api-call.ts` | fetch / EventSource hook |
-| `Revo-Member-Tracker/app/admin/components/base-url-context.tsx` | localStorage base URL |
+| `Revo-Member-Tracker/app/admin/components/use-api-call.ts` | fetch / EventSource hook (routes through `/api/admin/proxy`) |
+| `Revo-Member-Tracker/app/admin/components/base-url-context.tsx` | localStorage base URL + `buildProxyUrl()` helper |
+| `Revo-Member-Tracker/app/api/admin/proxy/route.ts` | Server-side admin API proxy (adds `ADMIN_TOKEN`, streams SSE) |
 | `Revo-Member-Tracker/app/admin/components/json-viewer.tsx` | Colored JSON viewer |
 | `Revo-Member-Tracker/components/ui/tabs.tsx` | Tabs primitive |
 | `Revo-Member-Tracker/components/ui/progress.tsx` | Progress bar component (style fix) |

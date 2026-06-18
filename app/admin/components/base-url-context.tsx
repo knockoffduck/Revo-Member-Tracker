@@ -3,7 +3,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
 const STORAGE_KEY = "revo-admin:base-url";
-const TOKEN_KEY = "revo-admin:token";
 const DEFAULT_BASE_URL =
 	process.env.NEXT_PUBLIC_ADMIN_API_URL?.replace(/\/+$/, "") ?? "http://localhost:3001";
 
@@ -11,24 +10,18 @@ type BaseUrlContextValue = {
 	baseUrl: string;
 	setBaseUrl: (url: string) => void;
 	resetBaseUrl: () => void;
-	token: string;
-	setToken: (token: string) => void;
-	resetToken: () => void;
 };
 
 const BaseUrlContext = createContext<BaseUrlContextValue | null>(null);
 
 export function BaseUrlProvider({ children }: { children: ReactNode }) {
 	const [baseUrl, setBaseUrlState] = useState<string>(DEFAULT_BASE_URL);
-	const [token, setTokenState] = useState<string>("");
 	const [hydrated, setHydrated] = useState(false);
 
 	useEffect(() => {
 		try {
 			const stored = window.localStorage.getItem(STORAGE_KEY);
 			if (stored) setBaseUrlState(stored);
-			const storedToken = window.localStorage.getItem(TOKEN_KEY);
-			if (storedToken) setTokenState(storedToken);
 		} catch {
 			// ignore (SSR or storage disabled)
 		}
@@ -54,28 +47,8 @@ export function BaseUrlProvider({ children }: { children: ReactNode }) {
 		}
 	}, []);
 
-	const setToken = useCallback((value: string) => {
-		const trimmed = value.trim();
-		setTokenState(trimmed);
-		try {
-			if (trimmed) window.localStorage.setItem(TOKEN_KEY, trimmed);
-			else window.localStorage.removeItem(TOKEN_KEY);
-		} catch {
-			// ignore
-		}
-	}, []);
-
-	const resetToken = useCallback(() => {
-		setTokenState("");
-		try {
-			window.localStorage.removeItem(TOKEN_KEY);
-		} catch {
-			// ignore
-		}
-	}, []);
-
 	return (
-		<BaseUrlContext.Provider value={{ baseUrl, setBaseUrl, resetBaseUrl, token, setToken, resetToken }}>
+		<BaseUrlContext.Provider value={{ baseUrl, setBaseUrl, resetBaseUrl }}>
 			{children}
 		</BaseUrlContext.Provider>
 	);
@@ -97,4 +70,25 @@ export function buildUrl(baseUrl: string, path: string, params?: Record<string, 
 		}
 	}
 	return url.toString();
+}
+
+export function buildProxyUrl(
+	baseUrl: string,
+	path: string,
+	query?: Record<string, string | number | undefined>,
+): string {
+	const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+	const pathUrl = new URL(normalizedPath, "http://localhost");
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined && value !== null && value !== "") {
+				pathUrl.searchParams.set(key, String(value));
+			}
+		}
+	}
+	const targetPath = `${pathUrl.pathname}${pathUrl.search}`;
+	return buildUrl(window.location.origin, "/api/admin/proxy", {
+		baseUrl,
+		path: targetPath,
+	});
 }

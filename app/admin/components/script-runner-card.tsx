@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Play, Square, RotateCcw, CheckCircle2, XCircle, AlertCircle, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useBaseUrl, buildUrl } from "./base-url-context";
+import { useBaseUrl, buildProxyUrl } from "./base-url-context";
 import { JsonViewer } from "./json-viewer";
 
 export type ScriptOption = {
@@ -90,7 +90,7 @@ export function ScriptRunnerCard({ script }: { script: ScriptDef }) {
 		setLogs([]);
 		startTicker();
 
-		const url = buildUrl(baseUrl, script.endpoint);
+		const url = buildProxyUrl(baseUrl, script.endpoint);
 
 		try {
 			const res = await fetch(url, {

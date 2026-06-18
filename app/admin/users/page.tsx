@@ -20,7 +20,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useBaseUrl, buildUrl } from "../components/base-url-context";
+import { useBaseUrl, buildProxyUrl } from "../components/base-url-context";
 import { BaseUrlSelector } from "../components/base-url-selector";
 import { toast } from "sonner";
 import {
@@ -61,7 +61,7 @@ type Pagination = {
 };
 
 export default function UsersPage() {
-	const { baseUrl, token } = useBaseUrl();
+	const { baseUrl } = useBaseUrl();
 	const [users, setUsers] = useState<AdminUser[]>([]);
 	const [pagination, setPagination] = useState<Pagination>({ limit: 25, offset: 0, total: 0 });
 	const paginationRef = useRef(pagination);
@@ -79,15 +79,13 @@ export default function UsersPage() {
 	const deleteDialogRef = useRef<HTMLDialogElement>(null);
 
 	const authHeaders = useMemo(() => {
-		const headers: Record<string, string> = { "Content-Type": "application/json" };
-		if (token) headers["Authorization"] = `Bearer ${token}`;
-		return headers;
-	}, [token]);
+		return { "Content-Type": "application/json" };
+	}, []);
 
 	const fetchUsers = useCallback(async () => {
 		setLoading(true);
 		try {
-			const url = buildUrl(baseUrl, "/admin/users", {
+			const url = buildProxyUrl(baseUrl, "/admin/users", {
 				q: q || undefined,
 				limit: pagination.limit,
 				offset: pagination.offset,
@@ -116,7 +114,7 @@ export default function UsersPage() {
 	const updateUser = async (id: string, body: Partial<Pick<AdminUser, "name" | "email" | "isAdmin">>) => {
 		setSavingUser(true);
 		try {
-			const res = await fetch(buildUrl(baseUrl, `/admin/users/${id}`), {
+			const res = await fetch(buildProxyUrl(baseUrl, `/admin/users/${id}`), {
 				method: "PATCH",
 				headers: authHeaders,
 				body: JSON.stringify(body),
@@ -140,7 +138,7 @@ export default function UsersPage() {
 	const deleteUser = async (id: string) => {
 		setDeletingUser(id);
 		try {
-			const res = await fetch(buildUrl(baseUrl, `/admin/users/${id}`), {
+			const res = await fetch(buildProxyUrl(baseUrl, `/admin/users/${id}`), {
 				method: "DELETE",
 				headers: authHeaders,
 			});
