@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, FileText, LayoutDashboard, ScrollText, Users } from "lucide-react";
+import { Activity, Dumbbell, FileText, LayoutDashboard, ScrollText, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
 	{ href: "/admin/diagnostics", label: "Diagnostics", icon: Activity },
 	{ href: "/admin/logs", label: "Logs", icon: ScrollText },
 	{ href: "/admin/reports", label: "Reports", icon: FileText },
+	{ href: "/admin/gyms", label: "Gyms", icon: Dumbbell },
 	{ href: "/admin/users", label: "Users", icon: Users },
 ];
 

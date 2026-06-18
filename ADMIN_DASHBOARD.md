@@ -13,6 +13,8 @@ A single admin-only section (`/admin/*`) of the public site that lets you:
 | `/admin/diagnostics` | One-click buttons for every backend API endpoint + buttons for every CLI maintenance script, each with a real-time progress bar, live log stream, elapsed timer, and final response viewer. |
 | `/admin/logs` | Tabbed log browser. **Scrape log** = the rolling `logs/updated_stats.json` (last 5 scrape sessions, expandable to per-gym rows). **Server stream** = a live SSE tail of the API's stdout/stderr. |
 | `/admin/reports` | Lists every `reports/stat-audit-*.json`, lets you filter by confidence/gym name, and shows a sortable table of repair proposals. |
+| `/admin/gyms` | CRUD for the local `Revo_Gyms` table (search/sort/paginate, create/edit/delete, inline active toggle). Backed by server actions + Drizzle directly (not the admin proxy). |
+| `/admin/users` | Search/edit/delete user accounts and toggle admin status (proxied to the external `Revo-Tracker-API`). |
 
 The backend base URL is configurable in the UI (defaults to `http://localhost:3001`) and persisted in `localStorage`. You can also set a build-time default via `NEXT_PUBLIC_ADMIN_API_URL`. The dashboard talks to the backend directly via fetch + EventSource — no Next.js API route proxying required.
 
