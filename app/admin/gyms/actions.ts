@@ -1,18 +1,11 @@
 "use server";
 
-import { db } from "@/app/db/database";
-import { revoGymCount, revoGyms } from "@/app/db/schema";
+import { createAdminPb } from "@/lib/server/pocketbase";
 import { requireAdminSession } from "@/lib/authz";
-import { count, eq, sql } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
+import { gymSchema, type GymMutationResult } from "./schema";
 import { z } from "zod";
 
-export type GymMutationResult = {
-	success: boolean;
-	message: string;
-	data?: { id?: string };
-	error?: unknown;
-};
+export type { GymMutationResult };
 
 async function assertAdmin(): Promise<boolean> {
 	try {
@@ -23,21 +16,18 @@ async function assertAdmin(): Promise<boolean> {
 	}
 }
 
-export const gymSchema = z.object({
-	name: z.string().trim().min(1, "Name is required").max(255, "Name is too long"),
-	state: z.string().trim().min(1, "State is required").max(50),
-	areaSize: z
-		.number()
-		.int("Area size must be a whole number")
-		.min(0, "Area size cannot be negative")
-		.max(1_000_000),
-	address: z.string().trim().min(1, "Address is required").max(500),
-	postcode: z.number().int("Postcode must be a whole number").min(0, "Postcode cannot be negative").max(99999),
-	active: z.union([z.literal(0), z.literal(1)], { message: "Active must be 0 or 1" }),
-	timezone: z.string().trim().min(1, "Timezone is required").max(50).default("Australia/Perth"),
-	latitude: z.number().nullable().optional(),
-	longitude: z.number().nullable().optional(),
-	squatRacks: z.number().int("Squat racks must be a whole number").min(0, "Squat racks cannot be negative").max(255).default(0),
+const toPbGym = (data: z.infer<typeof gymSchema>) => ({
+	name: data.name,
+	state: data.state,
+	area_size: data.areaSize,
+	address: data.address,
+	postcode: data.postcode,
+	active: data.active === 1 || data.active === true,
+	timezone: data.timezone,
+	latitude: data.latitude ?? 0,
+	longitude: data.longitude ?? 0,
+	Squat_Racks: data.squatRacks,
+	last_updated: new Date().toISOString(),
 });
 
 export const createGym = async (input: z.infer<typeof gymSchema>): Promise<GymMutationResult> => {
@@ -49,24 +39,10 @@ export const createGym = async (input: z.infer<typeof gymSchema>): Promise<GymMu
 		return { success: false, message: "Invalid input", error: parsed.error.flatten() };
 	}
 
-	const id = randomUUID();
-
 	try {
-		await db.insert(revoGyms).values({
-			id,
-			name: parsed.data.name,
-			state: parsed.data.state,
-			areaSize: parsed.data.areaSize,
-			address: parsed.data.address,
-			postcode: parsed.data.postcode,
-			active: parsed.data.active,
-			timezone: parsed.data.timezone,
-			squatRacks: parsed.data.squatRacks,
-			latitude: parsed.data.latitude ?? null,
-			longitude: parsed.data.longitude ?? null,
-			lastUpdated: sql`NOW()`,
-		});
-		return { success: true, message: "Gym created", data: { id } };
+		const pb = await createAdminPb();
+		const record = await pb.collection("Revo_Gyms").create(toPbGym(parsed.data));
+		return { success: true, message: "Gym created", data: { id: record.id } };
 	} catch (err) {
 		return {
 			success: false,
@@ -82,7 +58,7 @@ export const updateGym = async (
 	if (!(await assertAdmin())) {
 		return { success: false, message: "Unauthorized" };
 	}
-	const idParsed = z.string().length(36, "Invalid gym id").safeParse(id);
+	const idParsed = z.string().min(1, "Invalid gym id").safeParse(id);
 	if (!idParsed.success) {
 		return { success: false, message: "Invalid gym id" };
 	}
@@ -91,19 +67,26 @@ export const updateGym = async (
 		return { success: false, message: "Invalid input", error: parsed.error.flatten() };
 	}
 
-	const updates = Object.fromEntries(
-		Object.entries(parsed.data).filter(([, v]) => v !== undefined),
-	) as Partial<typeof revoGyms.$inferInsert>;
+	const updates: Record<string, unknown> = {};
+	if (parsed.data.name !== undefined) updates.name = parsed.data.name;
+	if (parsed.data.state !== undefined) updates.state = parsed.data.state;
+	if (parsed.data.areaSize !== undefined) updates.area_size = parsed.data.areaSize;
+	if (parsed.data.address !== undefined) updates.address = parsed.data.address;
+	if (parsed.data.postcode !== undefined) updates.postcode = parsed.data.postcode;
+	if (parsed.data.active !== undefined) updates.active = parsed.data.active === 1 || parsed.data.active === true;
+	if (parsed.data.timezone !== undefined) updates.timezone = parsed.data.timezone;
+	if (parsed.data.latitude !== undefined) updates.latitude = parsed.data.latitude;
+	if (parsed.data.longitude !== undefined) updates.longitude = parsed.data.longitude;
+	if (parsed.data.squatRacks !== undefined) updates.Squat_Racks = parsed.data.squatRacks;
+	updates.last_updated = new Date().toISOString();
 
 	if (Object.keys(updates).length === 0) {
 		return { success: false, message: "No fields to update" };
 	}
 
 	try {
-		await db
-			.update(revoGyms)
-			.set({ ...updates, lastUpdated: sql`NOW()` })
-			.where(eq(revoGyms.id, idParsed.data));
+		const pb = await createAdminPb();
+		await pb.collection("Revo_Gyms").update(idParsed.data, updates);
 		return { success: true, message: "Gym updated" };
 	} catch (err) {
 		return {
@@ -117,17 +100,17 @@ export const deleteGym = async (id: string): Promise<GymMutationResult> => {
 	if (!(await assertAdmin())) {
 		return { success: false, message: "Unauthorized" };
 	}
-	const idParsed = z.string().length(36, "Invalid gym id").safeParse(id);
+	const idParsed = z.string().min(1, "Invalid gym id").safeParse(id);
 	if (!idParsed.success) {
 		return { success: false, message: "Invalid gym id" };
 	}
 
 	try {
-		const dependents = await db
-			.select({ c: count() })
-			.from(revoGymCount)
-			.where(eq(revoGymCount.gymId, idParsed.data));
-		const depCount = Number(dependents[0]?.c ?? 0);
+		const pb = await createAdminPb();
+		const dependents = await pb.collection("Revo_Gym_Count").getList(1, 1, {
+			filter: `gym_id='${idParsed.data}'`,
+		});
+		const depCount = dependents.totalItems;
 
 		if (depCount > 0) {
 			return {
@@ -136,7 +119,7 @@ export const deleteGym = async (id: string): Promise<GymMutationResult> => {
 			};
 		}
 
-		await db.delete(revoGyms).where(eq(revoGyms.id, idParsed.data));
+		await pb.collection("Revo_Gyms").delete(idParsed.data);
 		return { success: true, message: "Gym deleted" };
 	} catch (err) {
 		return {

@@ -1,16 +1,20 @@
 const isProduction = process.env.NODE_ENV === "production";
 
+// Dev-only allowance so impeccable live mode can load.
+const __impeccableLiveDev =
+	process.env.NODE_ENV === "development" ? " http://localhost:8400" : "";
+
 const cspDirectives = [
 	"default-src 'self'",
 	"base-uri 'self'",
 	"frame-ancestors 'none'",
 	"form-action 'self' https://formsubmit.co",
 	"object-src 'none'",
-	"script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+	`script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com${__impeccableLiveDev}`,
 	"style-src 'self' 'unsafe-inline'",
 	"img-src 'self' data: blob: https:",
 	"font-src 'self' data: https:",
-	"connect-src 'self' http://localhost:3001 https://revotrackerapi.dvcklab.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
+	`connect-src 'self' https://pb.dvcklab.work http://localhost:3001 https://revotrackerapi.dvcklab.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com${__impeccableLiveDev}`,
 	"frame-src 'none'",
 ];
 

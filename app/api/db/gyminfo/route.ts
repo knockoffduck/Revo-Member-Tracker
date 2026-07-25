@@ -1,11 +1,14 @@
-import { db } from "@/app/db/database";
-import { revoGyms } from "@/app/db/schema";
+import { createAdminPb } from "@/lib/server/pocketbase";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-	const data = await db.select().from(revoGyms).orderBy(revoGyms.name);
+	const pb = await createAdminPb();
+	const data = await pb.collection("Revo_Gyms").getFullList({
+		sort: "name",
+		batch: 200,
+	});
 	if (data.length === 0) {
 		return NextResponse.json({
 			success: false,

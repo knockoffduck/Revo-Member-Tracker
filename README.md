@@ -10,18 +10,17 @@ A modern **Next.js 15** application designed to track live gym occupancy and his
 -   **Smart Ranking**: Displays gyms based on occupancy density (least crowded first).
 -   **Historical Data**: Stores data for trend analysis and historical occupancy viewing.
 -   **User Accounts**: 
-    -   Secure authentication via **Better Auth**.
+    -   Secure authentication via **PocketBase**.
     -   Customizable gym preferences and favorite gyms.
 -   **Responsive Design**: Mobile-first UI with a polished dark mode toggle.
--   **Type Safety**: Full end-to-end type safety using Drizzle ORM and TypeScript.
+-   **Type Safety**: Full end-to-end type safety using PocketBase SDK and TypeScript.
 
 ## Tech Stack
 
 -   **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 -   **Runtime**: [Bun](https://bun.sh/)
--   **Database**: MySQL
--   **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
--   **Authentication**: [Better Auth](https://better-auth.com/)
+-   **Database**: [PocketBase](https://pocketbase.io/)
+-   **Authentication**: [PocketBase Auth](https://pocketbase.io/docs/authentication/)
 -   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 -   **UI Components**: [shadcn/ui](https://ui.shadcn.com/) (Radix Primitives)
 -   **Icons**: [Lucide React](https://lucide.dev/)
@@ -31,15 +30,14 @@ A modern **Next.js 15** application designed to track live gym occupancy and his
 ```
 ├── app/                  # Next.js App Router directory
 │   ├── components/       # App-specific components (e.g., Header)
-│   ├── db/               # Database schema and configuration
+│   ├── db/               # PocketBase client configuration
 │   ├── layout.tsx        # Root layout with providers
 │   └── globals.css       # Global styles and Tailwind directives
 ├── components/           # Shared UI components (shadcn/ui)
 │   └── ui/               # Primitives (buttons, inputs, etc.)
-├── lib/                  # Utility functions
-├── drizzle/              # Drizzle migrations output
+├── lib/                  # Utility functions and PocketBase helpers
 ├── public/               # Static assets
-└── ...config files       # Configs for Tailwind, Drizzle, Next.js, Bun, etc.
+└── ...config files       # Configs for Tailwind, Next.js, Bun, etc.
 ```
 
 ## Design System
@@ -71,14 +69,14 @@ The project follows a custom design system detailed in the [Design Guide](design
 3. **Set up environment variables**:
    Create a `.env` file in the root directory:
    ```env
-   DATABASE_URL="mysql://user:password@host:port/database"
-   BETTER_AUTH_SECRET="your-secret-here"
-   BETTER_AUTH_URL="http://localhost:3000"
-   ```
-
-4. **Run database migrations**:
-   ```bash
-   bunx drizzle-kit push
+   NEXT_PUBLIC_POCKETBASE_URL="https://pb.dvcklab.work"
+   POCKETBASE_URL="https://pb.dvcklab.work"
+   POCKETBASE_ADMIN_EMAIL="admin@example.com"
+   POCKETBASE_ADMIN_PASSWORD="your-admin-password"
+   NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+   NEXT_PUBLIC_ADMIN_API_URL="http://localhost:3001"
+   ADMIN_API_TOKEN=""
+   ADMIN_API_URLS="http://localhost:3001"
    ```
 
 ### Running the App

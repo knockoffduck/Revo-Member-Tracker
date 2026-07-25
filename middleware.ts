@@ -71,12 +71,12 @@ function logIpSummary() {
 	ipTracker.clear();
 }
 
-// ── Rate limiter ─────────────────────────────────────────────────────────────
+// ── Rate limiter (bots / unhuman only) ───────────────────────────────────────
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 60; // per window per IP
-const RATE_LIMIT_MAX_BOTS = 20; // per window per IP for bots
+const RATE_LIMIT_MAX_BOTS = 40; // per window per IP for good bots
+const RATE_LIMIT_MAX_UNHUMAN = 60; // per window per IP for unhuman (non-browser) clients
 
 function getClientIp(request: NextRequest): string {
 	const forwardedFor = request.headers.get("x-forwarded-for");
@@ -89,9 +89,22 @@ function getClientIp(request: NextRequest): string {
 	return realIp?.trim() ?? "unknown";
 }
 
-function isRateLimited(ip: string, isBot: boolean): boolean {
+/**
+ * Detects requests that don't look like they come from a real browser.
+ * Real browsers always send Accept and Accept-Language headers.
+ */
+function isUnhuman(request: NextRequest): boolean {
+	const accept = request.headers.get("accept") ?? "";
+	const acceptLang = request.headers.get("accept-language") ?? "";
+	// Browsers always send these; missing both strongly suggests a script/bot
+	if (!accept && !acceptLang) return true;
+	// Scripts often send accept: */* with nothing else useful
+	if (accept === "*/*" && !acceptLang) return true;
+	return false;
+}
+
+function isRateLimited(ip: string, limit: number): boolean {
 	const now = Date.now();
-	const limit = isBot ? RATE_LIMIT_MAX_BOTS : RATE_LIMIT_MAX_REQUESTS;
 	const current = rateLimitStore.get(ip);
 
 	if (!current || current.resetAt <= now) {
@@ -213,15 +226,22 @@ export function middleware(request: NextRequest) {
 		return new NextResponse("Forbidden", { status: 403 });
 	}
 
-	// Rate limit all requests
-	if (isRateLimited(ip, isGoodBot(userAgent))) {
-		console.warn(`[IP-TRACKER] Rate limited: ${ip} | path: ${pathname} | UA: ${userAgent.slice(0, 60)}`);
-		return new NextResponse("Too Many Requests", {
-			status: 429,
-			headers: {
-				"Retry-After": "60",
-			},
-		});
+	// Rate limit good bots and unhuman (non-browser) clients only.
+	// Real human browser traffic is never rate-limited.
+	const goodBot = isGoodBot(userAgent);
+	const unhuman = !goodBot && isUnhuman(request);
+
+	if (goodBot || unhuman) {
+		const limit = goodBot ? RATE_LIMIT_MAX_BOTS : RATE_LIMIT_MAX_UNHUMAN;
+		if (isRateLimited(ip, limit)) {
+			console.warn(`[IP-TRACKER] Rate limited ${goodBot ? "good bot" : "unhuman"}: ${ip} | path: ${pathname} | UA: ${userAgent.slice(0, 60)}`);
+			return new NextResponse("Too Many Requests", {
+				status: 429,
+				headers: {
+					"Retry-After": "60",
+				},
+			});
+		}
 	}
 
 	return NextResponse.next();

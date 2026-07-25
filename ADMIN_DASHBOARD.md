@@ -164,7 +164,7 @@ Keep-alive comment frames (`: keep-alive\n\n`) are sent every 15s so reverse pro
 
 ```bash
 cd Revo-Tracker-API
-cp .env.example .env  # fill in DATABASE_URL etc.
+cp .env.example .env  # fill in POCKETBASE_* and proxy vars
 bun install
 bun run dev           # starts on :3001
 ```
