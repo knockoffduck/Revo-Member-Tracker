@@ -1,6 +1,4 @@
-import { db } from "@/app/db/database";
-import { revoGyms } from "@/app/db/schema";
-import { asc, count, desc, like, or } from "drizzle-orm";
+import { createAdminPb } from "@/lib/server/pocketbase";
 import GymsTable, { GymAdminRow, SortKey } from "./GymsTable";
 
 export const dynamic = "force-dynamic";
@@ -22,34 +20,53 @@ export default async function GymsAdminPage(props: {
 	const sort: SortKey = SORT_KEYS.includes(sortRaw) ? sortRaw : "name";
 	const order = sp?.order === "desc" ? "desc" : "asc";
 	const limit = Math.min(Math.max(Number(sp?.limit ?? 25) || 25, 1), 100);
-	const offset = Math.max(Number(sp?.offset ?? 0) || 0, 0);
+	const page = Math.floor(Math.max(Number(sp?.offset ?? 0) || 0, 0) / limit) + 1;
 
-	const condition = q
-		? or(
-				like(revoGyms.name, `%${q}%`),
-				like(revoGyms.state, `%${q}%`),
-				like(revoGyms.address, `%${q}%`),
-			)
-		: undefined;
+	const sortFieldMap: Record<SortKey, string> = {
+		name: "name",
+		state: "state",
+		areaSize: "area_size",
+		postcode: "postcode",
+		squatRacks: "Squat_Racks",
+		active: "active",
+		lastUpdated: "last_updated",
+	};
 
-	const sortColumn = {
-		name: revoGyms.name,
-		state: revoGyms.state,
-		areaSize: revoGyms.areaSize,
-		postcode: revoGyms.postcode,
-		squatRacks: revoGyms.squatRacks,
-		active: revoGyms.active,
-		lastUpdated: revoGyms.lastUpdated,
-	}[sort];
-	const orderBy = order === "desc" ? desc(sortColumn) : asc(sortColumn);
+	let filter = "";
+	if (q) {
+		const escaped = q.replace(/'/g, "\\'");
+		filter = `(name~'${escaped}' || state~'${escaped}' || address~'${escaped}')`;
+	}
 
-	const [rows, totalRows] = await Promise.all([
-		db.select().from(revoGyms).where(condition).orderBy(orderBy).limit(limit).offset(offset),
-		db.select({ c: count() }).from(revoGyms).where(condition),
-	]);
+	let total = 0;
+	let gyms: GymAdminRow[] = [];
+	let loadError: string | null = null;
 
-	const total = Number(totalRows[0]?.c ?? 0);
-	const gyms: GymAdminRow[] = rows.map((r) => ({ ...r }));
+	try {
+		const pb = await createAdminPb();
+		const result = await pb.collection("Revo_Gyms").getList(page, limit, {
+			filter: filter || undefined,
+			sort: `${order === "desc" ? "-" : "+"}${sortFieldMap[sort]}`,
+		});
+
+		total = result.totalItems;
+		gyms = result.items.map((r) => ({
+			id: r.id,
+			name: r.name,
+			state: r.state,
+			areaSize: r.area_size,
+			address: r.address,
+			postcode: r.postcode,
+			active: r.active ? 1 : 0,
+			timezone: r.timezone,
+			longitude: r.longitude,
+			latitude: r.latitude,
+			squatRacks: r.Squat_Racks,
+			lastUpdated: r.last_updated,
+		}));
+	} catch (err) {
+		loadError = (err as Error)?.message || "Failed to load gyms";
+	}
 
 	return (
 		<div className="space-y-6">
@@ -59,11 +76,18 @@ export default async function GymsAdminPage(props: {
 					Manage the list of Revo gyms shown across the site. Deactivate a gym to hide it from public views without losing its history.
 				</p>
 			</div>
-			<GymsTable
-				gyms={gyms}
-				pagination={{ limit, offset, total }}
-				search={{ q, sort, order }}
-			/>
+			{loadError ? (
+				<div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-sm text-destructive">
+					<p className="font-medium">Failed to load gyms</p>
+					<p className="mt-1 text-destructive/80">{loadError}</p>
+				</div>
+			) : (
+				<GymsTable
+					gyms={gyms}
+					pagination={{ limit, offset: (page - 1) * limit, total }}
+					search={{ q, sort, order }}
+				/>
+			)}
 		</div>
 	);
 }

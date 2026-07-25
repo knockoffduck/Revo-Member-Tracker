@@ -1,8 +1,7 @@
-import { getGyms } from "@/lib/fetchData"; // Assuming getGyms is here
-import GymList from "./GymList"; // Corrected import path assumption
-import { GymResponse } from "./_types"; // Assuming type is here
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getGyms } from "@/lib/fetchData";
+import GymList from "./GymList";
+import { GymResponse } from "./_types";
+import { getCurrentUser } from "@/lib/current-user";
 import { userHasGymPreferences, getUserGymPreferences } from "@/app/actions";
 
 export default async function Home(props: {
@@ -17,17 +16,13 @@ export default async function Home(props: {
 
     let response: GymResponse | undefined = undefined;
     let fetchError: string | null = null;
-    // --- User Session and Preferences ---
-    const session = await auth.api.getSession({
-        headers: await headers(), // Required for server-side session retrieval
-    });
-    const userId = session?.user?.id;
-    // Check if the logged-in user has gym preferences set
+
+    const user = await getCurrentUser();
+    const userId = user?.id;
     const hasPreferences = userId ? await userHasGymPreferences(userId) : false;
     const userFavorites = userId ? await getUserGymPreferences(userId) : [];
 
     try {
-        // Let TypeScript infer the type or explicitly type as potentially undefined
         response = await getGyms(
             undefined,
             {
@@ -47,7 +42,6 @@ export default async function Home(props: {
                 {fetchError ? (
                     <p className="text-red-500">{fetchError}</p>
                 ) : response ? (
-                    // Only render GymList if response is defined and not null/undefined
                     <GymList
                         hasGymPreferences={hasPreferences}
                         userFavorites={userFavorites}
@@ -57,8 +51,6 @@ export default async function Home(props: {
                         currentTime={response.timestamp}
                     />
                 ) : (
-                    // Optional: Handle the case where response is undefined (e.g., loading or no data)
-                    // You might want a more sophisticated loading state here
                     <p>Loading gyms...</p>
                 )}
             </div>

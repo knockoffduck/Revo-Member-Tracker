@@ -75,8 +75,8 @@ function logIpSummary() {
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 60; // per window per IP
-const RATE_LIMIT_MAX_BOTS = 20; // per window per IP for bots
+const RATE_LIMIT_MAX_REQUESTS = 200; // per window per IP
+const RATE_LIMIT_MAX_BOTS = 40; // per window per IP for bots
 
 function getClientIp(request: NextRequest): string {
 	const forwardedFor = request.headers.get("x-forwarded-for");

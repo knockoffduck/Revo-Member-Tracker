@@ -3,11 +3,8 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { db } from "@/app/db/database";
-import { revoGymCount, revoGyms, user } from "@/app/db/schema";
-import { and, asc, desc, eq, gte, inArray, lte, ne } from "drizzle-orm";
-import { auth } from "./auth";
-import { headers } from "next/headers";
+import { createPublicPb } from "@/lib/server/pocketbase";
+import { getCurrentUser } from "@/lib/current-user";
 import { calculateDistance, getPostcodeCoordinates } from "./postcodeData";
 import { unstable_cache } from "next/cache";
 
@@ -53,6 +50,7 @@ export const resolveGymDate = (timezone: string, date?: string) => {
 
 export type GymMeta = {
     id: string;
+    name: string;
     timezone: string;
     address: string;
     postcode: number;
@@ -71,24 +69,42 @@ let trendsCache:
     | null = null;
 let trendsCachePromise: Promise<Record<string, GymTrend[]>> | null = null;
 
-const fetchGymMeta = async (gymName: string): Promise<GymMeta | null> => {
-    const result = await db
-        .select({
-            id: revoGyms.id,
-            timezone: revoGyms.timezone,
-            address: revoGyms.address,
-            postcode: revoGyms.postcode,
-            state: revoGyms.state,
-            areaSize: revoGyms.areaSize,
-            latitude: revoGyms.latitude,
-            longitude: revoGyms.longitude,
-            squatRacks: revoGyms.squatRacks,
-        })
-        .from(revoGyms)
-        .where(eq(revoGyms.name, gymName))
-        .limit(1);
+type PbRecord = Record<string, unknown>;
 
-    return result[0] || null;
+const mapGymMeta = (record: PbRecord): GymMeta => ({
+    id: String(record.id),
+    name: String(record.name ?? ""),
+    timezone: String(record.timezone ?? "Australia/Perth"),
+    address: String(record.address ?? ""),
+    postcode: Number(record.postcode ?? 0),
+    state: String(record.state ?? ""),
+    areaSize: Number(record.area_size ?? 0),
+    latitude: record.latitude == null ? null : Number(record.latitude),
+    longitude: record.longitude == null ? null : Number(record.longitude),
+    squatRacks: Number(record.Squat_Racks ?? 0),
+});
+
+const mapGym = (record: PbRecord, meta?: GymMeta | null): Gym => ({
+    id: String(record.id),
+    created: String(record.created),
+    count: Number(record.count ?? 0),
+    ratio: Number(record.ratio ?? 0),
+    gymName: String(record.gym_name ?? record.name ?? ""),
+    percentage: Number(record.percentage ?? 0),
+    gymId: String(record.gym_id ?? record.id),
+    areaSize: meta?.areaSize ?? 0,
+    state: meta?.state ?? "",
+    timezone: meta?.timezone ?? "Australia/Perth",
+    squatRacks: meta?.squatRacks ?? 0,
+});
+
+const fetchGymMeta = async (gymName: string): Promise<GymMeta | null> => {
+    const pb = createPublicPb();
+    const result = await pb.collection("Revo_Gyms").getList(1, 1, {
+        filter: `name='${gymName.replace(/'/g, "\\'")}'`,
+    });
+
+    return result.items[0] ? mapGymMeta(result.items[0]) : null;
 };
 
 export const getGymMeta = async (gymName: string): Promise<GymMeta | null> => {
@@ -103,8 +119,6 @@ export const getGymMeta = async (gymName: string): Promise<GymMeta | null> => {
 /**
  * Fetches the latest gym occupancy data.
  * Optionally filters by user preferences if a session exists and preferences are set.
- * @param gyms - Optional array of gym names (currently unused in the function logic but kept for potential future use).
- * @returns A Promise resolving to a GymResponse object containing the timestamp of the latest data and the gym data itself.
  */
 export const getGyms = async (
     gyms?: string[],
@@ -115,160 +129,90 @@ export const getGyms = async (
     showAll: boolean = false,
 ) => {
     try {
-        // Find the timestamp of the most recent entry in the database
-        const latestTimeResult = await db
-            .select({ created: revoGymCount.created })
-            .from(revoGymCount)
-            .orderBy(desc(revoGymCount.created))
-            .limit(1);
+        const pb = createPublicPb();
 
-        // Ensure we found a timestamp
-        if (!latestTimeResult || latestTimeResult.length === 0) {
+        // Find the timestamp of the most recent entry
+        const latestPage = await pb.collection("Revo_Gym_Count").getList(1, 1, {
+            sort: "-created",
+        });
+
+        const latestTimestamp = latestPage.items[0]?.created;
+        if (!latestTimestamp) {
             throw new Error("No entries found in the database");
         }
-        const latestTimestamp = latestTimeResult[0].created;
 
         // Attempt to get the current user session
-        const session = await auth.api.getSession({
-            headers: await headers(), // Pass headers for server-side session retrieval
-        });
-        const userId = session?.user?.id;
+        const user = await getCurrentUser();
+        const userId = user?.id;
 
-        // Determine OrderBy Clause
-        let orderByClause;
-        if (sort.key === "gymName") {
-            orderByClause =
-                sort.direction === "asc"
-                    ? asc(revoGymCount.gymName)
-                    : desc(revoGymCount.gymName);
-        } else if (sort.key === "percentage") {
-            orderByClause =
-                sort.direction === "asc"
-                    ? asc(revoGymCount.percentage)
-                    : desc(revoGymCount.percentage);
-        } else if (sort.key === "areaSize") {
-            orderByClause =
-                sort.direction === "asc"
-                    ? asc(revoGyms.areaSize)
-                    : desc(revoGyms.areaSize);
-        } else if (sort.key === "count") {
-            orderByClause =
-                sort.direction === "asc"
-                    ? asc(revoGymCount.count)
-                    : desc(revoGymCount.count);
-        } else if (sort.key === "rackAmount") {
-            orderByClause =
-                sort.direction === "asc"
-                    ? asc(revoGyms.squatRacks)
-                    : desc(revoGyms.squatRacks);
-        } else {
-            // Fallback
-            orderByClause = asc(revoGymCount.percentage);
-        }
-
-        // Determine Base Filter (Timestamp + AreaSize check if sorting by size)
-        const baseConditions = [
-            eq(revoGymCount.created, latestTimestamp),
-            eq(revoGyms.active, 1),
+        // Fetch all count records for the latest timestamp.
+        // Use a minute-wide range so the query can use the created index
+        // (LIKE/regex filters cannot use a B-tree index on a 6M-row table).
+        const minutePrefix = latestTimestamp.slice(0, 16);
+        const filterParts = [
+            `created>='${minutePrefix}:00' && created<='${minutePrefix}:59'`,
         ];
-
-        if (sort.key === "areaSize") {
-            baseConditions.push(gte(revoGyms.areaSize, 1));
+        if (gyms && gyms.length > 0) {
+            const namesFilter = gyms.map((g) => `gym_name='${g.replace(/'/g, "\\'")}'`).join(" || ");
+            filterParts.push(`(${namesFilter})`);
         }
 
-        if (sort.key === "rackAmount") {
-            baseConditions.push(gte(revoGyms.squatRacks, 1));
-        }
+        const latestRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
+            filter: filterParts.join(" && "),
+            batch: 200,
+        });
 
-        let latestData: Gym[] = [];
-
-        // If no user is logged in, fetch all gyms for the latest timestamp
-        if (!userId || showAll) {
-            latestData = await db
-                .select({
-                    id: revoGymCount.id,
-                    created: revoGymCount.created,
-                    count: revoGymCount.count,
-                    ratio: revoGymCount.ratio,
-                    gymName: revoGymCount.gymName,
-                    percentage: revoGymCount.percentage,
-                    gymId: revoGymCount.gymId,
-                    areaSize: revoGyms.areaSize,
-                    state: revoGyms.state,
-                    timezone: revoGyms.timezone,
-                    squatRacks: revoGyms.squatRacks,
-                })
-                .from(revoGymCount)
-                .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
-                .where(and(...baseConditions))
-                .orderBy(orderByClause);
-        } else {
-            // If a user is logged in, fetch their gym preferences
-            const userPreferencesResult = await db
-                .select({ gymPreferences: user.gymPreferences })
-                .from(user)
-                .where(eq(user.id, userId))
-                .limit(1);
-
-            const gymPreferences = userPreferencesResult[0]?.gymPreferences;
-
-            // If user has no preferences set, fetch all gyms (same as anonymous user)
-            if (
-                !gymPreferences ||
-                !Array.isArray(gymPreferences) ||
-                gymPreferences.length === 0
-            ) {
-                latestData = await db
-                    .select({
-                        id: revoGymCount.id,
-                        created: revoGymCount.created,
-                        count: revoGymCount.count,
-                        ratio: revoGymCount.ratio,
-                        gymName: revoGymCount.gymName,
-                        percentage: revoGymCount.percentage,
-                        gymId: revoGymCount.gymId,
-                        areaSize: revoGyms.areaSize,
-                        state: revoGyms.state,
-                        timezone: revoGyms.timezone,
-                        squatRacks: revoGyms.squatRacks,
-                    })
-                    .from(revoGymCount)
-                    .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
-                    .where(and(...baseConditions))
-                    .orderBy(orderByClause);
-            } else {
-                // If user has preferences, fetch only the preferred gyms for the latest timestamp
-                latestData = await db
-                    .select({
-                        id: revoGymCount.id,
-                        created: revoGymCount.created,
-                        count: revoGymCount.count,
-                        ratio: revoGymCount.ratio,
-                        gymName: revoGymCount.gymName,
-                        percentage: revoGymCount.percentage,
-                        gymId: revoGymCount.gymId,
-                        areaSize: revoGyms.areaSize,
-                        state: revoGyms.state,
-                        timezone: revoGyms.timezone,
-                        squatRacks: revoGyms.squatRacks,
-                    })
-                    .from(revoGymCount)
-                    .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
-                    .where(
-                        and(
-                            ...baseConditions,
-                            // Filter by gyms present in the user's preferences array
-                            inArray(
-                                revoGymCount.gymName,
-                                gymPreferences as string[],
-                            ),
-                        ),
-                    )
-                    .orderBy(orderByClause);
+        // Fetch active gym metadata for all referenced gyms
+        const gymIds = [...new Set(latestRecords.map((r) => String(r.gym_id)).filter(Boolean))];
+        const gymMetaMap = new Map<string, GymMeta>();
+        if (gymIds.length > 0) {
+            const metaFilterParts = [gymIds.map((id) => `id='${id}'`).join(" || "), "active=true"];
+            const metaRecords = await pb.collection("Revo_Gyms").getFullList({
+                filter: metaFilterParts.join(" && "),
+                batch: 200,
+            });
+            for (const record of metaRecords) {
+                gymMetaMap.set(record.id, mapGymMeta(record));
             }
         }
 
-        // Apply client-side sorting for perRack (calculated field)
+        let latestData: Gym[] = latestRecords
+            .filter((record) => gymMetaMap.has(String(record.gym_id)))
+            .map((record) => mapGym(record, gymMetaMap.get(String(record.gym_id))!));
+
+        // Apply user preferences filter
+        if (userId && !showAll) {
+            const preferences = user?.gymPreferences ?? [];
+            if (preferences.length > 0) {
+                latestData = latestData.filter((g) => preferences.includes(g.gymName));
+            }
+        }
+
+        // Apply area/rack filters
+        if (sort.key === "areaSize") {
+            latestData = latestData.filter((g) => g.areaSize >= 1);
+        }
+        if (sort.key === "rackAmount") {
+            latestData = latestData.filter((g) => g.squatRacks >= 1);
+        }
+
+        // Apply sorting
+        const sortKey = sort.key as GymResponse["data"][number] extends infer T ? keyof T : never;
+        const direction = sort.direction === "asc" ? 1 : -1;
+        if (sort.key === "gymName") {
+            latestData.sort((a, b) => direction * a.gymName.localeCompare(b.gymName));
+        } else if (sort.key === "percentage") {
+            latestData.sort((a, b) => direction * (a.percentage - b.percentage));
+        } else if (sort.key === "areaSize") {
+            latestData.sort((a, b) => direction * (a.areaSize - b.areaSize));
+        } else if (sort.key === "count") {
+            latestData.sort((a, b) => direction * (a.count - b.count));
+        } else if (sort.key === "rackAmount") {
+            latestData.sort((a, b) => direction * (a.squatRacks - b.squatRacks));
+        } else {
+            latestData.sort((a, b) => direction * (a.percentage - b.percentage));
+        }
+
         if (sort.key === "perRack") {
             latestData.sort((a, b) => {
                 const ratioA = a.squatRacks > 0 ? a.count / a.squatRacks : Infinity;
@@ -277,23 +221,25 @@ export const getGyms = async (
             });
         }
 
-        // Structure the response
         const result: GymResponse = {
             timestamp: latestTimestamp,
             data: latestData,
         };
         return result;
     } catch (error) {
-        console.error("Error fetching gym data:", error);
-        // Re-throw the error to be handled by the caller or Next.js error boundary
+        const err = error as Error & { url?: string; status?: number; response?: unknown };
+        console.error("Error fetching gym data:", {
+            message: err?.message,
+            url: err?.url,
+            status: err?.status,
+            response: err?.response,
+        });
         throw error;
     }
 };
 
 /**
- * Fetches historical occupancy data for a specific gym for the current day (in Perth timezone).
- * @param gymName - The name of the gym to fetch stats for.
- * @returns A Promise resolving to an array of gym occupancy records for the day, ordered by time.
+ * Fetches historical occupancy data for a specific gym for the current day (in the gym's timezone).
  */
 export const getGymStats = async (
     gymName: string,
@@ -313,44 +259,28 @@ export const getGymStats = async (
             return [];
         }
 
-        const rows = await db
-            .select({
-                id: revoGymCount.id,
-                created: revoGymCount.created,
-                count: revoGymCount.count,
-                ratio: revoGymCount.ratio,
-                gymName: revoGymCount.gymName,
-                percentage: revoGymCount.percentage,
-                gymId: revoGymCount.gymId,
-            })
-            .from(revoGymCount)
-            .where(
-                and(
-                    eq(revoGymCount.gymId, resolvedGymMeta.id),
-                    gte(revoGymCount.created, startOfDayInGymTz.utc().format()),
-                    lte(revoGymCount.created, endOfDayInGymTz.utc().format()),
-                ),
-            )
-            .orderBy(asc(revoGymCount.created));
+        const pb = createPublicPb();
+        // PocketBase stores `created` as "YYYY-MM-DD HH:mm:ss.SSSZ" (space, not T).
+        // Format boundaries to match that representation for correct string comparison.
+        const startUtc = startOfDayInGymTz.utc().format("YYYY-MM-DD HH:mm:ss") + "Z";
+        const endUtc = endOfDayInGymTz.utc().format("YYYY-MM-DD HH:mm:ss") + "Z";
+        const records = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
+            filter: `gym_id='${resolvedGymMeta.id}' && created>='${startUtc}' && created<='${endUtc}'`,
+            sort: "created",
+            batch: 500,
+        });
 
-        const data = rows.map((row) => ({
-            ...row,
+        const data = records.map((record) => ({
+            ...mapGym(record, resolvedGymMeta),
             gymName,
-            areaSize: resolvedGymMeta.areaSize,
-            state: resolvedGymMeta.state,
-            timezone: resolvedGymMeta.timezone,
-            squatRacks: resolvedGymMeta.squatRacks,
         }));
         const t1 = performance.now();
 
-        console.log(
-            `Time taken to fetch gym stats for ${gymName}: ${t1 - t0}ms`,
-        );
+        console.log(`Time taken to fetch gym stats for ${gymName}: ${t1 - t0}ms`);
 
         return data;
     } catch (error) {
         console.error(`Error fetching gym stats for ${gymName}:`, error);
-        // Re-throw the error
         throw error;
     }
 };
@@ -366,34 +296,20 @@ export const getGymLiveSnapshot = async (
             return null;
         }
 
-        const rows = await db
-            .select({
-                id: revoGymCount.id,
-                created: revoGymCount.created,
-                count: revoGymCount.count,
-                ratio: revoGymCount.ratio,
-                gymName: revoGymCount.gymName,
-                percentage: revoGymCount.percentage,
-                gymId: revoGymCount.gymId,
-            })
-            .from(revoGymCount)
-            .where(eq(revoGymCount.gymId, resolvedGymMeta.id))
-            .orderBy(desc(revoGymCount.created))
-            .limit(1);
+        const pb = createPublicPb();
+        const records = await pb.collection("Revo_Gym_Count").getList<PbRecord>(1, 1, {
+            filter: `gym_id='${resolvedGymMeta.id}'`,
+            sort: "-created",
+        });
 
-        const latestRow = rows[0];
-
+        const latestRow = records.items[0];
         if (!latestRow) {
             return null;
         }
 
         return {
-            ...latestRow,
+            ...mapGym(latestRow, resolvedGymMeta),
             gymName,
-            areaSize: resolvedGymMeta.areaSize,
-            state: resolvedGymMeta.state,
-            timezone: resolvedGymMeta.timezone,
-            squatRacks: resolvedGymMeta.squatRacks,
         };
     } catch (error) {
         console.error(`Error fetching live gym snapshot for ${gymName}:`, error);
@@ -444,9 +360,7 @@ export const getAllTrends = async (): Promise<Record<string, GymTrend[]>> => {
                     expiresAt: Date.now() + TRENDS_CACHE_TTL_MS,
                 };
 
-                console.log(
-                    `Fetched gym trends in ${performance.now() - startedAt}ms`,
-                );
+                console.log(`Fetched gym trends in ${performance.now() - startedAt}ms`);
 
                 return json.data;
             })().finally(() => {
@@ -464,7 +378,6 @@ export const getAllTrends = async (): Promise<Record<string, GymTrend[]>> => {
 
 /**
  * Fetches the trend data for a specific gym and the current day of the week.
- * @param gymId - The ID of the gym (e.g., from revoGyms table or mapped locally).
  */
 export const getGymTrend = async (
     gymId: string,
@@ -500,8 +413,6 @@ export type GymDetails = {
 
 /**
  * Fetches detailed information for a specific gym.
- * @param gymName - The name of the gym.
- * @returns A Promise resolving to the gym details or null if not found.
  */
 export const getGymDetails = async (gymName: string): Promise<GymDetails | null> => {
     try {
@@ -560,10 +471,6 @@ export type NearbyGym = {
 
 /**
  * Fetches nearby gyms that are less crowded than the current gym.
- * @param gymName - The name of the reference gym.
- * @param radiusKm - Maximum distance in kilometres (default: 20).
- * @param maxResults - Maximum number of results to return (default: 5).
- * @returns A Promise resolving to an array of nearby gyms sorted by crowd level (ascending).
  */
 export const getNearbyGyms = async (
     gymName: string,
@@ -571,32 +478,27 @@ export const getNearbyGyms = async (
     maxResults: number = 5
 ): Promise<NearbyGym[]> => {
     try {
-        // Get the reference gym's details including postcode
-        const referenceGym = await db
-            .select({
-                postcode: revoGyms.postcode,
-                latitude: revoGyms.latitude,
-                longitude: revoGyms.longitude,
-            })
-            .from(revoGyms)
-            .where(eq(revoGyms.name, gymName))
-            .limit(1);
+        const pb = createPublicPb();
 
-        if (!referenceGym || referenceGym.length === 0) {
+        const referenceGym = await pb.collection("Revo_Gyms").getList(1, 1, {
+            filter: `name='${gymName.replace(/'/g, "\\'")}'`,
+        });
+
+        if (!referenceGym.items.length) {
             console.warn(`Reference gym not found: ${gymName}`);
             return [];
         }
 
-        const refGym = referenceGym[0];
+        const refRecord = referenceGym.items[0];
+        const refMeta = mapGymMeta(refRecord);
 
-        // Get coordinates - use stored lat/lng or fallback to postcode lookup
-        let refLat = refGym.latitude;
-        let refLng = refGym.longitude;
+        let refLat = refMeta.latitude;
+        let refLng = refMeta.longitude;
 
         if (!refLat || !refLng) {
-            const coords = getPostcodeCoordinates(refGym.postcode);
+            const coords = getPostcodeCoordinates(refMeta.postcode);
             if (!coords) {
-                console.warn(`No coordinates found for postcode: ${refGym.postcode}`);
+                console.warn(`No coordinates found for postcode: ${refMeta.postcode}`);
                 return [];
             }
             refLat = coords.lat;
@@ -604,48 +506,45 @@ export const getNearbyGyms = async (
         }
 
         // Get the latest timestamp
-        const latestTimeResult = await db
-            .select({ created: revoGymCount.created })
-            .from(revoGymCount)
-            .orderBy(desc(revoGymCount.created))
-            .limit(1);
-
-        if (!latestTimeResult || latestTimeResult.length === 0) {
+        const latestPage = await pb.collection("Revo_Gym_Count").getList(1, 1, {
+            sort: "-created",
+        });
+        const latestTimestamp = latestPage.items[0]?.created;
+        if (!latestTimestamp) {
             return [];
         }
-        const latestTimestamp = latestTimeResult[0].created;
 
-        // Get all active gyms except the reference gym with their current crowd levels
-        const allGyms = await db
-            .select({
-                gymName: revoGymCount.gymName,
-                percentage: revoGymCount.percentage,
-                postcode: revoGyms.postcode,
-                latitude: revoGyms.latitude,
-                longitude: revoGyms.longitude,
-                state: revoGyms.state,
-            })
-            .from(revoGymCount)
-            .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
-            .where(
-                and(
-                    eq(revoGymCount.created, latestTimestamp),
-                    eq(revoGyms.active, 1),
-                    ne(revoGyms.name, gymName)
-                )
-            );
+        const minutePrefix = latestTimestamp.slice(0, 16);
+        const allRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
+            filter: `created>='${minutePrefix}:00' && created<='${minutePrefix}:59' && gym_id!='${refRecord.id}'`,
+            batch: 200,
+        });
 
-        // Calculate distances and filter by radius
+        const gymIds = [...new Set(allRecords.map((r) => String(r.gym_id)).filter(Boolean))];
+        const gymMetaMap = new Map<string, GymMeta>();
+        if (gymIds.length > 0) {
+            const metaFilterParts = [gymIds.map((id) => `id='${id}'`).join(" || "), "active=true"];
+            const metaRecords = await pb.collection("Revo_Gyms").getFullList<PbRecord>({
+                filter: metaFilterParts.join(" && "),
+                batch: 200,
+            });
+            for (const record of metaRecords) {
+                gymMetaMap.set(String(record.id), mapGymMeta(record));
+            }
+        }
+
         const nearbyGyms: NearbyGym[] = [];
 
-        for (const gym of allGyms) {
-            let gymLat = gym.latitude;
-            let gymLng = gym.longitude;
+        for (const record of allRecords) {
+            const meta = gymMetaMap.get(String(record.gym_id));
+            if (!meta) continue;
 
-            // Fallback to postcode lookup if no stored coordinates
+            let gymLat = meta.latitude;
+            let gymLng = meta.longitude;
+
             if (!gymLat || !gymLng) {
-                const coords = getPostcodeCoordinates(gym.postcode);
-                if (!coords) continue; // Skip if no coordinates available
+                const coords = getPostcodeCoordinates(meta.postcode);
+                if (!coords) continue;
                 gymLat = coords.lat;
                 gymLng = coords.lng;
             }
@@ -654,15 +553,14 @@ export const getNearbyGyms = async (
 
             if (distance <= radiusKm) {
                 nearbyGyms.push({
-                    gymName: gym.gymName,
-                    percentage: gym.percentage,
-                    distanceKm: Math.round(distance * 10) / 10, // Round to 1 decimal
-                    state: gym.state as string,
+                    gymName: String(record.gym_name ?? meta.name),
+                    percentage: Number(record.percentage ?? 0),
+                    distanceKm: Math.round(distance * 10) / 10,
+                    state: meta.state,
                 });
             }
         }
 
-        // Sort by percentage (ascending - less crowded first), then by distance
         nearbyGyms.sort((a, b) => {
             if (a.percentage !== b.percentage) {
                 return a.percentage - b.percentage;
@@ -693,10 +591,6 @@ export const getCachedNearbyGyms = async (
 
 /**
  * Fetches nearby gyms based on a postcode instead of a gym name.
- * @param postcode - The reference postcode.
- * @param radiusKm - Maximum distance in kilometres (default: 20).
- * @param maxResults - Maximum number of results to return (default: 5).
- * @returns A Promise resolving to an array of nearby gyms sorted by crowd level (ascending).
  */
 export const getNearbyGymsByPostcode = async (
     postcode: number,
@@ -704,7 +598,6 @@ export const getNearbyGymsByPostcode = async (
     maxResults: number = 5
 ): Promise<NearbyGym[]> => {
     try {
-        // Get coordinates from postcode
         const coords = getPostcodeCoordinates(postcode);
         if (!coords) {
             console.warn(`No coordinates found for postcode: ${postcode}`);
@@ -714,47 +607,46 @@ export const getNearbyGymsByPostcode = async (
         const refLat = coords.lat;
         const refLng = coords.lng;
 
-        // Get the latest timestamp
-        const latestTimeResult = await db
-            .select({ created: revoGymCount.created })
-            .from(revoGymCount)
-            .orderBy(desc(revoGymCount.created))
-            .limit(1);
+        const pb = createPublicPb();
 
-        if (!latestTimeResult || latestTimeResult.length === 0) {
+        const latestPage = await pb.collection("Revo_Gym_Count").getList(1, 1, {
+            sort: "-created",
+        });
+        const latestTimestamp = latestPage.items[0]?.created;
+        if (!latestTimestamp) {
             return [];
         }
-        const latestTimestamp = latestTimeResult[0].created;
 
-        // Get all active gyms with their current crowd levels
-        const allGyms = await db
-            .select({
-                gymName: revoGymCount.gymName,
-                percentage: revoGymCount.percentage,
-                postcode: revoGyms.postcode,
-                latitude: revoGyms.latitude,
-                longitude: revoGyms.longitude,
-                state: revoGyms.state,
-            })
-            .from(revoGymCount)
-            .innerJoin(revoGyms, eq(revoGymCount.gymId, revoGyms.id))
-            .where(
-                and(
-                    eq(revoGymCount.created, latestTimestamp),
-                    eq(revoGyms.active, 1)
-                )
-            );
+        const minutePrefix = latestTimestamp.slice(0, 16);
+        const allRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
+            filter: `created>='${minutePrefix}:00' && created<='${minutePrefix}:59'`,
+            batch: 200,
+        });
 
-        // Calculate distances and filter by radius
+        const gymIds = [...new Set(allRecords.map((r) => String(r.gym_id)).filter(Boolean))];
+        const gymMetaMap = new Map<string, GymMeta>();
+        if (gymIds.length > 0) {
+            const metaFilterParts = [gymIds.map((id) => `id='${id}'`).join(" || "), "active=true"];
+            const metaRecords = await pb.collection("Revo_Gyms").getFullList<PbRecord>({
+                filter: metaFilterParts.join(" && "),
+                batch: 200,
+            });
+            for (const record of metaRecords) {
+                gymMetaMap.set(String(record.id), mapGymMeta(record));
+            }
+        }
+
         const nearbyGyms: NearbyGym[] = [];
 
-        for (const gym of allGyms) {
-            let gymLat = gym.latitude;
-            let gymLng = gym.longitude;
+        for (const record of allRecords) {
+            const meta = gymMetaMap.get(String(record.gym_id));
+            if (!meta) continue;
 
-            // Fallback to postcode lookup if no stored coordinates
+            let gymLat = meta.latitude;
+            let gymLng = meta.longitude;
+
             if (!gymLat || !gymLng) {
-                const gymCoords = getPostcodeCoordinates(gym.postcode);
+                const gymCoords = getPostcodeCoordinates(meta.postcode);
                 if (!gymCoords) continue;
                 gymLat = gymCoords.lat;
                 gymLng = gymCoords.lng;
@@ -764,15 +656,14 @@ export const getNearbyGymsByPostcode = async (
 
             if (distance <= radiusKm) {
                 nearbyGyms.push({
-                    gymName: gym.gymName,
-                    percentage: gym.percentage,
+                    gymName: String(record.gym_name ?? meta.name),
+                    percentage: Number(record.percentage ?? 0),
                     distanceKm: Math.round(distance * 10) / 10,
-                    state: gym.state as string,
+                    state: meta.state,
                 });
             }
         }
 
-        // Sort by percentage (ascending), then by distance
         nearbyGyms.sort((a, b) => {
             if (a.percentage !== b.percentage) {
                 return a.percentage - b.percentage;
