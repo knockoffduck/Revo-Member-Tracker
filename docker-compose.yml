@@ -20,7 +20,7 @@ services:
     image: revo-member-tracker:latest
     container_name: revo-member-tracker
     ports:
-      - "3000:3000"
+      - "${HOST_PORT:-3000}:3000"
     env_file:
       - .env
     environment:
