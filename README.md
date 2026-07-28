@@ -10,7 +10,7 @@ A modern **Next.js 15** application designed to track live gym occupancy and his
 -   **Smart Ranking**: Displays gyms based on occupancy density (least crowded first).
 -   **Historical Data**: Stores data for trend analysis and historical occupancy viewing.
 -   **User Accounts**: 
-    -   Secure authentication via **PocketBase**.
+    -   Secure authentication via **Better Auth** (email/password, backed by MySQL).
     -   Customizable gym preferences and favorite gyms.
 -   **Responsive Design**: Mobile-first UI with a polished dark mode toggle.
 -   **Type Safety**: Full end-to-end type safety using PocketBase SDK and TypeScript.
@@ -19,8 +19,8 @@ A modern **Next.js 15** application designed to track live gym occupancy and his
 
 -   **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 -   **Runtime**: [Bun](https://bun.sh/)
--   **Database**: [PocketBase](https://pocketbase.io/)
--   **Authentication**: [PocketBase Auth](https://pocketbase.io/docs/authentication/)
+-   **App Database**: [PocketBase](https://pocketbase.io/) (gym + announcement data)
+-   **Authentication**: [Better Auth](https://www.better-auth.com/) (user accounts in MySQL via [Drizzle ORM](https://orm.drizzle.team/))
 -   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 -   **UI Components**: [shadcn/ui](https://ui.shadcn.com/) (Radix Primitives)
 -   **Icons**: [Lucide React](https://lucide.dev/)
@@ -73,6 +73,10 @@ The project follows a custom design system detailed in the [Design Guide](design
    POCKETBASE_URL="https://pb.dvcklab.work"
    POCKETBASE_ADMIN_EMAIL="admin@example.com"
    POCKETBASE_ADMIN_PASSWORD="your-admin-password"
+   # Better Auth + MySQL (user accounts)
+   DATABASE_URL="mysql://user:password@localhost:3306/revo"
+   BETTER_AUTH_SECRET="generate-a-long-random-secret"
+   BETTER_AUTH_URL="http://localhost:3000"
    NEXT_PUBLIC_BASE_URL="http://localhost:3000"
    NEXT_PUBLIC_ADMIN_API_URL="http://localhost:3001"
    ADMIN_API_TOKEN=""
@@ -95,20 +99,31 @@ The project follows a custom design system detailed in the [Design Guide](design
 
 ## Database Schema
 
-The application uses a structured MySQL schema managed by Drizzle. Key tables include:
+The app uses a **hybrid data architecture**:
 
--   `Revo_Gyms`: Stores metadata for each gym location (size, address, etc.).
--   `Revo_Gym_Count`: Tracks snapshot data for occupancy and ratios.
--   `user`: Manages user profiles and `gym_preferences`.
--   `gym_trend_cache`: Stores pre-calculated trend data for performance.
+-   **PocketBase** stores the gym/announcement data. Key collections:
+    -   `Revo_Gyms`: metadata for each gym location (size, address, etc.).
+    -   `Revo_Gym_Count`: snapshot data for occupancy and ratios.
+    -   `announcements`: published site updates.
+-   **MySQL** (via Drizzle ORM) stores Better Auth user-account tables: `user`,
+    `session`, `account`, and `verification`. The `user` table also carries
+    `gym_preferences` and an `isAdmin` flag. The MySQL schema is managed
+    externally (there is no `drizzle/` migrations directory in this repo).
 
 ## API Endpoints
 
-### `GET /api/gyms/stats/update`
-Fetches the latest gym stats from the source and updates the database.
+The Next.js app exposes a small set of routes:
 
-### `GET /api/gyms/stats/latest`
-Returns the most recent gym statistics, sorted by occupancy ratio.
+-   `GET /api/db/gyminfo` — returns all gym metadata from PocketBase.
+-   `GET /api/account/gym-preferences` — returns the signed-in user's gym preferences.
+-   `ANY /api/auth/[...all]` — Better Auth handler (sign up/in/out, session).
+-   `GET|POST /api/admin/proxy` — admin-only reverse proxy to the external stats
+    API. The upstream base URL must be in the `ADMIN_API_URLS` allowlist.
+
+> Note: `/api/gyms/stats/update` and `/api/gyms/stats/latest` (referenced in the
+> admin diagnostics UI) are **not** Next.js routes. They are paths on the
+> external stats API, reached at runtime through `/api/admin/proxy?path=/gyms/stats/...`.
+> Historical trend data is fetched from `https://revotrackerapi.dvcklab.com/gyms/trends`.
 
 ## App Previews
 
