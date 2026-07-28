@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { enforceRateLimit } from "@/lib/security";
 import { headers } from "next/headers";
 import { z } from "zod";
 
@@ -29,11 +28,6 @@ const updatePasswordSchema = z.object({
 });
 
 export const updateAccountEmail = async (formData: FormData) => {
-	await enforceRateLimit("account:change-email", {
-		limit: 5,
-		windowMs: 15 * 60 * 1000,
-	});
-
 	const rawData = Object.fromEntries(formData);
 	const validationResult = updateEmailSchema.safeParse(rawData);
 
@@ -83,11 +77,6 @@ export const updateAccountEmail = async (formData: FormData) => {
 };
 
 export const updateAccountPassword = async (formData: FormData) => {
-	await enforceRateLimit("account:change-password", {
-		limit: 5,
-		windowMs: 15 * 60 * 1000,
-	});
-
 	const rawData = Object.fromEntries(formData);
 	const validationResult = updatePasswordSchema.safeParse(rawData);
 

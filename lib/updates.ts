@@ -2,7 +2,6 @@
 
 import { createAdminPb, createPublicPb } from "@/lib/server/pocketbase";
 import { requireAdminSession } from "@/lib/authz";
-import { enforceRateLimit } from "@/lib/security";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -50,11 +49,6 @@ export async function createAnnouncement(data: {
 	category: "feature" | "fix" | "update" | "event";
 	status: "draft" | "published";
 }) {
-	await enforceRateLimit("updates:create", {
-		limit: 10,
-		windowMs: 15 * 60 * 1000,
-	});
-
 	await requireAdminSession();
 
 	const validationResult = announcementSchema.safeParse(data);

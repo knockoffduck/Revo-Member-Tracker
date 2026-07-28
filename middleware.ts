@@ -75,8 +75,7 @@ function logIpSummary() {
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 200; // per window per IP
-const RATE_LIMIT_MAX_BOTS = 40; // per window per IP for bots
+const RATE_LIMIT_MAX_BOTS = 40; // per window per IP for bots/unhuman requests
 
 function getClientIp(request: NextRequest): string {
 	const forwardedFor = request.headers.get("x-forwarded-for");
@@ -89,9 +88,8 @@ function getClientIp(request: NextRequest): string {
 	return realIp?.trim() ?? "unknown";
 }
 
-function isRateLimited(ip: string, isBot: boolean): boolean {
+function isRateLimited(ip: string): boolean {
 	const now = Date.now();
-	const limit = isBot ? RATE_LIMIT_MAX_BOTS : RATE_LIMIT_MAX_REQUESTS;
 	const current = rateLimitStore.get(ip);
 
 	if (!current || current.resetAt <= now) {
@@ -99,7 +97,7 @@ function isRateLimited(ip: string, isBot: boolean): boolean {
 		return false;
 	}
 
-	if (current.count >= limit) {
+	if (current.count >= RATE_LIMIT_MAX_BOTS) {
 		return true;
 	}
 
@@ -165,6 +163,16 @@ function isGoodBot(userAgent: string): boolean {
 	return GOOD_BOTS.some((bot) => ua.includes(bot));
 }
 
+// A request is considered unhuman if it comes from a recognized crawler/bot
+// (good or bad) or has no User-Agent at all (typical of scripts and scrapers).
+// Only these requests are subject to the global rate limit; normal browser
+// traffic from real users is not rate limited here.
+function isNonHumanRequest(userAgent: string): boolean {
+	const ua = userAgent.trim();
+	if (ua === "") return true;
+	return isBot(ua) || isGoodBot(ua);
+}
+
 // ── HTTPS redirect ───────────────────────────────────────────────────────────
 function shouldRedirectToHttps(request: NextRequest) {
 	if (process.env.NODE_ENV !== "production") {
@@ -213,9 +221,11 @@ export function middleware(request: NextRequest) {
 		return new NextResponse("Forbidden", { status: 403 });
 	}
 
-	// Rate limit all requests
-	if (isRateLimited(ip, isGoodBot(userAgent))) {
-		console.warn(`[IP-TRACKER] Rate limited: ${ip} | path: ${pathname} | UA: ${userAgent.slice(0, 60)}`);
+	// Rate limit only known bots / unhuman requests. Real browser traffic is
+	// not rate limited here; authentication endpoints keep their own stricter
+	// per-action rate limits (see lib/security.ts).
+	if (isNonHumanRequest(userAgent) && isRateLimited(ip)) {
+		console.warn(`[IP-TRACKER] Rate limited bot: ${ip} | path: ${pathname} | UA: ${userAgent.slice(0, 60)}`);
 		return new NextResponse("Too Many Requests", {
 			status: 429,
 			headers: {
