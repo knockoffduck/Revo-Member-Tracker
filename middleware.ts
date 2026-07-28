@@ -12,10 +12,18 @@ interface IpRecord {
 const ipTracker = new Map<string, IpRecord>();
 const IP_LOG_INTERVAL_MS = 60 * 1000; // Log summary every 60s
 const IP_SUSPICIOUS_THRESHOLD = 30; // Flag IPs with >30 req/min
+const IP_TRACKER_MAX_ENTRIES = 50_000; // Hard cap to bound memory within a window
 let lastSummaryLog = Date.now();
 
 function trackRequest(ip: string, pathname: string, userAgent: string) {
 	const now = Date.now();
+
+	// Bound memory: if the tracker is full, reset it early rather than letting a
+	// flood of distinct IPs grow the Map without limit.
+	if (ipTracker.size >= IP_TRACKER_MAX_ENTRIES) {
+		logIpSummary();
+	}
+
 	const existing = ipTracker.get(ip);
 
 	if (!existing) {
@@ -76,6 +84,18 @@ const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX_BOTS = 40; // per window per IP for bots/unhuman requests
+const RATE_LIMIT_MAX_ENTRIES = 50_000; // Hard cap to bound memory
+let lastRateLimitSweep = 0;
+
+function sweepRateLimitStore(now: number) {
+	if (now - lastRateLimitSweep < 60_000) return;
+	lastRateLimitSweep = now;
+	for (const [ip, entry] of rateLimitStore) {
+		if (entry.resetAt <= now) {
+			rateLimitStore.delete(ip);
+		}
+	}
+}
 
 function getClientIp(request: NextRequest): string {
 	const forwardedFor = request.headers.get("x-forwarded-for");
@@ -90,6 +110,22 @@ function getClientIp(request: NextRequest): string {
 
 function isRateLimited(ip: string): boolean {
 	const now = Date.now();
+	sweepRateLimitStore(now);
+
+	// If the store is at capacity, drop the oldest-resetting entry to make room
+	// so a flood of distinct IPs cannot grow it without bound.
+	if (!rateLimitStore.has(ip) && rateLimitStore.size >= RATE_LIMIT_MAX_ENTRIES) {
+		let oldestKey: string | null = null;
+		let oldestReset = Infinity;
+		for (const [key, entry] of rateLimitStore) {
+			if (entry.resetAt < oldestReset) {
+				oldestReset = entry.resetAt;
+				oldestKey = key;
+			}
+		}
+		if (oldestKey) rateLimitStore.delete(oldestKey);
+	}
+
 	const current = rateLimitStore.get(ip);
 
 	if (!current || current.resetAt <= now) {
