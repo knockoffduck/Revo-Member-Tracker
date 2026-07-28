@@ -146,6 +146,11 @@ export const getGyms = async (
     try {
         const pb = createPublicPb();
 
+        // Kick off the session lookup up front (without awaiting) so it runs
+        // concurrently with the PocketBase queries below; we only need the
+        // result later, when applying the user's gym-preference filter.
+        const userPromise = getCurrentUser();
+
         // Find the timestamp of the most recent entry
         const latestPage = await pb.collection("Revo_Gym_Count").getList(1, 1, {
             sort: "-created",
@@ -155,10 +160,6 @@ export const getGyms = async (
         if (!latestTimestamp) {
             throw new Error("No entries found in the database");
         }
-
-        // Attempt to get the current user session
-        const user = await getCurrentUser();
-        const userId = user?.id;
 
         // Fetch all count records for the latest timestamp.
         // Use a minute-wide range so the query can use the created index
@@ -195,6 +196,8 @@ export const getGyms = async (
             .map((record) => mapGym(record, gymMetaMap.get(String(record.gym_id))!));
 
         // Apply user preferences filter
+        const user = await userPromise;
+        const userId = user?.id;
         if (userId && !showAll) {
             const preferences = user?.gymPreferences ?? [];
             if (preferences.length > 0) {
