@@ -1,0 +1,65 @@
+# Run the Revo Member Tracker with Docker Compose.
+#
+#   cp .env.example .env   # fill in real values first
+#   docker compose up -d --build
+#
+# NEXT_PUBLIC_* values are inlined into the client bundle at build time, so
+# they are passed as build args. Everything else is injected at runtime from
+# your .env file.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Inlined at build time — must be real when you build.
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_ADMIN_API_URL: ${NEXT_PUBLIC_ADMIN_API_URL:-http://localhost:3001}
+        NEXT_PUBLIC_POCKETBASE_URL: ${NEXT_PUBLIC_POCKETBASE_URL:-https://pb.dvcklab.work}
+    image: revo-member-tracker:latest
+    container_name: revo-member-tracker
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Runtime-only overrides (env_file values win for anything not listed here).
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # Optional local MySQL for Better Auth user accounts. Enable with:
+  #   docker compose --profile db up -d --build
+  # The Better Auth schema is managed externally (no migrations dir), so you
+  # must create the tables yourself before login works. Point DATABASE_URL at:
+  #   mysql://revo:revo@db:3306/revo
+  db:
+    image: mysql:8.4
+    container_name: revo-mysql
+    profiles: ["db"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-revo}
+      MYSQL_USER: ${MYSQL_USER:-revo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-revo}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
