@@ -19,8 +19,10 @@ services:
         NEXT_PUBLIC_POCKETBASE_URL: ${NEXT_PUBLIC_POCKETBASE_URL:-https://pb.dvcklab.work}
     image: revo-member-tracker:latest
     container_name: revo-member-tracker
-    ports:
-      - "${HOST_PORT:-3000}:3000"
+    # No host port mapping: Dokploy/Traefik routes to the container on the
+    # internal Docker network. For local dev without a reverse proxy, add:
+    #   ports: ["3000:3000"]
+    # or run: docker compose up -d -p 3000:3000 (compose v2.24+)
     env_file:
       - .env
     environment:
