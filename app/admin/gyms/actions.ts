@@ -108,7 +108,7 @@ export const deleteGym = async (id: string): Promise<GymMutationResult> => {
 	try {
 		const pb = await createAdminPb();
 		const dependents = await pb.collection("Revo_Gym_Count").getList(1, 1, {
-			filter: `gym_id='${idParsed.data}'`,
+			filter: pb.filter("gym_id={:gymId}", { gymId: idParsed.data }),
 		});
 		const depCount = dependents.totalItems;
 

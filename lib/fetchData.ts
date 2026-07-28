@@ -4,6 +4,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { createPublicPb } from "@/lib/server/pocketbase";
+import type PocketBase from "pocketbase";
 import { getCurrentUser } from "@/lib/current-user";
 import { calculateDistance, getPostcodeCoordinates } from "./postcodeData";
 import { unstable_cache } from "next/cache";
@@ -22,6 +23,20 @@ const DATE_FORMAT = "YYYY-MM-DD";
 
 const isValidDateParam = (value?: string) =>
     !!value && dayjs(value, DATE_FORMAT, true).isValid();
+
+/**
+ * Builds a parameterized PocketBase filter matching any of the given values for
+ * a field, e.g. `(id={:v0} || id={:v1})`. Values are auto-escaped by pb.filter,
+ * so this is safe for user-controlled input (unlike manual string escaping).
+ */
+const buildInFilter = (pb: PocketBase, field: string, values: string[]): string => {
+    const params: Record<string, string> = {};
+    const clauses = values.map((value, i) => {
+        params[`v${i}`] = value;
+        return `${field}={:v${i}}`;
+    });
+    return pb.filter(`(${clauses.join(" || ")})`, params);
+};
 
 export const resolveGymDate = (timezone: string, date?: string) => {
     const todayInGymTz = dayjs().tz(timezone).startOf("day");
@@ -101,7 +116,7 @@ const mapGym = (record: PbRecord, meta?: GymMeta | null): Gym => ({
 const fetchGymMeta = async (gymName: string): Promise<GymMeta | null> => {
     const pb = createPublicPb();
     const result = await pb.collection("Revo_Gyms").getList(1, 1, {
-        filter: `name='${gymName.replace(/'/g, "\\'")}'`,
+        filter: pb.filter("name={:name}", { name: gymName }),
     });
 
     return result.items[0] ? mapGymMeta(result.items[0]) : null;
@@ -153,8 +168,7 @@ export const getGyms = async (
             `created>='${minutePrefix}:00' && created<='${minutePrefix}:59'`,
         ];
         if (gyms && gyms.length > 0) {
-            const namesFilter = gyms.map((g) => `gym_name='${g.replace(/'/g, "\\'")}'`).join(" || ");
-            filterParts.push(`(${namesFilter})`);
+            filterParts.push(buildInFilter(pb, "gym_name", gyms));
         }
 
         const latestRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
@@ -166,7 +180,7 @@ export const getGyms = async (
         const gymIds = [...new Set(latestRecords.map((r) => String(r.gym_id)).filter(Boolean))];
         const gymMetaMap = new Map<string, GymMeta>();
         if (gymIds.length > 0) {
-            const metaFilterParts = [gymIds.map((id) => `id='${id}'`).join(" || "), "active=true"];
+            const metaFilterParts = [buildInFilter(pb, "id", gymIds), "active=true"];
             const metaRecords = await pb.collection("Revo_Gyms").getFullList({
                 filter: metaFilterParts.join(" && "),
                 batch: 200,
@@ -265,7 +279,10 @@ export const getGymStats = async (
         const startUtc = startOfDayInGymTz.utc().format("YYYY-MM-DD HH:mm:ss") + "Z";
         const endUtc = endOfDayInGymTz.utc().format("YYYY-MM-DD HH:mm:ss") + "Z";
         const records = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
-            filter: `gym_id='${resolvedGymMeta.id}' && created>='${startUtc}' && created<='${endUtc}'`,
+            filter: pb.filter(
+                "gym_id={:gymId} && created>={:start} && created<={:end}",
+                { gymId: resolvedGymMeta.id, start: startUtc, end: endUtc },
+            ),
             sort: "created",
             batch: 500,
         });
@@ -298,7 +315,7 @@ export const getGymLiveSnapshot = async (
 
         const pb = createPublicPb();
         const records = await pb.collection("Revo_Gym_Count").getList<PbRecord>(1, 1, {
-            filter: `gym_id='${resolvedGymMeta.id}'`,
+            filter: pb.filter("gym_id={:gymId}", { gymId: resolvedGymMeta.id }),
             sort: "-created",
         });
 
@@ -481,7 +498,7 @@ export const getNearbyGyms = async (
         const pb = createPublicPb();
 
         const referenceGym = await pb.collection("Revo_Gyms").getList(1, 1, {
-            filter: `name='${gymName.replace(/'/g, "\\'")}'`,
+            filter: pb.filter("name={:name}", { name: gymName }),
         });
 
         if (!referenceGym.items.length) {
@@ -516,14 +533,17 @@ export const getNearbyGyms = async (
 
         const minutePrefix = latestTimestamp.slice(0, 16);
         const allRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
-            filter: `created>='${minutePrefix}:00' && created<='${minutePrefix}:59' && gym_id!='${refRecord.id}'`,
+            filter: pb.filter(
+                "created>={:start} && created<={:end} && gym_id!={:refId}",
+                { start: `${minutePrefix}:00`, end: `${minutePrefix}:59`, refId: refRecord.id },
+            ),
             batch: 200,
         });
 
         const gymIds = [...new Set(allRecords.map((r) => String(r.gym_id)).filter(Boolean))];
         const gymMetaMap = new Map<string, GymMeta>();
         if (gymIds.length > 0) {
-            const metaFilterParts = [gymIds.map((id) => `id='${id}'`).join(" || "), "active=true"];
+            const metaFilterParts = [buildInFilter(pb, "id", gymIds), "active=true"];
             const metaRecords = await pb.collection("Revo_Gyms").getFullList<PbRecord>({
                 filter: metaFilterParts.join(" && "),
                 batch: 200,
@@ -626,7 +646,7 @@ export const getNearbyGymsByPostcode = async (
         const gymIds = [...new Set(allRecords.map((r) => String(r.gym_id)).filter(Boolean))];
         const gymMetaMap = new Map<string, GymMeta>();
         if (gymIds.length > 0) {
-            const metaFilterParts = [gymIds.map((id) => `id='${id}'`).join(" || "), "active=true"];
+            const metaFilterParts = [buildInFilter(pb, "id", gymIds), "active=true"];
             const metaRecords = await pb.collection("Revo_Gyms").getFullList<PbRecord>({
                 filter: metaFilterParts.join(" && "),
                 batch: 200,
