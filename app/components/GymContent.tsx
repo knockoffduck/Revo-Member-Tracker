@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import {
   getGymMeta,
   getGymLiveSnapshot,
@@ -14,7 +16,11 @@ import { getCrowdLevelMeta } from "@/app/components/CrowdLevelBadge";
 import NearbyGymsCard from "@/app/components/NearbyGymsCard";
 import GymDaySwitcher from "@/app/components/GymDaySwitcher";
 import { getTrendInsight } from "@/app/components/gym-detail-utils";
-import moment from "moment-timezone";
+
+// dayjs plugins are global, but extend explicitly here so this module does not
+// depend on transitive side-effects from fetchData's import order.
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export default async function GymContent({
   gymName,
@@ -67,7 +73,7 @@ export default async function GymContent({
     // so that the Chart component (which renders in UTC) displays the correct wall clock time.
     // e.g. 08:00 Adelaide Time -> 08:00 UTC
 
-    const gymWallTime = moment.utc(item.created).tz(item.timezone);
+    const gymWallTime = dayjs(item.created).tz(item.timezone);
     const fakeUtcString = gymWallTime.format("YYYY-MM-DDTHH:mm:ss") + "Z";
 
     const localisedItem = {
