@@ -9,11 +9,13 @@ pnpm-debug.log*
 .next
 out
 dist
+tsconfig.tsbuildinfo
 
 # Environment files
 .env
 .env.local
 .env.*.local
+.env.example
 
 # Git
 .git
@@ -37,8 +39,20 @@ logs
 coverage
 .nyc_output
 
-# Misc
-README.md
-ADMIN_DASHBOARD.md
-CHANGELOG.md
+# Local tooling / one-off scripts (not needed in the image)
+.impeccable
+scripts
+
+# Static data snapshots & analysis artifacts (nothing reads them at runtime)
+data
+trends_output.json
+
+# Screenshots and other images at repo root
+*.png
+*.jpg
+*.jpeg
+
+# Docs & Docker files themselves
 *.md
+Dockerfile
+docker-compose*.yml
