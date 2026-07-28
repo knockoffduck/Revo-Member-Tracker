@@ -2,7 +2,6 @@ import { getGyms } from "@/lib/fetchData";
 import GymList from "./GymList";
 import { GymResponse } from "./_types";
 import { getCurrentUser } from "@/lib/current-user";
-import { userHasGymPreferences, getUserGymPreferences } from "@/app/actions";
 
 export default async function Home(props: {
     searchParams?: Promise<{ query?: string; sort?: string; order?: string; showAll?: string }>;
@@ -17,10 +16,12 @@ export default async function Home(props: {
     let response: GymResponse | undefined = undefined;
     let fetchError: string | null = null;
 
+    // getCurrentUser() already loads gym preferences with the session, so derive
+    // the flags from it instead of issuing two extra MySQL round-trips.
     const user = await getCurrentUser();
     const userId = user?.id;
-    const hasPreferences = userId ? await userHasGymPreferences(userId) : false;
-    const userFavorites = userId ? await getUserGymPreferences(userId) : [];
+    const userFavorites = user?.gymPreferences ?? [];
+    const hasPreferences = userFavorites.length > 0;
 
     try {
         response = await getGyms(
