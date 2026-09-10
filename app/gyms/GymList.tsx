@@ -85,7 +85,8 @@ export default function GymList({
 
   // Derive state from URL params
   const sortKey = (searchParams.get("sort") as SortKey) || "percentage";
-  const sortDirection = (searchParams.get("order") as "asc" | "desc") || "asc";
+  // Busiest gym first when no explicit order is requested.
+  const sortDirection = (searchParams.get("order") as "asc" | "desc") || "desc";
   const showAllParam = searchParams.get("showAll") === "true";
   const selectedState = searchParams.get("state") || "All States";
 
@@ -164,10 +165,10 @@ export default function GymList({
       // When switching to a new sort key, use logical default
       if (key === 'gymName') {
         newDirection = 'asc'; // A-Z
-      } else if (key === 'areaSize' || key === 'rackAmount') {
-        newDirection = 'desc'; // Largest/Most first
+      } else if (key === 'perRack') {
+        newDirection = 'asc'; // Fewest people per rack first
       } else {
-        newDirection = 'asc'; // Least crowded/fewest first
+        newDirection = 'desc'; // Busiest / most members / largest first
       }
     } else {
       // Toggling direction on same key

@@ -10,7 +10,8 @@ export default async function Home(props: {
 
     const query = searchParams?.query || "";
     const sortKey = searchParams?.sort || "percentage";
-    const sortDirection = (searchParams?.order as "asc" | "desc") || "asc";
+    // Busiest gym first when no explicit order is requested.
+    const sortDirection = (searchParams?.order as "asc" | "desc") || "desc";
     const showAll = searchParams?.showAll === "true";
 
     let response: GymResponse | undefined = undefined;

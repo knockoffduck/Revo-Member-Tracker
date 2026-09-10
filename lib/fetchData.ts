@@ -139,7 +139,7 @@ export const getGyms = async (
     gyms?: string[],
     sort: { key: string; direction: "asc" | "desc" } = {
         key: "percentage",
-        direction: "asc",
+        direction: "desc",
     },
     showAll: boolean = false,
 ) => {
