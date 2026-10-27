@@ -23,6 +23,8 @@ interface LocationCardProps {
   className?: string;
   isFavorite?: boolean;
   onToggleFavorite?: (gymName: string) => void;
+  /** True when the newest reading is old: stop saying "now". */
+  stale?: boolean;
 }
 
 const timeFormatter = new Intl.DateTimeFormat(undefined, {
@@ -54,7 +56,7 @@ function relativeTime(from: Date, now: number) {
   return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFavorite = false, onToggleFavorite }) => {
+export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFavorite = false, onToggleFavorite, stale = false }) => {
 
   const {
     gymName: name,
@@ -133,7 +135,7 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
                 {count}
               </span>
               <span className="text-sm text-muted-foreground">
-                member{count === 1 ? "" : "s"} now
+                member{count === 1 ? "" : "s"} {stale ? "at last update" : "now"}
               </span>
             </div>
           </div>

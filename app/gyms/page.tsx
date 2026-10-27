@@ -1,6 +1,5 @@
 import { getDataFreshness, getGyms } from "@/lib/fetchData";
 import GymList from "./GymList";
-import StaleDataBanner from "@/app/components/StaleDataBanner";
 import JsonLd from "@/app/components/JsonLd";
 import { GymResponse } from "./_types";
 import { getCurrentUser } from "@/lib/current-user";
@@ -83,7 +82,6 @@ export default async function Home(props: {
                 />
             ) : null}
             <div className="flex flex-col gap-6">
-                <StaleDataBanner freshness={freshness} />
                 {fetchError ? (
                     <p className="text-red-500">{fetchError}</p>
                 ) : response ? (
@@ -94,6 +92,7 @@ export default async function Home(props: {
                         query={query}
                         gymResponse={response}
                         currentTime={response.timestamp}
+                        freshness={freshness}
                     />
                 ) : (
                     <p>Loading gyms...</p>

@@ -2,6 +2,8 @@
 
 import { Gym, GymResponse, SortKey, SORT_OPTIONS, getSortLabel } from "./_types";
 import { LocationCard } from "@/app/components/LocationCard";
+import StaleDataBanner, { formatFreshnessAge } from "@/app/components/StaleDataBanner";
+import type { DataFreshness } from "@/lib/fetchData";
 import { toast } from "@/hooks/use-toast";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { Search, ChevronDown, ArrowUp, ArrowDown, SlidersHorizontal } from "lucide-react";
@@ -111,6 +113,7 @@ export default function GymList({
   hasGymPreferences,
   userFavorites = [],
   isAuthenticated,
+  freshness,
 }: {
   query: string;
   gymResponse: GymResponse;
@@ -118,6 +121,7 @@ export default function GymList({
   hasGymPreferences: boolean;
   userFavorites?: string[];
   isAuthenticated: boolean;
+  freshness?: DataFreshness;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -374,11 +378,17 @@ export default function GymList({
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Gyms</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {processedGyms.length === totalGyms
-                ? `${totalGyms} Revo locations, live`
+                ? `${totalGyms} Revo locations, ${
+                    freshness?.stale
+                      ? `last updated ${formatFreshnessAge(freshness.ageMinutes)}`
+                      : "live"
+                  }`
                 : `${processedGyms.length} of ${totalGyms} locations`}
             </p>
           </div>
         </header>
+
+        {freshness ? <StaleDataBanner freshness={freshness} className="mb-5" /> : null}
 
         <div className="relative z-20 mb-6 rounded-xl border border-border bg-card p-4 sm:p-5">
           {/* Search row */}
@@ -442,6 +452,7 @@ export default function GymList({
                 className="max-w-none"
                 isFavorite={isFavorite(gym.gymName)}
                 onToggleFavorite={toggleFavorite}
+                stale={freshness?.stale ?? false}
               />
             ))}
           </div>
