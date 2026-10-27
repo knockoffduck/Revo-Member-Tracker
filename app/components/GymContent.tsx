@@ -59,13 +59,50 @@ export default async function GymContent({
     gymTimezone: timezone,
   });
   const crowdLevel = getCrowdLevelMeta(currentPercentage);
-  const summaryItems = [
-    hasLiveSnapshot ? `${crowdLevel.label} now` : null,
-    typeof currentMemberCount === "number"
-      ? `${new Intl.NumberFormat("en-AU").format(currentMemberCount)} member${currentMemberCount === 1 ? "" : "s"}`
-      : null,
-    trendInsight,
-  ].filter((item): item is string => !!item);
+  const formatCount = (value: number) => new Intl.NumberFormat("en-AU").format(value);
+
+  // A past day needs its own numbers: the live snapshot is irrelevant once the
+  // reader has moved off today, and calling it "now" would be a lie.
+  const recordedSamples = data.filter((item) => typeof item.count === "number");
+  const peakSample = recordedSamples.reduce<Gym | null>(
+    (best, item) => (!best || item.count > best.count ? item : best),
+    null,
+  );
+  const dayAverage = recordedSamples.length
+    ? Math.round(
+        recordedSamples.reduce((total, item) => total + item.count, 0) /
+          recordedSamples.length,
+      )
+    : null;
+  const peakTimeLabel = peakSample
+    ? dayjs(peakSample.created).tz(timezone).format("h:mm a")
+    : null;
+  const slotKey = (value: string) => {
+    const wall = dayjs(value).tz(timezone);
+    const minute = Math.floor(wall.minute() / 15) * 15;
+    return `${wall.format("HH")}:${String(minute).padStart(2, "0")}`;
+  };
+  const coveredSlots = new Set(recordedSamples.map((item) => slotKey(item.created)))
+    .size;
+  const coveragePercent = Math.round((coveredSlots / 96) * 100);
+
+  const summaryItems = dateMeta.isToday
+    ? [
+        hasLiveSnapshot ? `${crowdLevel.label} now` : null,
+        typeof currentMemberCount === "number"
+          ? `${formatCount(currentMemberCount)} member${currentMemberCount === 1 ? "" : "s"}`
+          : null,
+        trendInsight,
+      ].filter((item): item is string => !!item)
+    : [
+        peakSample
+          ? `Peak ${formatCount(peakSample.count)} at ${peakTimeLabel}`
+          : null,
+        dayAverage !== null ? `Average ${formatCount(dayAverage)} members` : null,
+        recordedSamples.length > 0 && coveragePercent < 90
+          ? `${coveragePercent}% of the day recorded`
+          : null,
+      ].filter((item): item is string => !!item);
 
   const localisedData = data.map((item: Gym) => {
     // Convert the database UTC time to the Gym's wall tim
@@ -115,7 +152,9 @@ export default async function GymContent({
                 <span
                   className={
                     index === 0
-                      ? `text-sm font-semibold ${crowdLevel.textClasses}`
+                      ? `text-sm font-semibold ${
+                          dateMeta.isToday ? crowdLevel.textClasses : "text-foreground"
+                        }`
                       : "text-sm text-muted-foreground"
                   }
                 >
@@ -144,8 +183,14 @@ export default async function GymContent({
         trendData={trendData}
         description={chartDescription}
         emptyMessage={`No member count samples were recorded for ${selectedDayLabel}.`}
-        currentCount={currentMemberCount}
-        insight={trendInsight}
+        currentCount={dateMeta.isToday ? currentMemberCount : peakSample?.count ?? null}
+        countLabel={dateMeta.isToday ? "Live Count" : "Peak"}
+        insight={
+          dateMeta.isToday && trendInsight
+            ? `${trendInsight.charAt(0).toUpperCase()}${trendInsight.slice(1)} right now`
+            : null
+        }
+        live={dateMeta.isToday}
       />
       <GymDaySwitcher
         gymName={gymName}

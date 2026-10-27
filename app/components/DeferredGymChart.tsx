@@ -30,7 +30,9 @@ type DeferredGymChartProps = {
   description?: string;
   emptyMessage?: string;
   currentCount?: number | null;
+  countLabel?: string;
   insight?: string | null;
+  live?: boolean;
 };
 
 export default function DeferredGymChart(props: DeferredGymChartProps) {

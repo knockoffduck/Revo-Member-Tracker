@@ -3,8 +3,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
 import dayjs from "dayjs";
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.extend(advancedFormat)
+// PocketBase timestamps look like "2026-10-24 10:11:12.345Z". The strict ISO
+// parser used on the client rejects the space, so the plugin is registered
+// here as well as in fetchData (which only runs on the server).
+dayjs.extend(customParseFormat)
+
+const POCKETBASE_TIMESTAMP = "YYYY-MM-DD HH:mm:ss.SSS[Z]";
+
+/** Returns null instead of an "Invalid Date" string when the value is unusable. */
+function parseTimestamp(value?: string | null) {
+    if (!value || !value.trim()) return null;
+
+    const normalised = value.trim().replace(" ", "T");
+    const parsed = dayjs(normalised).isValid()
+        ? dayjs(normalised)
+        : dayjs(value.trim(), POCKETBASE_TIMESTAMP, true);
+
+    return parsed.isValid() ? parsed : null;
+}
 
 interface UpdateCardProps {
     title: string;
@@ -19,6 +38,8 @@ export default function UpdateCard({
     category,
     content,
 }: UpdateCardProps) {
+    const publishedAt = parseTimestamp(date);
+
     const getCategoryColor = (cat: string | null) => {
         switch (cat) {
             case "feature":
@@ -38,9 +59,14 @@ export default function UpdateCard({
                 <div className="flex justify-between items-start flex-col sm:flex-row gap-2">
                     <div className="flex flex-col gap-1">
                         <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-                        <div className="text-sm text-muted-foreground">
-                            {dayjs(date).format("MMMM Do, YYYY")}
-                        </div>
+                        {publishedAt ? (
+                            <time
+                                dateTime={publishedAt.toISOString()}
+                                className="text-sm text-muted-foreground"
+                            >
+                                {publishedAt.format("MMMM Do, YYYY")}
+                            </time>
+                        ) : null}
                     </div>
                     {category && (
                         <Badge className={`${getCategoryColor(category)} text-white`}>

@@ -176,7 +176,9 @@ type ChartProps = {
   description?: string;
   emptyMessage?: string;
   currentCount?: number | null;
+  countLabel?: string;
   insight?: string | null;
+  live?: boolean;
 };
 
 export default function Chart({
@@ -185,7 +187,9 @@ export default function Chart({
   description = "Today's activity vs Average",
   emptyMessage = "No activity data available for this day.",
   currentCount,
+  countLabel = "Live Count",
   insight,
+  live = true,
 }: ChartProps) {
   const chartData = React.useMemo(() => buildTimeline(data, trendData), [data, trendData]);
 
@@ -197,9 +201,10 @@ export default function Chart({
   }, [chartData]);
 
   const lastRecorded = lastRecordedIndex >= 0 ? chartData[lastRecordedIndex] : null;
-  // Today's line stops mid-day; a finished day runs to 11:30pm. Only the
-  // former gets a "now" marker, so a past day never claims to be live.
-  const isInProgress = lastRecordedIndex >= 0 && lastRecordedIndex < chartData.length - 1;
+  // Today's line stops mid-day; a finished day runs to 11:30pm. Only a live day
+  // gets a "now" marker, so a past day never claims to be current.
+  const isInProgress =
+    live && lastRecordedIndex >= 0 && lastRecordedIndex < chartData.length - 1;
 
   const scale = React.useMemo(
     () => buildScale(chartData.flatMap(({ count, average }) => [count, average])),
@@ -231,15 +236,13 @@ export default function Chart({
               {description}
             </CardDescription>
             {insight ? (
-              <p className="pt-1 text-sm font-medium text-foreground/90">
-                {insight.charAt(0).toUpperCase() + insight.slice(1)} right now
-              </p>
+              <p className="pt-1 text-sm font-medium text-foreground/90">{insight}</p>
             ) : null}
           </div>
           {formattedCurrentCount ? (
             <div className="hidden rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-left sm:block sm:min-w-[8.5rem] sm:text-right">
               <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
-                Live Count
+                {countLabel}
               </p>
               <p className="mt-1 text-4xl font-semibold leading-none tracking-tight">
                 {formattedCurrentCount}

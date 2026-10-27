@@ -38,7 +38,13 @@ export default async function UpdatesPage() {
                         <UpdateCard
                             key={update.id}
                             title={update.title}
-                            date={update.publishedAt || update.createdAt || ""}
+                            date={
+                                update.published_at ||
+                                update.created ||
+                                update.publishedAt ||
+                                update.createdAt ||
+                                ""
+                            }
                             category={update.category}
                             content={update.content}
                         />
