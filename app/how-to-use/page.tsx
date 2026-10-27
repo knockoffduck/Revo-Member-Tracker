@@ -77,7 +77,7 @@ export default function HowToUsePage() {
                                     Quiet: under 30%
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="text-muted-foreground">
+                            <CardContent className="text-foreground/80">
                                 The gym is quiet. Plenty of equipment available. Perfect time for a workout.
                             </CardContent>
                         </Card>
@@ -88,7 +88,7 @@ export default function HowToUsePage() {
                                     Moderate: 30 to 70%
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="text-muted-foreground">
+                            <CardContent className="text-foreground/80">
                                 Moderate traffic. You might wait for a bench or rack, but it&apos;s manageable.
                             </CardContent>
                         </Card>
@@ -99,7 +99,7 @@ export default function HowToUsePage() {
                                     Busy: over 70%
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="text-muted-foreground">
+                            <CardContent className="text-foreground/80">
                                 Very busy. Expect crowds and waiting times. Maybe save leg day for later.
                             </CardContent>
                         </Card>

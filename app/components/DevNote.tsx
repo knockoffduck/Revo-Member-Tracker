@@ -10,7 +10,7 @@ interface DevNoteProps {
 export function DevNote({ className, variant = "full" }: DevNoteProps) {
     return (
         <div className={cn("flex flex-col items-center gap-2", className)}>
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                 <span className="h-[1px] w-4 bg-border/50" />
                 Dev Note
                 <span className="h-[1px] w-4 bg-border/50" />

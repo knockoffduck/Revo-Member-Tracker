@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
 import dayjs from "dayjs";
 import advancedFormat from 'dayjs/plugin/advancedFormat'
@@ -60,7 +60,8 @@ export default function UpdateCard({
             <CardHeader>
                 <div className="flex justify-between items-start flex-col sm:flex-row gap-2">
                     <div className="flex flex-col gap-1">
-                        <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+                        {/* h2 so the markdown h3s inside the body keep a valid order */}
+                        <h2 className="text-2xl font-bold">{title}</h2>
                         {publishedAt ? (
                             <time
                                 dateTime={publishedAt.toISOString()}

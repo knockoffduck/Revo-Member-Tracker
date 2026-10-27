@@ -90,7 +90,7 @@ export const LocationCard: React.FC<LocationCardProps> = ({ gym, className, isFa
   const estimatedCapacity = Math.floor(size / 5);
   const squatRank = squatRacks > 0 ? Math.max(1, Math.round((count / squatRacks) * 10) / 10) : 0;
   const squatStatusColor =
-    squatRank > 12 ? "text-red-600 dark:text-red-400" : squatRank > 6 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400";
+    squatRank > 12 ? "text-red-700 dark:text-red-400" : squatRank > 6 ? "text-amber-700 dark:text-amber-400" : "text-emerald-700 dark:text-emerald-400";
 
   return (
     <Link href={`/gyms/${name}`} className={`block w-full max-w-sm group ${className || ''}`}>
