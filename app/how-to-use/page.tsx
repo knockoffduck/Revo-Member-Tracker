@@ -14,6 +14,14 @@ export const metadata: Metadata = {
     description:
       "How to read the crowd levels, the count chart and the squat rack numbers in Revo Tracker.",
     url: "/how-to-use",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "How to use Revo Tracker",
+      },
+    ],
   },
 };
 

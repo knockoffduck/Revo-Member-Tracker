@@ -10,6 +10,14 @@ export const metadata: Metadata = {
     title: "Support",
     description: "Get help with Revo Tracker, or send a note straight to Dvcklab.",
     url: "/support",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Revo Tracker support",
+      },
+    ],
   },
 };
 

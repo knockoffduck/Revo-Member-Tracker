@@ -17,6 +17,14 @@ export const metadata: Metadata = {
         title: "Updates",
         description: "What changed in Revo Tracker, newest first.",
         url: "/updates",
+        images: [
+            {
+                url: "/opengraph-image",
+                width: 1200,
+                height: 630,
+                alt: "Revo Tracker updates",
+            },
+        ],
     },
 };
 

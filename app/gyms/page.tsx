@@ -14,6 +14,14 @@ export const metadata: Metadata = {
         description:
             "Live member counts and crowd levels for every Revo Fitness location, sorted by how busy they are right now.",
         url: "/gyms",
+        images: [
+            {
+                url: "/opengraph-image",
+                width: 1200,
+                height: 630,
+                alt: "All gyms: live member counts for every Revo Fitness location",
+            },
+        ],
     },
 };
 

@@ -13,6 +13,14 @@ export const metadata: Metadata = {
     description:
       "Why Revo Tracker exists: the Revo Fitness site shows one live count, this shows every location at once.",
     url: "/about",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "About Revo Tracker",
+      },
+    ],
   },
 };
 
