@@ -18,7 +18,7 @@ export default function Footer() {
                         dvcklab@outlook.com
                     </a>
                 </div>
-                <p className="text-[10px] text-muted-foreground/50 font-medium">
+                <p className="text-xs text-muted-foreground font-medium">
                     &copy; {new Date().getFullYear()} Dvcklab. Built for the Revo Fitness Community.
                 </p>
             </div>

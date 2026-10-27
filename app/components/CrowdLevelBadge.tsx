@@ -6,13 +6,14 @@ interface CrowdLevelBadgeProps {
 }
 
 export const getCrowdLevelMeta = (percentage: number) => {
-    // 700-level colours in light mode: 500/600 sit at 2.9 to 3.8:1 on white,
-    // which fails WCAG AA for this text size. Dark mode keeps the 400s.
+    // Light mode needs 700 on white (4.9:1 or better) and 800 on the tinted
+    // pill (5.8:1 or better); the 500/600 pair axe measured sat at 2.9:1.
+    // Dark mode keeps its 400s.
     if (percentage < 30) {
         return {
             label: "Quiet",
             textClasses: "text-green-700 dark:text-green-400",
-            colorClasses: "bg-green-500/15 text-green-700 dark:text-green-400",
+            colorClasses: "bg-green-500/15 text-green-800 dark:text-green-400",
         };
     }
 
@@ -20,14 +21,14 @@ export const getCrowdLevelMeta = (percentage: number) => {
         return {
             label: "Moderate",
             textClasses: "text-yellow-700 dark:text-yellow-400",
-            colorClasses: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
+            colorClasses: "bg-yellow-500/15 text-yellow-800 dark:text-yellow-400",
         };
     }
 
     return {
         label: "Busy",
         textClasses: "text-red-700 dark:text-red-400",
-        colorClasses: "bg-red-500/15 text-red-700 dark:text-red-400",
+        colorClasses: "bg-red-500/15 text-red-800 dark:text-red-400",
     };
 };
 
