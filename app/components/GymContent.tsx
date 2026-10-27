@@ -25,9 +25,12 @@ dayjs.extend(timezone);
 export default async function GymContent({
   gymName,
   selectedDate,
+  stale = false,
 }: {
   gymName: string;
   selectedDate?: string;
+  /** True when the newest reading is old; stops the copy claiming "live". */
+  stale?: boolean;
 }) {
   const requestStartedAt = performance.now();
   const gymMeta = await getGymMeta(gymName);
@@ -191,10 +194,12 @@ export default async function GymContent({
         description={chartDescription}
         emptyMessage={`No member count samples were recorded for ${selectedDayLabel}.`}
         currentCount={dateMeta.isToday ? currentMemberCount : peakSample?.count ?? null}
-        countLabel={dateMeta.isToday ? "Live Count" : "Peak"}
+        countLabel={
+          dateMeta.isToday ? (stale ? "Latest Count" : "Live Count") : "Peak"
+        }
         insight={
           dateMeta.isToday && trendInsight
-            ? `${trendInsight.charAt(0).toUpperCase()}${trendInsight.slice(1)} right now`
+            ? `${trendInsight.charAt(0).toUpperCase()}${trendInsight.slice(1)} ${stale ? "at the last reading" : "right now"}`
             : null
         }
         live={dateMeta.isToday}

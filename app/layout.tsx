@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Script from "next/script"; // 1. Import the Script component
 import DeferredToaster from "./components/DeferredToaster";
+import JsonLd from "./components/JsonLd";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://revotracker.dvcklab.com"),
@@ -56,6 +57,39 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="RevoTracker" />
       </head>
       <body className="flex min-h-screen flex-col">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": "https://revotracker.dvcklab.com/#website",
+                url: "https://revotracker.dvcklab.com",
+                name: "Revo Tracker",
+                description:
+                  "Live member counts for every Revo Fitness gym, with peak times and weekly averages.",
+                inLanguage: "en-AU",
+                publisher: { "@id": "https://dvcklab.com/#organization" },
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate:
+                      "https://revotracker.dvcklab.com/gyms?query={search_term_string}",
+                  },
+                  "query-input": "required name=search_term_string",
+                },
+              },
+              {
+                "@type": "Organization",
+                "@id": "https://dvcklab.com/#organization",
+                name: "Dvcklab",
+                url: "https://dvcklab.com",
+                email: "dvcklab@outlook.com",
+              },
+            ],
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

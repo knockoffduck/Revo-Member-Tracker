@@ -113,13 +113,28 @@ const mapGym = (record: PbRecord, meta?: GymMeta | null): Gym => ({
     squatRacks: meta?.squatRacks ?? 0,
 });
 
+/**
+ * Gym rows change a few times a year, but the metadata lookup runs on every gym
+ * page render (page, GymContent, stats and the JSON-LD all need it). Five
+ * minutes of memory removes those repeats without risking stale addresses.
+ */
+const GYM_META_TTL_MS = 5 * 60 * 1000;
+const gymMetaCache = new Map<string, { data: GymMeta | null; expiresAt: number }>();
+
 const fetchGymMeta = async (gymName: string): Promise<GymMeta | null> => {
+    const cached = gymMetaCache.get(gymName);
+    if (cached && cached.expiresAt > Date.now()) {
+        return cached.data;
+    }
+
     const pb = createPublicPb();
     const result = await pb.collection("Revo_Gyms").getList(1, 1, {
         filter: pb.filter("name={:name}", { name: gymName }),
     });
 
-    return result.items[0] ? mapGymMeta(result.items[0]) : null;
+    const meta = result.items[0] ? mapGymMeta(result.items[0]) : null;
+    gymMetaCache.set(gymName, { data: meta, expiresAt: Date.now() + GYM_META_TTL_MS });
+    return meta;
 };
 
 export const getGymMeta = async (gymName: string): Promise<GymMeta | null> => {
@@ -128,6 +143,118 @@ export const getGymMeta = async (gymName: string): Promise<GymMeta | null> => {
     } catch (error) {
         console.error(`Error fetching gym metadata for ${gymName}:`, error);
         return null;
+    }
+};
+
+/**
+ * The newest snapshot of every active gym, shared by every request.
+ *
+ * The scraper writes once every five minutes, so re-reading the same 83 rows on
+ * every page view buys nothing but latency. Thirty seconds keeps the numbers
+ * fresh enough to call live while collapsing a traffic spike into one query.
+ */
+const SNAPSHOT_TTL_MS = 30 * 1000;
+
+type Snapshot = { timestamp: string; data: Gym[] };
+
+let snapshotCache: { value: Snapshot; expiresAt: number } | null = null;
+let snapshotPromise: Promise<Snapshot> | null = null;
+
+const fetchSnapshotFromPocketBase = async (): Promise<Snapshot> => {
+    const pb = createPublicPb();
+
+    // Find the timestamp of the most recent entry
+    const latestPage = await pb.collection("Revo_Gym_Count").getList(1, 1, {
+        sort: "-created",
+    });
+
+    const latestTimestamp = latestPage.items[0]?.created;
+    if (!latestTimestamp) {
+        throw new Error("No entries found in the database");
+    }
+
+    // Fetch all count records for the latest timestamp.
+    // Use a minute-wide range so the query can use the created index
+    // (LIKE/regex filters cannot use a B-tree index on a 6M-row table).
+    const minutePrefix = latestTimestamp.slice(0, 16);
+    const latestRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
+        filter: `created>='${minutePrefix}:00' && created<='${minutePrefix}:59'`,
+        batch: 200,
+    });
+
+    // Fetch active gym metadata for all referenced gyms
+    const gymIds = [...new Set(latestRecords.map((r) => String(r.gym_id)).filter(Boolean))];
+    const gymMetaMap = new Map<string, GymMeta>();
+    if (gymIds.length > 0) {
+        const metaFilterParts = [buildInFilter(pb, "id", gymIds), "active=true"];
+        const metaRecords = await pb.collection("Revo_Gyms").getFullList({
+            filter: metaFilterParts.join(" && "),
+            batch: 200,
+        });
+        for (const record of metaRecords) {
+            gymMetaMap.set(record.id, mapGymMeta(record));
+        }
+    }
+
+    const data: Gym[] = latestRecords
+        .filter((record) => gymMetaMap.has(String(record.gym_id)))
+        .map((record) => mapGym(record, gymMetaMap.get(String(record.gym_id))!));
+
+    return { timestamp: latestTimestamp, data };
+};
+
+const getLatestSnapshot = async (): Promise<Snapshot> => {
+    const now = Date.now();
+    if (snapshotCache && snapshotCache.expiresAt > now) {
+        return snapshotCache.value;
+    }
+
+    // Share one in-flight fetch between concurrent requests.
+    if (!snapshotPromise) {
+        snapshotPromise = fetchSnapshotFromPocketBase()
+            .then((value) => {
+                snapshotCache = { value, expiresAt: Date.now() + SNAPSHOT_TTL_MS };
+                return value;
+            })
+            .finally(() => {
+                snapshotPromise = null;
+            });
+    }
+
+    return snapshotPromise;
+};
+
+/** Minutes without a new reading before the site stops calling the numbers live. */
+export const STALE_AFTER_MINUTES = Number(process.env.STALE_AFTER_MINUTES ?? 20);
+
+export type DataFreshness = {
+    /** Timestamp of the newest reading, as PocketBase stores it. */
+    updatedAt: string | null;
+    ageMinutes: number;
+    stale: boolean;
+};
+
+/** PocketBase returns "2026-10-27 04:15:00.123Z"; V8 wants the T. */
+const parsePbTimestamp = (value: string): number =>
+    new Date(value.replace(" ", "T")).getTime();
+
+/**
+ * How old the newest reading is. A failed lookup reports fresh rather than
+ * stale: a warning banner is worse than useless if it fires on every hiccup.
+ */
+export const getDataFreshness = async (): Promise<DataFreshness> => {
+    try {
+        const { timestamp } = await getLatestSnapshot();
+        const updatedAt = parsePbTimestamp(timestamp);
+        if (!Number.isFinite(updatedAt)) {
+            return { updatedAt: null, ageMinutes: 0, stale: false };
+        }
+
+        const ageMinutes = Math.max(0, Math.floor((Date.now() - updatedAt) / 60000));
+        return { updatedAt: timestamp, ageMinutes, stale: ageMinutes >= STALE_AFTER_MINUTES };
+    } catch (error) {
+        console.error("Could not determine data freshness:", error);
+        return { updatedAt: null, ageMinutes: 0, stale: false };
     }
 };
 
@@ -144,59 +271,14 @@ export const getGyms = async (
     showAll: boolean = false,
 ) => {
     try {
-        const pb = createPublicPb();
+        const snapshot = await getLatestSnapshot();
 
-        // Kick off the session lookup up front (without awaiting) so it runs
-        // concurrently with the PocketBase queries below; we only need the
-        // result later, when applying the user's gym-preference filter.
-        const userPromise = getCurrentUser();
-
-        // Find the timestamp of the most recent entry
-        const latestPage = await pb.collection("Revo_Gym_Count").getList(1, 1, {
-            sort: "-created",
-        });
-
-        const latestTimestamp = latestPage.items[0]?.created;
-        if (!latestTimestamp) {
-            throw new Error("No entries found in the database");
-        }
-
-        // Fetch all count records for the latest timestamp.
-        // Use a minute-wide range so the query can use the created index
-        // (LIKE/regex filters cannot use a B-tree index on a 6M-row table).
-        const minutePrefix = latestTimestamp.slice(0, 16);
-        const filterParts = [
-            `created>='${minutePrefix}:00' && created<='${minutePrefix}:59'`,
-        ];
-        if (gyms && gyms.length > 0) {
-            filterParts.push(buildInFilter(pb, "gym_name", gyms));
-        }
-
-        const latestRecords = await pb.collection("Revo_Gym_Count").getFullList<PbRecord>({
-            filter: filterParts.join(" && "),
-            batch: 200,
-        });
-
-        // Fetch active gym metadata for all referenced gyms
-        const gymIds = [...new Set(latestRecords.map((r) => String(r.gym_id)).filter(Boolean))];
-        const gymMetaMap = new Map<string, GymMeta>();
-        if (gymIds.length > 0) {
-            const metaFilterParts = [buildInFilter(pb, "id", gymIds), "active=true"];
-            const metaRecords = await pb.collection("Revo_Gyms").getFullList({
-                filter: metaFilterParts.join(" && "),
-                batch: 200,
-            });
-            for (const record of metaRecords) {
-                gymMetaMap.set(record.id, mapGymMeta(record));
-            }
-        }
-
-        let latestData: Gym[] = latestRecords
-            .filter((record) => gymMetaMap.has(String(record.gym_id)))
-            .map((record) => mapGym(record, gymMetaMap.get(String(record.gym_id))!));
+        let latestData: Gym[] = gyms && gyms.length > 0
+            ? snapshot.data.filter((gym) => gyms.includes(gym.gymName))
+            : [...snapshot.data];
 
         // Apply user preferences filter
-        const user = await userPromise;
+        const user = await getCurrentUser();
         const userId = user?.id;
         if (userId && !showAll) {
             const preferences = user?.gymPreferences ?? [];
@@ -214,12 +296,9 @@ export const getGyms = async (
         }
 
         // Apply sorting
-        const sortKey = sort.key as GymResponse["data"][number] extends infer T ? keyof T : never;
         const direction = sort.direction === "asc" ? 1 : -1;
         if (sort.key === "gymName") {
             latestData.sort((a, b) => direction * a.gymName.localeCompare(b.gymName));
-        } else if (sort.key === "percentage") {
-            latestData.sort((a, b) => direction * (a.percentage - b.percentage));
         } else if (sort.key === "areaSize") {
             latestData.sort((a, b) => direction * (a.areaSize - b.areaSize));
         } else if (sort.key === "count") {
@@ -239,7 +318,7 @@ export const getGyms = async (
         }
 
         const result: GymResponse = {
-            timestamp: latestTimestamp,
+            timestamp: snapshot.timestamp,
             data: latestData,
         };
         return result;

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Clock, Heart, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getGyms } from "@/lib/fetchData";
+import { getDataFreshness, getGyms } from "@/lib/fetchData";
 import { getCrowdLevelMeta } from "./components/CrowdLevelBadge";
+import StaleDataBanner, { formatFreshnessAge } from "./components/StaleDataBanner";
 import type { Gym } from "./gyms/_types";
 
 // The hero is only as useful as the numbers in it, so it is rendered per request.
@@ -22,8 +23,12 @@ export default async function LandingPage() {
     console.error("[home] could not load live counts:", error);
   }
 
+  const freshness = await getDataFreshness();
+
   return (
     <div className="flex min-h-screen flex-col">
+      <StaleDataBanner freshness={freshness} className="mx-auto w-full max-w-3xl px-6 pt-6" />
+
       <section className="flex flex-col items-center px-6 pb-12 pt-16 text-center sm:pt-24">
         <h1 className="max-w-3xl text-balance text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
           Track the crowd, so you can focus on your gains
@@ -76,7 +81,9 @@ export default async function LandingPage() {
         <section className="mx-auto w-full max-w-3xl px-6 pb-16">
           <div className="mb-3 flex items-end justify-between gap-4">
             <h2 className="text-sm font-medium text-muted-foreground">
-              Busiest right now
+              {freshness.stale
+                ? `Busiest at the last update, ${formatFreshnessAge(freshness.ageMinutes)}`
+                : "Busiest right now"}
             </h2>
             <Link
               href="/gyms"

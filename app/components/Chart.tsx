@@ -226,6 +226,19 @@ export default function Chart({
       ? new Intl.NumberFormat("en-AU").format(currentCount)
       : null;
 
+  // Screen-reader summary of the same series the chart draws.
+  const chartSummary = React.useMemo(() => {
+    const recorded = chartData.filter((point) => typeof point.count === "number");
+    if (recorded.length === 0) return "No readings recorded for this day.";
+
+    const counts = recorded.map((point) => point.count as number);
+    const peak = Math.max(...counts);
+    const first = formatTimeLabel(recorded[0].at, true);
+    const last = formatTimeLabel(recorded[recorded.length - 1].at, true);
+
+    return `${description}. ${recorded.length} readings from ${first} to ${last}. Peak ${peak} members. The dashed line is the typical average for this weekday.`;
+  }, [chartData, description]);
+
   return (
     <Card className="w-full overflow-hidden">
       <CardHeader className="gap-4 border-b px-4 py-4 sm:px-6 sm:py-5">
@@ -254,7 +267,39 @@ export default function Chart({
       <CardContent className="px-3 pb-4 pt-4 sm:px-6 sm:pb-6 sm:pt-6">
         {hasCurrentData ? (
           <>
+            {/* The chart is an SVG with no text, so the same numbers are
+                offered as a summary plus a table for screen readers. */}
+            <figure className="sr-only">
+              <figcaption id="revo-chart-summary">{chartSummary}</figcaption>
+              <table>
+                <caption>Member count by time of day</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Time</th>
+                    <th scope="col">Members recorded</th>
+                    <th scope="col">Typical average</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {chartData
+                    .filter((point) => point.count != null)
+                    .map((point) => (
+                      <tr key={point.key}>
+                        <th scope="row">{formatTimeLabel(point.at, true)}</th>
+                        <td>{point.count}</td>
+                        <td>
+                          {point.average == null
+                            ? "no average"
+                            : Math.round(point.average)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </figure>
+
             <ChartContainer
+              aria-describedby="revo-chart-summary"
               config={chartConfig}
               className="aspect-auto h-[230px] w-full sm:h-[260px] [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground/70 [&_.recharts-cartesian-axis-tick_text]:text-[11px]"
             >

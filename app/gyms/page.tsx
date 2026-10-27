@@ -1,5 +1,7 @@
-import { getGyms } from "@/lib/fetchData";
+import { getDataFreshness, getGyms } from "@/lib/fetchData";
 import GymList from "./GymList";
+import StaleDataBanner from "@/app/components/StaleDataBanner";
+import JsonLd from "@/app/components/JsonLd";
 import { GymResponse } from "./_types";
 import { getCurrentUser } from "@/lib/current-user";
 import type { Metadata } from "next";
@@ -60,9 +62,28 @@ export default async function Home(props: {
         fetchError = "Could not load gym data. Please try again later.";
     }
 
+    const freshness = await getDataFreshness();
+
     return (
         <div className="w-full px-8 justify-center pt-6 gap-6 ">
+            {response && response.data.length > 0 ? (
+                <JsonLd
+                    data={{
+                        "@context": "https://schema.org",
+                        "@type": "ItemList",
+                        name: "Revo Fitness gyms tracked by Revo Tracker",
+                        numberOfItems: response.data.length,
+                        itemListElement: response.data.map((gym, index) => ({
+                            "@type": "ListItem",
+                            position: index + 1,
+                            name: gym.gymName,
+                            url: `https://revotracker.dvcklab.com/gyms/${encodeURIComponent(gym.gymName)}`,
+                        })),
+                    }}
+                />
+            ) : null}
             <div className="flex flex-col gap-6">
+                <StaleDataBanner freshness={freshness} />
                 {fetchError ? (
                     <p className="text-red-500">{fetchError}</p>
                 ) : response ? (
