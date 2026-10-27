@@ -12,6 +12,12 @@ export const revalidate = 60; // Revalidate every minute
 export const metadata: Metadata = {
     title: "Updates",
     description: "What changed in Revo Tracker, newest first.",
+    alternates: { canonical: "/updates" },
+    openGraph: {
+        title: "Updates",
+        description: "What changed in Revo Tracker, newest first.",
+        url: "/updates",
+    },
 };
 
 export default async function UpdatesPage() {

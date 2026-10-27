@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Why Revo Tracker exists: the Revo Fitness site shows one live count, this shows every location at once.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About",
+    description:
+      "Why Revo Tracker exists: the Revo Fitness site shows one live count, this shows every location at once.",
+    url: "/about",
+  },
 };
 
 export default function AboutPage() {

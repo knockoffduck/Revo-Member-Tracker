@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   title: "How to use it",
   description:
     "How to read the crowd levels, the count chart and the squat rack numbers in Revo Tracker.",
+  alternates: { canonical: "/how-to-use" },
+  openGraph: {
+    title: "How to use it",
+    description:
+      "How to read the crowd levels, the count chart and the squat rack numbers in Revo Tracker.",
+    url: "/how-to-use",
+  },
 };
 
 export default function HowToUsePage() {

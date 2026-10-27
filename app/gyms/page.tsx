@@ -9,6 +9,12 @@ export const metadata: Metadata = {
     description:
         "Live member counts and crowd levels for every Revo Fitness location, sorted by how busy they are right now.",
     alternates: { canonical: "/gyms" },
+    openGraph: {
+        title: "All gyms",
+        description:
+            "Live member counts and crowd levels for every Revo Fitness location, sorted by how busy they are right now.",
+        url: "/gyms",
+    },
 };
 
 export default async function Home(props: {

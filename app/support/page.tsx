@@ -5,6 +5,12 @@ import { ArrowUpRight, Mail, MessageSquare, ShieldAlert } from "lucide-react";
 export const metadata: Metadata = {
   title: "Support",
   description: "Get help with Revo Tracker, or send a note straight to Dvcklab.",
+  alternates: { canonical: "/support" },
+  openGraph: {
+    title: "Support",
+    description: "Get help with Revo Tracker, or send a note straight to Dvcklab.",
+    url: "/support",
+  },
 };
 
 const inputStyles =
