@@ -70,7 +70,7 @@ export default async function Header() {
 					<AccountButton />
 				) : (
 					<Link href="/auth/sign-in">
-						<Button variant="outline">Sign In</Button>
+						<Button variant="outline" className="h-11 px-4">Sign In</Button>
 					</Link>
 				)}
 			</div>

@@ -1,5 +1,6 @@
 
 import React from "react";
+import type { Metadata } from "next";
 import UpdateCard from "@/app/components/UpdateCard";
 import { getAnnouncements, isAdmin } from "@/lib/updates";
 import Link from "next/link";
@@ -7,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 export const revalidate = 60; // Revalidate every minute
+
+export const metadata: Metadata = {
+    title: "Updates",
+    description: "What changed in Revo Tracker, newest first.",
+};
 
 export default async function UpdatesPage() {
     const updates = await getAnnouncements();

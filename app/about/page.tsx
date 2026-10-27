@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Info, BarChart, Users } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Why Revo Tracker exists: the Revo Fitness site shows one live count, this shows every location at once.",
+};
 
 export default function AboutPage() {
   return (

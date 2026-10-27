@@ -1,68 +1,155 @@
 import Link from "next/link";
+import { ArrowRight, Clock, Heart, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart3, Clock, MapPin } from "lucide-react";
-import { DevNote } from "./components/DevNote";
+import { getGyms } from "@/lib/fetchData";
+import { getCrowdLevelMeta } from "./components/CrowdLevelBadge";
+import type { Gym } from "./gyms/_types";
 
-export default function LandingPage() {
+// The hero is only as useful as the numbers in it, so it is rendered per request.
+export const dynamic = "force-dynamic";
+
+export default async function LandingPage() {
+  let busiest: Gym[] = [];
+  let totalGyms = 0;
+
+  try {
+    const response = await getGyms(undefined, { key: "percentage", direction: "desc" }, true);
+    totalGyms = response.data.length;
+    busiest = [...response.data]
+      .sort((a, b) => (b.percentage ?? 0) - (a.percentage ?? 0))
+      .slice(0, 3);
+  } catch (error) {
+    console.error("[home] could not load live counts:", error);
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center space-y-10 py-24 px-6 text-center md:py-32 bg-gradient-to-b from-background to-muted/20">
-        <div className="space-y-4 max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-            Track the crowd, so you can focus on your gains
-          </h1>
-          <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-            Real-time capacity tracking to help you find the perfect time to train and avoid the rush.
-          </p>
-        </div>
-        <div className="flex gap-4">
-          <Link href="/gyms">
-            <Button size="lg" className="h-12 px-8 text-lg gap-2">
-              Find Your Gym <ArrowRight className="w-4 h-4" />
-            </Button>
+    <div className="flex min-h-screen flex-col">
+      <section className="flex flex-col items-center px-6 pb-12 pt-16 text-center sm:pt-24">
+        <h1 className="max-w-3xl text-balance text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+          Track the crowd, so you can focus on your gains
+        </h1>
+        <p className="mt-5 max-w-xl text-pretty text-base text-muted-foreground md:text-lg">
+          Live member counts for every Revo Fitness location, so you can pick a
+          quiet hour instead of guessing.
+        </p>
+
+        <form action="/gyms" className="mt-8 flex w-full max-w-md items-center gap-2">
+          <div className="relative flex-1">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              name="query"
+              placeholder="Search a suburb"
+              aria-label="Search gyms"
+              className="h-12 w-full rounded-xl border border-input bg-background pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <Button type="submit" size="lg" className="h-12 px-5">
+            Search
+          </Button>
+        </form>
+
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm">
+          <Link
+            href="/gyms"
+            className="inline-flex items-center gap-1.5 font-medium text-foreground underline-offset-4 hover:underline"
+          >
+            Browse all {totalGyms > 0 ? totalGyms : ""} gyms
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
-          <Link href="https://revofitness.com.au" target="_blank" rel="noreferrer">
-            <Button variant="outline" size="lg" className="h-12 px-8 text-lg">
-              Visit Revo
-            </Button>
+          <span className="text-muted-foreground" aria-hidden="true">·</span>
+          <Link
+            href="https://revofitness.com.au"
+            target="_blank"
+            rel="noreferrer"
+            className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            Revo Fitness website
           </Link>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="container mx-auto py-24 px-6">
-        <div className="grid gap-12 md:grid-cols-3">
-          <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div className="p-3 rounded-full bg-primary/10 text-primary">
-              <BarChart3 className="w-8 h-8" />
-            </div>
-            <h3 className="text-xl font-bold">Live Capacity</h3>
-            <p className="text-muted-foreground">
-              See exactly how busy your gym is right now before you leave the house.
+      {busiest.length > 0 ? (
+        <section className="mx-auto w-full max-w-3xl px-6 pb-16">
+          <div className="mb-3 flex items-end justify-between gap-4">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              Busiest right now
+            </h2>
+            <Link
+              href="/gyms"
+              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              See all
+            </Link>
+          </div>
+
+          <ul className="divide-y divide-border rounded-xl border border-border bg-card">
+            {busiest.map((gym) => {
+              const percentage = Math.round(gym.percentage ?? 0);
+              const crowd = getCrowdLevelMeta(percentage);
+              return (
+                <li key={gym.id}>
+                  <Link
+                    href={`/gyms/${gym.gymName}`}
+                    className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-muted/40"
+                  >
+                    <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-foreground">{gym.gymName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {gym.state} · {gym.count} members
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <div className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-secondary sm:block">
+                        <div
+                          className={`h-full ${percentage > 70 ? "bg-red-500" : percentage > 30 ? "bg-amber-500" : "bg-emerald-500"}`}
+                          style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
+                        />
+                      </div>
+                      <span className={`w-16 text-right text-sm font-medium tabular-nums ${crowd.textClasses}`}>
+                        {percentage}%
+                      </span>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+
+      <section className="mx-auto w-full max-w-3xl px-6 pb-20">
+        <div className="grid gap-6 sm:grid-cols-3">
+          <div className="flex flex-col gap-2">
+            <Clock className="h-5 w-5 text-primary" aria-hidden="true" />
+            <h2 className="font-medium text-foreground">Peak times</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Each gym page charts today against its own weekly average, so
+              quiet hours are easy to spot.
             </p>
           </div>
-          <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div className="p-3 rounded-full bg-primary/10 text-primary">
-              <Clock className="w-8 h-8" />
-            </div>
-            <h3 className="text-xl font-bold">Peak Times</h3>
-            <p className="text-muted-foreground">
-              Analyse historical data to identify the quietest times to workout.
+          <div className="flex flex-col gap-2">
+            <Heart className="h-5 w-5 text-primary" aria-hidden="true" />
+            <h2 className="font-medium text-foreground">Favourites</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Save the gyms you actually use. They stay on this device, or sync
+              if you sign in.
             </p>
           </div>
-          <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-            </div>
-            <h3 className="text-xl font-bold">Favourites</h3>
-            <p className="text-muted-foreground">
-              Track any Revo Fitness location. Save your favourites for quick access.
+          <div className="flex flex-col gap-2">
+            <MapPin className="h-5 w-5 text-primary" aria-hidden="true" />
+            <h2 className="font-medium text-foreground">Squat racks</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Rack counts and members per rack, so leg day doesn&apos;t start
+              with a queue.
             </p>
           </div>
         </div>
       </section>
-
     </div>
   );
 }

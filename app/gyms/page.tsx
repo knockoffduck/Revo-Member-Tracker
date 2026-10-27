@@ -2,6 +2,14 @@ import { getGyms } from "@/lib/fetchData";
 import GymList from "./GymList";
 import { GymResponse } from "./_types";
 import { getCurrentUser } from "@/lib/current-user";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "All gyms",
+    description:
+        "Live member counts and crowd levels for every Revo Fitness location, sorted by how busy they are right now.",
+    alternates: { canonical: "/gyms" },
+};
 
 export default async function Home(props: {
     searchParams?: Promise<{ query?: string; sort?: string; order?: string; showAll?: string }>;

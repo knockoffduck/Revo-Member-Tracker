@@ -28,7 +28,7 @@ export default function BackButton({ className }: BackButtonProps) {
             size="icon"
             onClick={handleBack}
             aria-label="Go back"
-            className={cn("h-10 w-10 rounded-full", className)}
+            className={cn("h-11 w-11 rounded-full", className)}
         >
             <ArrowLeft className="h-5 w-5" />
         </Button>

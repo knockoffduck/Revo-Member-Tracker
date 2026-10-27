@@ -26,55 +26,53 @@ export default function GymDaySwitcher({
   const buildHref = (date: string) =>
     `/gyms/${encodeURIComponent(gymName)}?date=${date}`;
 
+  const arrowClass = cn(
+    buttonVariants({ variant: "outline", size: "sm" }),
+    "h-11 w-11 shrink-0 rounded-lg border-border/70 bg-background p-0",
+  );
+
   return (
-    <div className="rounded-xl border border-border/60 bg-card/70 px-3 py-3 sm:px-4">
-      <div className="text-center">
-        <p className="text-sm font-semibold text-foreground">
-          {selectedDay.format("ddd, D MMM YYYY")}
+    <div className="flex items-center justify-between gap-2 rounded-xl border border-border/60 bg-card px-2 py-2">
+      <Link
+        href={buildHref(previousDate)}
+        scroll={false}
+        className={arrowClass}
+        aria-label={`View ${selectedDay.subtract(1, "day").format("D MMMM YYYY")}`}
+      >
+        <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+      </Link>
+
+      <div className="min-w-0 text-center">
+        <p className="truncate text-sm font-semibold text-foreground">
+          {isToday ? "Today" : selectedDay.format("ddd, D MMM YYYY")}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Times shown in {timezone}
+        <p className="truncate text-[11px] text-muted-foreground">
+          {isToday ? `${selectedDay.format("D MMM YYYY")} · times in ${timezone}` : `Times in ${timezone}`}
         </p>
       </div>
 
-      <div className="mt-3 grid grid-cols-[auto,1fr,auto] items-center gap-2 rounded-xl bg-muted/20 p-1 sm:mx-auto sm:max-w-md">
-        <Link
-          href={buildHref(previousDate)}
-          scroll={false}
-          className={cn(
-            buttonVariants({ variant: "outline", size: "sm" }),
-            "h-10 min-w-10 rounded-lg border-border/70 bg-background/80 px-3",
-          )}
-          aria-label={`View ${selectedDay.subtract(1, "day").format("D MMM YYYY")}`}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Link>
-        <Link
-          href={`/gyms/${encodeURIComponent(gymName)}`}
-          scroll={false}
-          className={cn(
-            buttonVariants({ variant: "secondary", size: "sm" }),
-            "h-10 w-full rounded-lg bg-background/60 text-sm font-medium shadow-none",
-            isToday && "pointer-events-none opacity-50",
-          )}
-          aria-disabled={isToday}
-          tabIndex={isToday ? -1 : undefined}
-        >
-          Today
-        </Link>
+      <div className="flex shrink-0 items-center gap-1.5">
+        {!isToday ? (
+          <Link
+            href={`/gyms/${encodeURIComponent(gymName)}`}
+            scroll={false}
+            className={cn(
+              buttonVariants({ variant: "secondary", size: "sm" }),
+              "h-11 rounded-lg px-3 text-sm font-medium",
+            )}
+          >
+            Today
+          </Link>
+        ) : null}
         <Link
           href={buildHref(nextDate)}
           scroll={false}
-          className={cn(
-            buttonVariants({ variant: "outline", size: "sm" }),
-            "h-10 min-w-10 rounded-lg border-border/70 bg-background/80 px-3",
-            isToday && "pointer-events-none opacity-50",
-          )}
+          className={cn(arrowClass, isToday && "pointer-events-none opacity-40")}
           aria-disabled={isToday}
           tabIndex={isToday ? -1 : undefined}
-          aria-label={`View ${selectedDay.add(1, "day").format("D MMM YYYY")}`}
+          aria-label={`View ${selectedDay.add(1, "day").format("D MMMM YYYY")}`}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Link>
       </div>
     </div>

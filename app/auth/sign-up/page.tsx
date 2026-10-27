@@ -5,7 +5,6 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Form,
@@ -16,13 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useTransition } from "react";
+import { PasswordInput } from "@/components/ui/password-input";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { signUpEmail } from "@/app/auth/actions";
 import Link from "next/link";
-import { Lock, User, Mail, ArrowRight, UserCircle, Loader2 } from "lucide-react";
+import { Lock, User, ArrowRight, UserCircle, Loader2, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -40,6 +40,7 @@ function Page() {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -51,47 +52,45 @@ function Page() {
   });
 
   const onSubmit = async (values: FormValues) => {
+    setFormError(null);
     startTransition(async () => {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("email", values.email);
       formData.append("password", values.password);
 
-      const result = await signUpEmail(formData);
+      try {
+        const result = await signUpEmail(formData);
 
-      if (result && !result.success) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.message,
-        });
-      } else if (result && result.success) {
-        toast({
-          title: "Success",
-          description: result.message,
-        });
-        router.push("/gyms");
+        if (result && !result.success) {
+          setFormError(result.message || "We couldn't create that account.");
+        } else if (result && result.success) {
+          toast({
+            title: "Success",
+            description: result.message,
+          });
+          router.push("/gyms");
+        }
+      } catch {
+        setFormError(
+          "We couldn't reach the account service. Please try again in a moment.",
+        );
       }
     });
   };
 
+  const fieldClass =
+    "pl-9 bg-background transition-colors focus:border-primary/50";
+
   return (
     <div className="flex w-full min-h-[calc(100vh-400px)] items-center justify-center px-4 py-12">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] opacity-20" />
-      </div>
-
-      <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl">
+      <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center pb-8">
-          <CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-            Create Account
-          </CardTitle>
-          <p className="text-muted-foreground text-sm">
-            Join using an email or username.
-            <br />
-            <span className="text-xs opacity-70">
-              A valid email is not required, just one that you will remember.
-            </span>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Create account
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Sync your favourite gyms across devices.
           </p>
         </CardHeader>
         <CardContent>
@@ -106,15 +105,19 @@ function Page() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Full Name
+                      Name
                     </FormLabel>
                     <FormControl>
                       <div className="relative group">
                         <UserCircle className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                         <Input
-                          placeholder="John Doe"
+                          placeholder="What should we call you?"
+                          autoComplete="name"
+                          required
+                          aria-invalid={Boolean(formError)}
+                          aria-describedby={formError ? "sign-up-error" : undefined}
                           {...field}
-                          className="pl-9 bg-white/5 border-white/10 transition-all focus:bg-white/10 focus:border-primary/50"
+                          className={fieldClass}
                         />
                       </div>
                     </FormControl>
@@ -128,19 +131,28 @@ function Page() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Email or Username
+                      Email or username
                     </FormLabel>
                     <FormControl>
                       <div className="relative group">
                         <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                         <Input
                           placeholder="user@example.com or cooluser123"
+                          autoComplete="username"
+                          autoCapitalize="none"
+                          spellCheck={false}
+                          required
+                          aria-invalid={Boolean(formError)}
+                          aria-describedby={formError ? "sign-up-error" : undefined}
                           {...field}
-                          className="pl-9 bg-white/5 border-white/10 transition-all focus:bg-white/10 focus:border-primary/50"
+                          className={fieldClass}
                         />
                       </div>
                     </FormControl>
                     <FormMessage />
+                    <p className="text-xs text-muted-foreground">
+                      A real email is optional. Pick something you&apos;ll remember.
+                    </p>
                   </FormItem>
                 )}
               />
@@ -154,12 +166,15 @@ function Page() {
                     </FormLabel>
                     <FormControl>
                       <div className="relative group">
-                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                        <Input
-                          placeholder="Create a password"
-                          type="password"
+                        <Lock className="absolute left-3 top-2.5 z-10 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                        <PasswordInput
+                          placeholder="At least 8 characters"
+                          autoComplete="new-password"
+                          required
+                          aria-invalid={Boolean(formError)}
+                          aria-describedby={formError ? "sign-up-error" : undefined}
                           {...field}
-                          className="pl-9 bg-white/5 border-white/10 transition-all focus:bg-white/10 focus:border-primary/50"
+                          className={fieldClass}
                         />
                       </div>
                     </FormControl>
@@ -168,16 +183,27 @@ function Page() {
                 )}
               />
 
+              {formError ? (
+                <p
+                  id="sign-up-error"
+                  role="alert"
+                  className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                >
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span>{formError}</span>
+                </p>
+              ) : null}
+
               <Button
                 type="submit"
-                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full h-11 font-medium"
                 disabled={isPending}
               >
                 {isPending ? (
                   <Loader2 className="animate-spin h-5 w-5" />
                 ) : (
                   <span className="flex items-center gap-2">
-                    Create Account <ArrowRight className="h-4 w-4" />
+                    Create account <ArrowRight className="h-4 w-4" />
                   </span>
                 )}
               </Button>
@@ -189,7 +215,7 @@ function Page() {
             Already have an account?{" "}
             <Link
               href="/auth/sign-in"
-              className="font-medium text-primary hover:text-primary/80 transition-colors underline decoration-primary/30 underline-offset-4 hover:decoration-primary"
+              className="font-medium text-primary underline-offset-4 hover:underline"
             >
               Sign in
             </Link>

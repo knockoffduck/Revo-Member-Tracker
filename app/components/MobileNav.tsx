@@ -16,7 +16,7 @@ export default function MobileNav({ isAdmin }: { isAdmin?: boolean }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" size="icon" className="md:hidden">
+				<Button variant="ghost" size="icon" className="h-11 w-11 md:hidden">
 					<Menu className="h-6 w-6" />
 					<span className="sr-only">Toggle menu</span>
 				</Button>

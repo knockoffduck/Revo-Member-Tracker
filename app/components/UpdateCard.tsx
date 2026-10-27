@@ -41,15 +41,17 @@ export default function UpdateCard({
     const publishedAt = parseTimestamp(date);
 
     const getCategoryColor = (cat: string | null) => {
+        // Tinted badges keep the label at 4.5:1 or better; solid fills with
+        // white text sit around 2-3:1 at this size.
         switch (cat) {
             case "feature":
-                return "bg-blue-500 hover:bg-blue-600";
+                return "border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300";
             case "fix":
-                return "bg-red-500 hover:bg-red-600";
+                return "border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300";
             case "event":
-                return "bg-purple-500 hover:bg-purple-600";
+                return "border-purple-500/30 bg-purple-500/10 text-purple-700 dark:text-purple-300";
             default:
-                return "bg-green-500 hover:bg-green-600";
+                return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
         }
     };
 
@@ -69,7 +71,7 @@ export default function UpdateCard({
                         ) : null}
                     </div>
                     {category && (
-                        <Badge className={`${getCategoryColor(category)} text-white`}>
+                        <Badge variant="outline" className={getCategoryColor(category)}>
                             {category.charAt(0).toUpperCase() + category.slice(1)}
                         </Badge>
                     )}

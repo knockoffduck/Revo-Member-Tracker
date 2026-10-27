@@ -44,7 +44,7 @@ export default async function GymContent({
   const [data, trendData, liveSnapshot] = await Promise.all([
     getGymStats(gymName, dateMeta.selectedDate, gymMeta ?? undefined),
     gymMeta?.id
-      ? getGymTrend(gymMeta.id, gymMeta.timezone)
+      ? getGymTrend(gymMeta.id, gymMeta.timezone, dateMeta.selectedDate)
       : Promise.resolve([] as TrendSlot[]),
     getGymLiveSnapshot(gymName, gymMeta ?? undefined),
   ]);
@@ -178,6 +178,13 @@ export default async function GymContent({
         />
       )}
 
+      <GymDaySwitcher
+        gymName={gymName}
+        selectedDate={dateMeta.selectedDate}
+        todayDate={dateMeta.todayDate}
+        timezone={dateMeta.timezone}
+      />
+
       <DeferredGymChart
         data={localisedData}
         trendData={trendData}
@@ -191,12 +198,6 @@ export default async function GymContent({
             : null
         }
         live={dateMeta.isToday}
-      />
-      <GymDaySwitcher
-        gymName={gymName}
-        selectedDate={dateMeta.selectedDate}
-        todayDate={dateMeta.todayDate}
-        timezone={dateMeta.timezone}
       />
 
       <NearbyGymsCard gymName={gymName} />

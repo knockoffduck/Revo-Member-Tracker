@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 	// DEV BYPASS: remove this guard for production
 	const admin = process.env.NODE_ENV === "development" ? true : await isAdmin();
 	if (!admin) {
-		redirect("/?admin=forbidden");
+		redirect("/auth/sign-in?next=/admin");
 	}
 	return (
 		<BaseUrlProvider>

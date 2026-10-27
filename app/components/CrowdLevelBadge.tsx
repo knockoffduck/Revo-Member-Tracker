@@ -33,7 +33,7 @@ export default function CrowdLevelBadge({ percentage, size = "default" }: CrowdL
     const { label, colorClasses } = getCrowdLevelMeta(percentage);
 
     const sizeClasses = size === "sm"
-        ? "px-2 py-0.5 text-[10px]"
+        ? "px-2 py-0.5 text-xs"
         : "px-3 py-1 text-xs";
 
     return (

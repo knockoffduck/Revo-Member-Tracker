@@ -2,6 +2,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MousePointerClick, Activity } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "How to use it",
+  description:
+    "How to read the crowd levels, the count chart and the squat rack numbers in Revo Tracker.",
+};
 
 export default function HowToUsePage() {
     return (
@@ -48,25 +55,34 @@ export default function HowToUsePage() {
                 <section className="space-y-6">
                     <h2 className="text-2xl font-bold border-b pb-2">What do the Colours Mean?</h2>
                     <div className="grid gap-6 md:grid-cols-3">
-                        <Card className="border-l-4 border-l-green-500">
+                        <Card className="border-emerald-500/30 bg-emerald-500/5">
                             <CardHeader>
-                                <CardTitle className="text-green-600">Green: Low</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+                                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                                    Quiet: under 30%
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="text-muted-foreground">
                                 The gym is quiet. Plenty of equipment available. Perfect time for a workout.
                             </CardContent>
                         </Card>
-                        <Card className="border-l-4 border-l-yellow-500">
+                        <Card className="border-amber-500/30 bg-amber-500/5">
                             <CardHeader>
-                                <CardTitle className="text-yellow-600">Yellow: Medium</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" aria-hidden="true" />
+                                    Moderate: 30 to 70%
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="text-muted-foreground">
                                 Moderate traffic. You might wait for a bench or rack, but it&apos;s manageable.
                             </CardContent>
                         </Card>
-                        <Card className="border-l-4 border-l-red-500">
+                        <Card className="border-red-500/30 bg-red-500/5">
                             <CardHeader>
-                                <CardTitle className="text-red-600">Red: High</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                                    <span className="h-2.5 w-2.5 rounded-full bg-red-500" aria-hidden="true" />
+                                    Busy: over 70%
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="text-muted-foreground">
                                 Very busy. Expect crowds and waiting times. Maybe save leg day for later.

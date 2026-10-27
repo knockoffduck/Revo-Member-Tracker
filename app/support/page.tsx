@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ArrowUpRight, Mail, MessageSquare, ShieldAlert } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Support | Revo Member Tracker",
-  description: "Contact Dvcklab for help with Revo Member Tracker.",
+  title: "Support",
+  description: "Get help with Revo Tracker, or send a note straight to Dvcklab.",
 };
 
 const inputStyles =

@@ -4,26 +4,106 @@ import { Gym, GymResponse, SortKey, SORT_OPTIONS, getSortLabel } from "./_types"
 import { LocationCard } from "@/app/components/LocationCard";
 import { toast } from "@/hooks/use-toast";
 import { useMemo, useState, useEffect, useRef } from "react";
-import {
-  Search,
-  ChevronDown,
-  ArrowUp,
-  ArrowDown
-} from "lucide-react";
+import { Search, ChevronDown, ArrowUp, ArrowDown, SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFavorites } from "./useFavorites";
 
-/**
- * Displays a list of gyms, allowing filtering and toggling between preferred/all gyms.
- *
- * @param props - Component props.
- * @param props.query - The search query string for filtering gyms by name.
- * @param props.gymResponse - The initial gym data fetched server-side.
- * @param props.currentTime - The timestamp string for the fetched data.
- * @param props.hasGymPreferences - Boolean indicating if the logged-in user has preferences set.
- * @param props.userFavorites - Array of gym names favorited by the user (if logged in).
- * @param props.isAuthenticated - Boolean indicating if the user is logged in.
- */
+type SortDropdownProps = {
+  label: string;
+  sortKey: SortKey;
+  sortDirection: "asc" | "desc";
+  isOpen: boolean;
+  onToggle: () => void;
+  onSort: (key: SortKey) => void;
+  onToggleDirection: () => void;
+  containerRef: React.RefObject<HTMLDivElement>;
+};
+
+function SortDropdown({
+  label,
+  sortKey,
+  sortDirection,
+  isOpen,
+  onToggle,
+  onSort,
+  onToggleDirection,
+  containerRef,
+}: SortDropdownProps) {
+  const sections = [
+    { title: "Occupancy", options: SORT_OPTIONS.filter((opt) => opt.section === "occupancy") },
+    { title: "Facilities", options: SORT_OPTIONS.filter((opt) => opt.section === "facilities") },
+    { title: "General", options: SORT_OPTIONS.filter((opt) => opt.section === "general") },
+  ].filter((section) => section.options.length > 0);
+
+  return (
+    <div className="flex items-center gap-1.5" ref={containerRef}>
+      <div className="relative flex-1 sm:flex-none">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={isOpen}
+          aria-haspopup="menu"
+          className="flex h-11 w-full items-center justify-between gap-3 rounded-lg border border-input bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/50 sm:min-w-[11rem]"
+        >
+          <span className="truncate">{label}</span>
+          <ChevronDown
+            size={16}
+            className={`shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        {isOpen && (
+          <div
+            role="menu"
+            className="absolute left-0 top-full z-[60] mt-2 min-w-[13rem] rounded-xl border border-border bg-popover py-2 text-popover-foreground shadow-lg"
+          >
+            {sections.map((section, index) => (
+              <div key={section.title}>
+                {index > 0 ? <div className="mx-3 my-2 h-px bg-border" /> : null}
+                <div className="px-4 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  {section.title}
+                </div>
+                {section.options.map((option) => (
+                  <button
+                    key={option.key}
+                    role="menuitemradio"
+                    aria-checked={sortKey === option.key}
+                    onClick={() => onSort(option.key)}
+                    className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm transition-colors ${
+                      sortKey === option.key
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-muted/60"
+                    }`}
+                  >
+                    <span>{option.label}</span>
+                    {sortKey === option.key
+                      ? sortDirection === "asc"
+                        ? <ArrowUp size={14} aria-hidden="true" />
+                        : <ArrowDown size={14} aria-hidden="true" />
+                      : null}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={onToggleDirection}
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-muted/50"
+        aria-label={sortDirection === "asc" ? "Sort descending" : "Sort ascending"}
+        title={sortDirection === "asc" ? "Switch to descending" : "Switch to ascending"}
+      >
+        {sortDirection === "asc"
+          ? <ArrowUp size={16} className="text-muted-foreground" aria-hidden="true" />
+          : <ArrowDown size={16} className="text-muted-foreground" aria-hidden="true" />}
+      </button>
+    </div>
+  );
+}
+
 export default function GymList({
   query,
   gymResponse,
@@ -42,101 +122,71 @@ export default function GymList({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Local state for columns configuration
-  const [columns, setColumns] = useState<number | 'auto'>('auto');
+  const [columns, setColumns] = useState<number | "auto">("auto");
   const [maxColumns, setMaxColumns] = useState(4);
   const [localSearchQuery, setLocalSearchQuery] = useState(query);
-
-  // Local state for favorites filtering (when not using server-side filtering)
   const [showFavoritesLocal, setShowFavoritesLocal] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { favorites, isFavorite, toggleFavorite } = useFavorites({
     initialFavorites: userFavorites || [],
-    isAuthenticated: isAuthenticated
+    isAuthenticated,
   });
 
-  // Sync local search query with prop query only on mount or if needed.
-  // We REMOVED the auto-sync effect to prevent "glitchy" typing where the server prop (laggy) overwrites the local input.
-  // The local state is the source of truth for the input.
-
-  // Monitor screen width to limit column selection
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       let newMax = 4;
-      if (width < 640) newMax = 1;      // Mobile
-      else if (width < 1024) newMax = 2; // Tablet
-      else if (width < 1280) newMax = 3; // Laptop
+      if (width < 640) newMax = 1;
+      else if (width < 1024) newMax = 2;
+      else if (width < 1280) newMax = 3;
 
       setMaxColumns(newMax);
-
-      // Reset to auto if current selection is invalid for new size
-      if (typeof columns === 'number' && columns > newMax) {
-        setColumns('auto');
+      if (typeof columns === "number" && columns > newMax) {
+        setColumns("auto");
       }
     };
 
-    // Initial check
     handleResize();
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [columns]);
 
-  // Derive state from URL params
   const sortKey = (searchParams.get("sort") as SortKey) || "percentage";
-  // Busiest gym first when no explicit order is requested.
   const sortDirection = (searchParams.get("order") as "asc" | "desc") || "desc";
   const showAllParam = searchParams.get("showAll") === "true";
   const selectedState = searchParams.get("state") || "All States";
 
-  // Logic for Show Favorites toggle
-  // If `hasGymPreferences`:
-  //    Toggle controls `showAll` param.
-  //    If showAllParam is TRUE, we are showing ALL gyms (toggle OFF).
-  //    If showAllParam is FALSE, we are showing FAVORITES (toggle ON).
-  // If `!hasGymPreferences`:
-  //    Toggle controls `showFavoritesLocal`.
-  //    If showFavoritesLocal is TRUE, we are showing FAVORITES (toggle ON).
-
-  // Let's standardize "isShowingFavorites" boolean for the UI switch
   const isShowingFavorites = hasGymPreferences ? !showAllParam : showFavoritesLocal;
+  const activeFilterCount =
+    (selectedState !== "All States" ? 1 : 0) + (isShowingFavorites ? 1 : 0);
 
-  // Handle toggling favorites
   const handleToggleFavorites = () => {
     const newIsShowingFavorites = !isShowingFavorites;
 
     if (hasGymPreferences) {
-      // Server-side toggle flow
       const params = new URLSearchParams(searchParams.toString());
       if (newIsShowingFavorites) {
-        // User wants to see favorites -> remove showAll param (default is favorites when has preferences)
         params.delete("showAll");
       } else {
-        // User wants to see all -> add showAll=true
         params.set("showAll", "true");
       }
       router.replace(`?${params.toString()}`, { scroll: false });
-
       toast({
         title: newIsShowingFavorites ? "Showing your preferred gyms" : "Showing all gyms",
         description: "Updating list...",
       });
     } else {
-      // Client-side toggle flow
       setShowFavoritesLocal(newIsShowingFavorites);
       toast({
-        title: newIsShowingFavorites ? "Showing your favorites" : "Showing all gyms",
+        title: newIsShowingFavorites ? "Showing your favourites" : "Showing all gyms",
         description: "Updating view...",
       });
     }
   };
 
-  const handleSearchChange = (val: string) => {
-    setLocalSearchQuery(val);
-  };
-
-  // Debounce URL update for search query
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
@@ -146,7 +196,6 @@ export default function GymList({
         params.delete("query");
       }
 
-      // Only update if the query param actually changed
       const currentQuery = searchParams.get("query") || "";
       if (currentQuery !== localSearchQuery) {
         router.replace(`?${params.toString()}`, { scroll: false });
@@ -160,31 +209,23 @@ export default function GymList({
     const params = new URLSearchParams(searchParams.toString());
     let newDirection: "asc" | "desc" = "asc";
 
-    // Determine default direction based on sort key
     if (key !== sortKey) {
-      // When switching to a new sort key, use logical default
-      if (key === 'gymName') {
-        newDirection = 'asc'; // A-Z
-      } else if (key === 'perRack') {
-        newDirection = 'asc'; // Fewest people per rack first
-      } else {
-        newDirection = 'desc'; // Busiest / most members / largest first
-      }
+      if (key === "gymName") newDirection = "asc";
+      else if (key === "perRack") newDirection = "asc";
+      else newDirection = "desc";
     } else {
-      // Toggling direction on same key
       newDirection = sortDirection === "asc" ? "desc" : "asc";
     }
 
     params.set("sort", key);
     params.set("order", newDirection);
+    setIsDropdownOpen(false);
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  // Toggle direction without changing sort key
   const handleToggleDirection = () => {
     const params = new URLSearchParams(searchParams.toString());
-    const newDirection = sortDirection === "asc" ? "desc" : "asc";
-    params.set("order", newDirection);
+    params.set("order", sortDirection === "asc" ? "desc" : "asc");
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
@@ -198,52 +239,33 @@ export default function GymList({
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  // Extract unique states for filter dropdown
   const uniqueStates = useMemo(() => {
     const states = gymResponse.data
       .map((gym) => gym.state)
-      .filter((state): state is string => !!state); // Filter out null/undefined
+      .filter((state): state is string => !!state);
     return Array.from(new Set(states)).sort();
   }, [gymResponse.data]);
 
-  // Client-side filtering (Search & State Filter)
-  // We use `localSearchQuery` for instant feedback on typing
   const processedGyms = useMemo(() => {
     let gyms = Array.isArray(gymResponse.data) ? [...gymResponse.data] : [];
 
-    // Filter by Search Query
     if (localSearchQuery) {
       gyms = gyms.filter((gym: Gym) =>
         gym.gymName.toLowerCase().includes(localSearchQuery.toLowerCase()),
       );
     }
 
-    // Filter by State
     if (selectedState && selectedState !== "All States") {
       gyms = gyms.filter((gym) => gym.state === selectedState);
     }
 
-    // Filter by Local Favorites (if active)
     if (!hasGymPreferences && showFavoritesLocal) {
-      gyms = gyms.filter(gym => favorites.includes(gym.gymName));
+      gyms = gyms.filter((gym) => favorites.includes(gym.gymName));
     }
 
     return gyms;
   }, [gymResponse.data, localSearchQuery, selectedState, hasGymPreferences, showFavoritesLocal, favorites]);
 
-  const gridClassMap: Record<string | number, string> = {
-    'auto': "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
-    1: "grid-cols-1",
-    2: "grid-cols-2",
-    3: "grid-cols-3",
-    4: "grid-cols-4",
-  };
-
-  // Dropdown state
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -252,263 +274,199 @@ export default function GymList({
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen]);
 
-  // Group sort options by section
-  const occupancyOptions = SORT_OPTIONS.filter(opt => opt.section === 'occupancy');
-  const facilitiesOptions = SORT_OPTIONS.filter(opt => opt.section === 'facilities');
-  const generalOptions = SORT_OPTIONS.filter(opt => opt.section === 'general');
+  const gridClassMap: Record<string | number, string> = {
+    // Auto tops out at three columns: a fourth squeezes "members now" onto a
+    // second line at 1280px.
+    auto: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    1: "grid-cols-1",
+    2: "grid-cols-2",
+    3: "grid-cols-3",
+    4: "grid-cols-4",
+  };
 
-  // Get current sort label
   const currentSortLabel = getSortLabel(sortKey);
+  const totalGyms = gymResponse.data.length;
+
+  const favoritesToggle = (
+    <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+      <span>Favourites only</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isShowingFavorites}
+        aria-label="Show favourites only"
+        onClick={handleToggleFavorites}
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent transition-colors ${
+          isShowingFavorites ? "bg-primary" : "bg-input"
+        }`}
+      >
+        <span
+          aria-hidden="true"
+          className={`inline-block h-5 w-5 transform rounded-full bg-background shadow transition-transform ${
+            isShowingFavorites ? "translate-x-5" : "translate-x-0"
+          }`}
+        />
+      </button>
+    </label>
+  );
+
+  const stateSelect = (
+    <label className="flex items-center gap-2 text-sm text-muted-foreground">
+      <span className="sr-only">Filter by state</span>
+      <span aria-hidden="true">State</span>
+      <span className="relative">
+        <select
+          className="h-11 appearance-none rounded-lg border border-input bg-background pl-3 pr-8 text-sm text-foreground outline-none focus:ring-1 focus:ring-ring"
+          value={selectedState}
+          onChange={(e) => handleStateChange(e.target.value)}
+          aria-label="Filter by state"
+        >
+          <option value="All States">All states</option>
+          {uniqueStates.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+        <ChevronDown size={14} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      </span>
+    </label>
+  );
+
+  const layoutSelect = (
+    <label className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
+      <span className="sr-only">Column layout</span>
+      <span aria-hidden="true">Layout</span>
+      <span className="relative">
+        <select
+          className="h-11 appearance-none rounded-lg border border-input bg-background pl-3 pr-8 text-sm text-foreground outline-none focus:ring-1 focus:ring-ring"
+          value={columns}
+          onChange={(e) => setColumns(e.target.value === "auto" ? "auto" : Number(e.target.value))}
+          aria-label="Column layout"
+        >
+          <option value="auto">Automatic</option>
+          {Array.from({ length: 4 }, (_, i) => i + 1)
+            .filter((num) => num <= maxColumns)
+            .map((num) => (
+              <option key={num} value={num}>
+                {num} column{num === 1 ? "" : "s"}
+              </option>
+            ))}
+        </select>
+        <ChevronDown size={14} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      </span>
+    </label>
+  );
 
   return (
-    <div className="bg-background p-4 md:p-8 min-h-screen text-foreground">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-card/80 backdrop-blur-md p-5 rounded-2xl border border-border shadow-2xl space-y-6 mb-8 relative z-20">
+    <div className="min-h-screen bg-background p-4 text-foreground md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-5 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Gyms</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {processedGyms.length === totalGyms
+                ? `${totalGyms} Revo locations, live`
+                : `${processedGyms.length} of ${totalGyms} locations`}
+            </p>
+          </div>
+        </header>
 
-          {/* Top Row: Search and Quick Toggles */}
-          <div className="flex w-full flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+        <div className="relative z-20 mb-6 rounded-xl border border-border bg-card p-4 sm:p-5">
+          {/* Search row */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} aria-hidden="true" />
               <input
-                type="text"
-                placeholder="Find a location..."
-                className="w-full pl-10 pr-4 py-2.5 bg-background border border-input rounded-xl focus:ring-2 focus:ring-ring focus:border-input transition-all outline-none text-foreground placeholder:text-muted-foreground shadow-inner"
+                type="search"
+                placeholder="Search gyms"
+                aria-label="Search locations"
+                className="h-11 w-full rounded-xl border border-input bg-background pl-10 pr-4 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring"
                 value={localSearchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                onChange={(e) => setLocalSearchQuery(e.target.value)}
               />
             </div>
 
-            {/* Show Favorites Toggle Mobile/Desktop */}
-            <div className="flex items-center justify-between w-full md:w-auto gap-8 border-t md:border-t-0 pt-4 md:pt-0 border-border">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <span className="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
-                  Show Favourites
+            <div className="hidden sm:block">{favoritesToggle}</div>
+
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((open) => !open)}
+              aria-expanded={filtersOpen}
+              aria-label={activeFilterCount > 0 ? `Filters, ${activeFilterCount} active` : "Filters"}
+              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-input bg-background transition-colors hover:bg-muted/50 sm:hidden"
+            >
+              <SlidersHorizontal size={18} aria-hidden="true" />
+              {activeFilterCount > 0 ? (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-foreground">
+                  {activeFilterCount}
                 </span>
-                <div
-                  onClick={handleToggleFavorites}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${isShowingFavorites ? 'bg-primary' : 'bg-input'}`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow-xl transition duration-200 ease-in-out ${isShowingFavorites ? 'translate-x-5' : 'translate-x-0'}`}
-                  />
-                </div>
-              </label>
-            </div>
+              ) : null}
+            </button>
           </div>
 
-          <div className="h-px bg-border hidden md:block" />
-
-          {/* Bottom Row: Sort and Selects */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-5 relative z-10">
-            {/* Custom Sort Dropdown */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 lg:pr-5 lg:border-r border-border" ref={dropdownRef}>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 sm:mb-0 sm:mr-1">Sort By</span>
-              
-              {/* Dropdown Container */}
-              <div className="relative z-[100]">
-                {/* Dropdown Trigger - using div instead of button to allow nested button */}
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center justify-between gap-3 px-4 py-2.5 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors min-w-[180px]"
-                  >
-                    <span className="text-sm font-medium text-card-foreground">{currentSortLabel}</span>
-                    <ChevronDown 
-                      size={16} 
-                      className={`text-muted-foreground transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                    />
-                  </button>
-                  <button
-                    onClick={handleToggleDirection}
-                    className="p-2.5 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors"
-                    title={`Change to ${sortDirection === 'asc' ? 'descending' : 'ascending'}`}
-                  >
-                    {sortDirection === 'asc' ? (
-                      <ArrowUp size={16} className="text-muted-foreground" />
-                    ) : (
-                      <ArrowDown size={16} className="text-muted-foreground" />
-                    )}
-                  </button>
-                </div>
-
-                {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 z-[60] bg-card/95 backdrop-blur-md rounded-xl border border-border shadow-2xl min-w-[200px] py-2">
-                    {/* Occupancy Section */}
-                    <div className="px-3 py-2">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Occupancy</span>
-                      <div className="mt-1 space-y-0.5">
-                        {occupancyOptions.map((option) => (
-                          <button
-                            key={option.key}
-                            onClick={() => {
-                              handleSort(option.key);
-                              setIsDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
-                              sortKey === option.key
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-card-foreground hover:bg-muted/50'
-                            }`}
-                          >
-                            <span>{option.label}</span>
-                            {sortKey === option.key && (
-                              sortDirection === 'asc' ? (
-                                <ArrowUp size={14} className="text-primary" />
-                              ) : (
-                                <ArrowDown size={14} className="text-primary" />
-                              )
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="h-px bg-border mx-3 my-2" />
-
-                    {/* Facilities Section */}
-                    <div className="px-3 py-2">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Facilities</span>
-                      <div className="mt-1 space-y-0.5">
-                        {facilitiesOptions.map((option) => (
-                          <button
-                            key={option.key}
-                            onClick={() => {
-                              handleSort(option.key);
-                              setIsDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
-                              sortKey === option.key
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-card-foreground hover:bg-muted/50'
-                            }`}
-                          >
-                            <span>{option.label}</span>
-                            {sortKey === option.key && (
-                              sortDirection === 'asc' ? (
-                                <ArrowUp size={14} className="text-primary" />
-                              ) : (
-                                <ArrowDown size={14} className="text-primary" />
-                              )
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="h-px bg-border mx-3 my-2" />
-
-                    {/* General Section */}
-                    <div className="px-3 py-2">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">General</span>
-                      <div className="mt-1 space-y-0.5">
-                        {generalOptions.map((option) => (
-                          <button
-                            key={option.key}
-                            onClick={() => {
-                              handleSort(option.key);
-                              setIsDropdownOpen(false);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center justify-between ${
-                              sortKey === option.key
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-card-foreground hover:bg-muted/50'
-                            }`}
-                          >
-                            <span>{option.label}</span>
-                            {sortKey === option.key && (
-                              sortDirection === 'asc' ? (
-                                <ArrowUp size={14} className="text-primary" />
-                              ) : (
-                                <ArrowDown size={14} className="text-primary" />
-                              )
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-grow">
-              {/* State Filter */}
-              <div className="flex items-center gap-2 flex-1 sm:flex-none">
-                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">State</span>
-                <div className="relative flex-grow">
-                  <select
-                    className="w-full appearance-none pl-3 pr-8 py-2 text-sm bg-background border border-input rounded-lg outline-none focus:ring-1 focus:ring-ring text-foreground"
-                    value={selectedState}
-                    onChange={(e) => handleStateChange(e.target.value)}
-                  >
-                    <option value="All States">All States</option>
-                    {uniqueStates.map((state) => (
-                      <option key={state} value={state}>
-                        {state}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
-                </div>
-              </div>
-
-              {/* Layout Filter */}
-              <div className="flex items-center gap-2 flex-1 sm:flex-none">
-                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Layout</span>
-                <div className="relative flex-grow">
-                  <select
-                    className="w-full appearance-none pl-3 pr-8 py-2 text-sm bg-background border border-input rounded-lg outline-none focus:ring-1 focus:ring-ring text-foreground"
-                    value={columns}
-                    onChange={(e) => setColumns(e.target.value === 'auto' ? 'auto' : Number(e.target.value))}
-                  >
-                    <option value="auto">Auto Columns</option>
-                    {Array.from({ length: 4 }, (_, i) => i + 1)
-                      .filter(num => num <= maxColumns)
-                      .map(num => (
-                        <option key={num} value={num}>{num} Columns</option>
-                      ))
-                    }
-                  </select>
-                  <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
-                </div>
-              </div>
-
-            </div>
+          {/* Filters: collapsed on phones, always visible from sm up */}
+          <div
+            className={`${filtersOpen ? "block" : "hidden"} mt-4 space-y-4 border-t border-border pt-4 sm:mt-4 sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:space-y-0 sm:border-0 sm:pt-0`}
+          >
+            <SortDropdown
+              label={currentSortLabel}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              isOpen={isDropdownOpen}
+              onToggle={() => setIsDropdownOpen((open) => !open)}
+              onSort={handleSort}
+              onToggleDirection={handleToggleDirection}
+              containerRef={dropdownRef}
+            />
+            {stateSelect}
+            {layoutSelect}
+            <div className="sm:hidden">{favoritesToggle}</div>
           </div>
         </div>
 
-        {/* Gym List Grid */}
         {processedGyms.length > 0 ? (
-          <div className={
-            columns === 'auto'
-              ? "flex flex-wrap justify-center gap-6"
-              : `grid ${gridClassMap[columns]} gap-6 justify-center justify-items-center`
-          }>
+          <div className={`grid ${gridClassMap[columns]} gap-5`}>
             {processedGyms.map((gym) => (
               <LocationCard
                 key={gym.id}
                 gym={gym}
-                className={columns !== 'auto' ? "max-w-none" : undefined}
+                className="max-w-none"
                 isFavorite={isFavorite(gym.gymName)}
                 onToggleFavorite={toggleFavorite}
               />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center p-12 text-muted-foreground">
-            <Search size={48} className="mb-4 opacity-20" />
-            <p className="text-lg font-medium">No gyms found</p>
-            <p className="text-sm text-muted-foreground">Try adjusting your filters or search query.</p>
+          <div className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
+            <Search size={40} className="mb-4 opacity-30" aria-hidden="true" />
+            <p className="text-lg font-medium text-foreground">No gyms found</p>
+            <p className="mt-1 max-w-xs text-sm">
+              {localSearchQuery
+                ? `Nothing matches "${localSearchQuery}". Try a different name.`
+                : "Try clearing the state filter or turning off favourites."}
+            </p>
+            {(localSearchQuery || activeFilterCount > 0) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setLocalSearchQuery("");
+                  setShowFavoritesLocal(false);
+                  router.replace("?", { scroll: false });
+                }}
+                className="mt-4 h-11 rounded-lg border border-input px-4 text-sm font-medium text-foreground hover:bg-muted/50"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         )}
       </div>

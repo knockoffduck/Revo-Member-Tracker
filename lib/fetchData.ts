@@ -396,27 +396,70 @@ export const getAllTrends = async (): Promise<Record<string, GymTrend[]>> => {
 }
 
 
+/** Per-gym trend cache: the cache table only changes when trends regenerate. */
+const gymTrendCache = new Map<string, { data: GymTrend[]; expiresAt: number }>();
+const GYM_TREND_TTL_MS = 30 * 60 * 1000;
+
 /**
- * Fetches the trend data for a specific gym and the current day of the week.
+ * Fetches trend data for a single gym.
+ *
+ * The all-gyms endpoint returns roughly 2.5 MB, which every gym page used to
+ * download to read one gym's slice. The API exposes the same data per gym.
  */
+export const fetchGymTrends = async (gymId: string): Promise<GymTrend[]> => {
+    const cached = gymTrendCache.get(gymId);
+    if (cached && cached.expiresAt > Date.now()) {
+        return cached.data;
+    }
+
+    try {
+        const response = await fetch(
+            `https://revotrackerapi.dvcklab.com/gyms/trends/${encodeURIComponent(gymId)}`,
+            { cache: "no-store" },
+        );
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch trends for ${gymId}: ${response.status}`);
+        }
+
+        const json = await response.json();
+        if (json.message !== "Success" || !Array.isArray(json.data)) {
+            throw new Error("Invalid trend data format");
+        }
+
+        gymTrendCache.set(gymId, {
+            data: json.data as GymTrend[],
+            expiresAt: Date.now() + GYM_TREND_TTL_MS,
+        });
+
+        return json.data as GymTrend[];
+    } catch (error) {
+        console.error(`Error fetching trend for gym ${gymId}:`, error);
+        return [];
+    }
+};
+
 export const getGymTrend = async (
     gymId: string,
     gymTimezone: string = "Australia/Perth",
+    forDate?: string,
 ): Promise<TrendSlot[]> => {
     try {
-        const allTrends = await getAllTrends();
-        const gymTrends = allTrends[gymId];
+        const gymTrends = await fetchGymTrends(gymId);
 
-        if (!gymTrends) {
+        if (!gymTrends.length) {
             console.warn(`No trend data found for gym ID: ${gymId}`);
             return [];
         }
 
-        const dayOfWeek = dayjs().tz(gymTimezone).day();
+        // A past day needs that weekday's average, not today's.
+        const dayOfWeek = forDate
+            ? dayjs(forDate, DATE_FORMAT, true).day()
+            : dayjs().tz(gymTimezone).day();
 
-        const todayTrend = gymTrends.find(t => t.dayOfWeek === dayOfWeek);
+        const dayTrend = gymTrends.find((trend) => trend.dayOfWeek === dayOfWeek);
 
-        return todayTrend?.slots || [];
+        return dayTrend?.slots || [];
     } catch (error) {
         console.error(`Error fetching trend for gym ${gymId}:`, error);
         return [];

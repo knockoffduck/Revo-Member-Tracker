@@ -15,7 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition } from "react";
+import { PasswordInput } from "@/components/ui/password-input";
+import { Suspense, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,7 +24,7 @@ import Link from "next/link";
 import { signInEmail } from "../actions";
 import { Lock, User, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().min(3, { message: "Please enter a valid email or username" }),
@@ -32,13 +33,21 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-function Page() {
+function SignInForm() {
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   // A toast disappears after a few seconds; a failed sign-in has to stay on
   // screen until the person tries again.
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Only same-origin relative paths, so ?next= can't bounce people off-site.
+  const requestedNext = searchParams.get("next");
+  const nextPath =
+    requestedNext && requestedNext.startsWith("/") && !requestedNext.startsWith("//")
+      ? requestedNext
+      : "/gyms";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -65,7 +74,7 @@ function Page() {
             title: "Success",
             description: result.message,
           });
-          router.push("/gyms");
+          router.push(nextPath);
         }
       } catch (error) {
         // Rate limiting and database failures throw rather than returning a
@@ -82,21 +91,14 @@ function Page() {
 
   return (
     <div className="flex w-full min-h-[calc(100vh-400px)] items-center justify-center px-4 py-12">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] opacity-20" />
-      </div>
-
-      <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl">
+      <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center pb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Welcome Back
+            Welcome back
           </h1>
           <p className="text-muted-foreground text-sm">
-            Sign in to sync your favorites across devices.
-            <br />
-            <span className="text-xs opacity-70">
-              Otherwise favorites are stored locally.
-            </span>
+            Sign in to sync your favourite gyms across devices. Without an
+            account they stay on this device.
           </p>
         </CardHeader>
         <CardContent>
@@ -119,11 +121,13 @@ function Page() {
                         <Input
                           placeholder="Enter your email or username"
                           autoComplete="username"
+                          autoCapitalize="none"
+                          spellCheck={false}
                           required
                           aria-invalid={Boolean(formError)}
                           aria-describedby={formError ? "sign-in-error" : undefined}
                           {...field}
-                          className="pl-9 bg-white/5 border-white/10 transition-all focus:bg-white/10 focus:border-primary/50"
+                          className="pl-9 bg-background transition-colors focus:border-primary/50"
                         />
                       </div>
                     </FormControl>
@@ -141,16 +145,15 @@ function Page() {
                     </FormLabel>
                     <FormControl>
                       <div className="relative group">
-                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                        <Input
+                        <Lock className="absolute left-3 top-2.5 z-10 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                        <PasswordInput
                           placeholder="Enter your password"
-                          type="password"
                           autoComplete="current-password"
                           required
                           aria-invalid={Boolean(formError)}
                           aria-describedby={formError ? "sign-in-error" : undefined}
                           {...field}
-                          className="pl-9 bg-white/5 border-white/10 transition-all focus:bg-white/10 focus:border-primary/50"
+                          className="pl-9 bg-background transition-colors focus:border-primary/50"
                         />
                       </div>
                     </FormControl>
@@ -202,4 +205,11 @@ function Page() {
   );
 }
 
-export default Page;
+export default function Page() {
+  // useSearchParams needs a Suspense boundary to keep the route prerenderable.
+  return (
+    <Suspense fallback={null}>
+      <SignInForm />
+    </Suspense>
+  );
+}

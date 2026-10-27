@@ -8,8 +8,31 @@ import Script from "next/script"; // 1. Import the Script component
 import DeferredToaster from "./components/DeferredToaster";
 
 export const metadata: Metadata = {
-  title: "Revo Member Tracker",
-  description: "Find the right time to gym",
+  metadataBase: new URL("https://revotracker.dvcklab.com"),
+  title: {
+    default: "Revo Tracker: live gym crowd levels",
+    template: "%s | Revo Tracker",
+  },
+  description:
+    "Live member counts for every Revo Fitness gym, with peak times, squat rack availability and weekly averages so you can train when it is quiet.",
+  applicationName: "Revo Tracker",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Revo Tracker",
+    locale: "en_AU",
+    url: "/",
+    title: "Revo Tracker: live gym crowd levels",
+    description:
+      "Live member counts for every Revo Fitness gym. Find the quiet hours before you leave the house.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Revo Tracker: live gym crowd levels",
+    description:
+      "Live member counts for every Revo Fitness gym. Find the quiet hours before you leave the house.",
+  },
+  robots: { index: true, follow: true },
 };
 
 const inter = Inter({
