@@ -8,7 +8,7 @@ const cspDirectives = [
 	"default-src 'self'",
 	"base-uri 'self'",
 	"frame-ancestors 'none'",
-	"form-action 'self' https://formsubmit.co",
+	"form-action 'self'",
 	"object-src 'none'",
 	`script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com${__impeccableLiveDev}`,
 	"style-src 'self' 'unsafe-inline'",

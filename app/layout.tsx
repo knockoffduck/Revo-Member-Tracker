@@ -85,7 +85,7 @@ export default function RootLayout({
                 "@id": "https://dvcklab.com/#organization",
                 name: "Dvcklab",
                 url: "https://dvcklab.com",
-                email: "dvcklab@outlook.com",
+                email: "contact@dvcklab.com",
               },
             ],
           }}

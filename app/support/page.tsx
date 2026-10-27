@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowUpRight, Mail, MessageSquare, ShieldAlert } from "lucide-react";
+
+import { SupportForm } from "./SupportForm";
 
 export const metadata: Metadata = {
   title: "Support",
@@ -21,8 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-const inputStyles =
-  "w-full rounded-xl border border-border/50 bg-background/50 px-4 py-3 text-base text-foreground shadow-sm backdrop-blur-sm transition-all duration-300 placeholder:text-muted-foreground focus:border-primary/50 focus:bg-background/80 focus:outline-none focus:ring-4 focus:ring-primary/10";
+const SUPPORT_EMAIL = "support@revotracker.dvcklab.com";
 
 export default function SupportPage() {
   return (
@@ -62,10 +62,10 @@ export default function SupportPage() {
                 the fastest response possible.
               </p>
               <a
-                href="mailto:dvcklab@outlook.com"
+                href={`mailto:${SUPPORT_EMAIL}`}
                 className="inline-flex items-center gap-2 text-primary font-medium transition-all hover:gap-3 hover:text-primary/80"
               >
-                dvcklab@outlook.com
+                {SUPPORT_EMAIL}
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             </div>
@@ -97,105 +97,7 @@ export default function SupportPage() {
           <div className="relative rounded-3xl border border-border/50 bg-card/40 p-1 shadow-xl backdrop-blur-xl">
             <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-white/5 to-white/0 dark:from-white/5 dark:to-transparent" />
 
-            <form
-              action="https://formsubmit.co/dvcklab@outlook.com"
-              method="POST"
-              className="flex h-full flex-col rounded-[22px] bg-background/50 p-8 sm:p-10"
-            >
-              <input
-                type="hidden"
-                name="_subject"
-                value="Revo Member Tracker Support Request"
-              />
-              <input
-                type="hidden"
-                name="_next"
-                value="https://revotracker.dvcklab.com"
-              />
-              <input type="hidden" name="_captcha" value="false" />
-
-              <div className="mb-8">
-                <h3 className="text-2xl font-semibold tracking-tight mb-2">
-                  Send a message
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Your message goes directly to Dvcklab via FormSubmit.
-                </p>
-              </div>
-
-              <div className="grid gap-6 sm:grid-cols-2 mb-6">
-                <label className="group flex flex-col gap-2">
-                  <span className="text-sm font-medium text-foreground/80 transition-colors group-focus-within:text-primary">
-                    Name
-                  </span>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="John Doe"
-                    required
-                    className={inputStyles}
-                  />
-                </label>
-
-                <label className="group flex flex-col gap-2">
-                  <span className="text-sm font-medium text-foreground/80 transition-colors group-focus-within:text-primary">
-                    Email
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    autoComplete="email"
-                    placeholder="john@example.com"
-                    required
-                    className={inputStyles}
-                  />
-                </label>
-              </div>
-
-              <label className="group mb-6 flex flex-col gap-2">
-                <span className="text-sm font-medium text-foreground/80 transition-colors group-focus-within:text-primary">
-                  Subject
-                </span>
-                <input
-                  type="text"
-                  name="subject"
-                  placeholder="What can I help you with?"
-                  required
-                  className={inputStyles}
-                />
-              </label>
-
-              <label className="group mb-8 flex flex-col gap-2 flex-grow">
-                <span className="text-sm font-medium text-foreground/80 transition-colors group-focus-within:text-primary">
-                  Message
-                </span>
-                <textarea
-                  name="message"
-                  placeholder="Describe your issue in detail..."
-                  required
-                  className={`${inputStyles} min-h-[160px] resize-y flex-grow`}
-                />
-              </label>
-
-              <div className="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row mt-auto pt-6 border-t border-border/50">
-                <Link
-                  href="/gyms"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ← Back to tracker
-                </Link>
-
-                <button
-                  type="submit"
-                  className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-foreground px-8 py-3.5 text-sm font-medium text-background transition-all hover:scale-[1.02] hover:shadow-lg sm:w-auto hover:bg-primary"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Send Message
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </span>
-                </button>
-              </div>
-            </form>
+            <SupportForm />
           </div>
         </div>
       </div>

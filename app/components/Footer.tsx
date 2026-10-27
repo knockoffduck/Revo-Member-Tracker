@@ -12,10 +12,10 @@ export default function Footer() {
                         Support
                     </Link>
                     <a
-                        href="mailto:dvcklab@outlook.com"
+                        href="mailto:support@revotracker.dvcklab.com"
                         className="transition-colors hover:text-foreground"
                     >
-                        dvcklab@outlook.com
+                        support@revotracker.dvcklab.com
                     </a>
                 </div>
                 <p className="text-xs text-muted-foreground font-medium">
