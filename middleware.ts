@@ -108,6 +108,84 @@ function getClientIp(request: NextRequest): string {
 	return realIp?.trim() ?? "unknown";
 }
 
+// ── Trusted IPs ──────────────────────────────────────────────────────────────
+// Comma-separated IPv4/IPv6 addresses or IPv4 CIDR blocks, e.g.
+// TRUSTED_IPS=203.0.113.7,198.51.100.0/24
+const TRUSTED_IPS = (process.env.TRUSTED_IPS ?? "")
+	.split(",")
+	.map((entry) => entry.trim())
+	.filter(Boolean);
+
+function normaliseIp(value: string): string {
+	const trimmed = value.trim().toLowerCase();
+	const unbracketed = trimmed.startsWith("[") && trimmed.includes("]")
+		? trimmed.slice(1, trimmed.indexOf("]"))
+		: trimmed;
+	// ::ffff:1.2.3.4 is IPv4 wearing an IPv6 hat.
+	return unbracketed.startsWith("::ffff:") ? unbracketed.slice(7) : unbracketed;
+}
+
+function ipv4ToInt(ip: string): number | null {
+	const parts = ip.split(".");
+	if (parts.length !== 4) return null;
+	let value = 0;
+	for (const part of parts) {
+		if (!/^\d{1,3}$/.test(part)) return null;
+		const octet = Number(part);
+		if (octet > 255) return null;
+		value = value * 256 + octet;
+	}
+	return value;
+}
+
+function matchesEntry(ip: string, entry: string): boolean {
+	const candidate = normaliseIp(ip);
+	const target = normaliseIp(entry);
+
+	if (candidate === target) return true;
+
+	if (target.includes("/")) {
+		const [network, bitsRaw] = target.split("/");
+		const bits = Number(bitsRaw);
+		if (!Number.isInteger(bits) || bits < 0 || bits > 32) return false;
+
+		const networkValue = ipv4ToInt(network);
+		const candidateValue = ipv4ToInt(candidate);
+		if (networkValue === null || candidateValue === null) return false;
+
+		// /0 would make every address match, which is never intended.
+		if (bits === 0) return false;
+		const mask = bits === 32 ? 0xffffffff : (0xffffffff << (32 - bits)) >>> 0;
+		return (networkValue & mask) === (candidateValue & mask);
+	}
+
+	return false;
+}
+
+function isTrustedIp(ip: string): boolean {
+	if (!ip || ip === "unknown" || TRUSTED_IPS.length === 0) return false;
+	return TRUSTED_IPS.some((entry) => matchesEntry(ip, entry));
+}
+
+/**
+ * The client address as seen by our own proxy rather than the client itself.
+ * Traefik appends the real peer to any x-forwarded-for it receives, so the last
+ * entry cannot be forged; the first entry can be.
+ */
+function isTrustedRequest(request: NextRequest): boolean {
+	if (TRUSTED_IPS.length === 0) return false;
+
+	const forwardedFor = request.headers.get("x-forwarded-for");
+	if (forwardedFor) {
+		const hops = forwardedFor.split(",").map((hop) => hop.trim()).filter(Boolean);
+		const peer = hops[hops.length - 1];
+		if (peer && isTrustedIp(peer)) return true;
+	}
+
+	const realIp = request.headers.get("x-real-ip");
+	return !!realIp && isTrustedIp(realIp);
+}
+
 function isRateLimited(ip: string): boolean {
 	const now = Date.now();
 	sweepRateLimitStore(now);
@@ -247,12 +325,15 @@ export function middleware(request: NextRequest) {
 
 	const ip = getClientIp(request);
 	const userAgent = request.headers.get("user-agent") ?? "";
+	// Your own addresses skip the bot filter and the bot rate limit. The check
+	// reads the proxy-appended hop, so a forged x-forwarded-for cannot opt in.
+	const trusted = isTrustedRequest(request);
 
 	// Track IP for bot detection visibility
 	trackRequest(ip, pathname, userAgent);
 
 	// Block bad bots entirely
-	if (isBot(userAgent)) {
+	if (!trusted && isBot(userAgent)) {
 		console.warn(`[IP-TRACKER] Blocked bad bot: ${ip} | UA: ${userAgent.slice(0, 80)}`);
 		return new NextResponse("Forbidden", { status: 403 });
 	}
@@ -260,7 +341,7 @@ export function middleware(request: NextRequest) {
 	// Rate limit only known bots / unhuman requests. Real browser traffic is
 	// not rate limited here; authentication endpoints keep their own stricter
 	// per-action rate limits (see lib/security.ts).
-	if (isNonHumanRequest(userAgent) && isRateLimited(ip)) {
+	if (!trusted && isNonHumanRequest(userAgent) && isRateLimited(ip)) {
 		console.warn(`[IP-TRACKER] Rate limited bot: ${ip} | path: ${pathname} | UA: ${userAgent.slice(0, 60)}`);
 		return new NextResponse("Too Many Requests", {
 			status: 429,
