@@ -33,7 +33,7 @@ export function DevNote({ className, variant = "full" }: DevNoteProps) {
                 <Link
                     href="https://dvcklab.com"
                     target="_blank"
-                    className="inline-flex items-center gap-1 text-primary hover:underline group"
+                    className="inline-flex items-center gap-1 text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary group"
                 >
                     Let&apos;s chat
                     <ExternalLink className="w-3 h-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
