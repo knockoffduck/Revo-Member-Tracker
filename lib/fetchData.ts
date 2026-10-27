@@ -150,10 +150,10 @@ export const getGymMeta = async (gymName: string): Promise<GymMeta | null> => {
  * The newest snapshot of every active gym, shared by every request.
  *
  * The scraper writes once every five minutes, so re-reading the same 83 rows on
- * every page view buys nothing but latency. Thirty seconds keeps the numbers
- * fresh enough to call live while collapsing a traffic spike into one query.
+ * every page view buys nothing but latency. A minute of cache is still fresher
+ * than the scrape cadence, and it collapses a traffic spike into one query.
  */
-const SNAPSHOT_TTL_MS = 30 * 1000;
+const SNAPSHOT_TTL_MS = 60 * 1000;
 
 type Snapshot = { timestamp: string; data: Gym[] };
 
