@@ -16,7 +16,7 @@
  *  - Bump VERSION on a deploy that changes the shell so stale HTML is dropped.
  */
 
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `revo-static-${VERSION}`;
 const PAGE_CACHE = `revo-pages-${VERSION}`;
 
@@ -39,11 +39,15 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       // Precache the shell so the very next cold open has something to paint.
+      // Key by absolute URL string: the Cache API rejects put() for requests in
+      // "navigate" mode, and a string key is always stored as a plain GET.
       const cache = await caches.open(PAGE_CACHE);
-      await Promise.allSettled([
-        cache.add(new Request("/", { credentials: "same-origin" })),
-        cache.add(new Request("/manifest.json")),
-      ]);
+      await Promise.allSettled(
+        ["/", "/manifest.json"].map(async (path) => {
+          const res = await fetch(path, { credentials: "same-origin" });
+          if (res.ok) await cache.put(new URL(path, self.location.origin).href, res);
+        }),
+      );
       await self.skipWaiting();
     })(),
   );
@@ -84,13 +88,21 @@ async function cacheFirst(request, cacheName) {
   }
 }
 
+// Cache API keys: navigations arrive as mode:"navigate", which put() rejects.
+// Key every page by origin+pathname so it is stored and matched as a plain GET.
+function pageKey(request) {
+  const u = new URL(request.url);
+  return u.origin + u.pathname;
+}
+
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
-  const cached = await cache.match(request, { ignoreSearch: true });
+  const key = pageKey(request);
+  const cached = await cache.match(key);
 
   const network = fetch(request)
     .then((res) => {
-      if (isCacheable(res)) cache.put(request, res.clone()).catch(() => {});
+      if (isCacheable(res)) cache.put(key, res.clone()).catch(() => {});
       return res;
     })
     .catch(() => null);
