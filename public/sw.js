@@ -16,7 +16,7 @@
  *  - Bump VERSION on a deploy that changes the shell so stale HTML is dropped.
  */
 
-const VERSION = "v2";
+const VERSION = "v3";
 const STATIC_CACHE = `revo-static-${VERSION}`;
 const PAGE_CACHE = `revo-pages-${VERSION}`;
 
@@ -74,20 +74,6 @@ function isCacheable(res) {
   return res && res.ok && res.type !== "opaque" && !res.redirected;
 }
 
-async function cacheFirst(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-  if (cached) return cached;
-  try {
-    const res = await fetch(request);
-    if (isCacheable(res)) cache.put(request, res.clone()).catch(() => {});
-    return res;
-  } catch {
-    const fallback = await cache.match(request, { ignoreSearch: true });
-    return fallback || new Response("", { status: 504, statusText: "Offline" });
-  }
-}
-
 // Cache API keys: navigations arrive as mode:"navigate", which put() rejects.
 // Key every page by origin+pathname so it is stored and matched as a plain GET.
 function pageKey(request) {
@@ -95,29 +81,54 @@ function pageKey(request) {
   return u.origin + u.pathname;
 }
 
-async function staleWhileRevalidate(request, cacheName) {
+// Every cache write goes through event.waitUntil(): without it the worker can
+// be torn down as soon as the response settles and the write is dropped, which
+// is exactly why navigations never cached on the first attempt.
+async function cacheFirst(event, request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+
+  try {
+    const res = await fetch(request);
+    if (isCacheable(res)) event.waitUntil(cache.put(request, res.clone()).catch(() => {}));
+    return res;
+  } catch {
+    const fallback = await cache.match(request, { ignoreSearch: true });
+    return fallback || new Response("", { status: 504, statusText: "Offline" });
+  }
+}
+
+async function navigation(event, request, cacheName) {
   const cache = await caches.open(cacheName);
   const key = pageKey(request);
   const cached = await cache.match(key);
 
-  const network = fetch(request)
-    .then((res) => {
-      if (isCacheable(res)) cache.put(key, res.clone()).catch(() => {});
-      return res;
-    })
-    .catch(() => null);
-
   if (cached) {
-    // Serve instantly, refresh in the background.
+    // Paint from disk immediately, refresh in the background.
+    event.waitUntil(
+      (async () => {
+        try {
+          const res = await fetch(request);
+          if (isCacheable(res)) await cache.put(key, res.clone());
+        } catch {
+          /* offline: keep serving the cached copy */
+        }
+      })(),
+    );
     return cached;
   }
 
-  const fresh = await network;
-  if (fresh) return fresh;
-  return new Response(OFFLINE_HTML, {
-    status: 200,
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  try {
+    const res = await fetch(request);
+    if (isCacheable(res)) event.waitUntil(cache.put(key, res.clone()).catch(() => {}));
+    return res;
+  } catch {
+    return new Response(OFFLINE_HTML, {
+      status: 200,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
 }
 
 self.addEventListener("fetch", (event) => {
@@ -142,11 +153,11 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/splash/") ||
     /\.(?:png|jpg|jpeg|webp|svg|ico|woff2?|ttf)$/i.test(url.pathname)
   ) {
-    event.respondWith(cacheFirst(request, STATIC_CACHE));
+    event.respondWith(cacheFirst(event, request, STATIC_CACHE));
     return;
   }
 
   if (request.mode === "navigate") {
-    event.respondWith(staleWhileRevalidate(request, PAGE_CACHE));
+    event.respondWith(navigation(event, request, PAGE_CACHE));
   }
 });
