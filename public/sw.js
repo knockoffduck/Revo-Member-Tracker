@@ -16,7 +16,7 @@
  *  - Bump VERSION on a deploy that changes the shell so stale HTML is dropped.
  */
 
-const VERSION = "v3";
+const VERSION = "v4";
 const STATIC_CACHE = `revo-static-${VERSION}`;
 const PAGE_CACHE = `revo-pages-${VERSION}`;
 
