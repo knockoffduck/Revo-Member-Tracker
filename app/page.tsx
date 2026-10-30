@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getDataFreshness, getGyms } from "@/lib/fetchData";
 import { getCrowdLevelMeta } from "./components/CrowdLevelBadge";
 import StaleDataBanner, { formatFreshnessAge } from "./components/StaleDataBanner";
+import RefreshButton from "./components/RefreshButton";
 import type { Gym } from "./gyms/_types";
 
 // The hero is only as useful as the numbers in it, so it is rendered per request.
@@ -85,12 +86,15 @@ export default async function LandingPage() {
                 ? `Busiest at the last update, ${formatFreshnessAge(freshness.ageMinutes)}`
                 : "Busiest right now"}
             </h2>
-            <Link
-              href="/gyms"
-              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-            >
-              See all
-            </Link>
+            <div className="flex items-center gap-3">
+              <RefreshButton />
+              <Link
+                href="/gyms"
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              >
+                See all
+              </Link>
+            </div>
           </div>
 
           <ul className="divide-y divide-border rounded-xl border border-border bg-card">

@@ -822,3 +822,18 @@ export const getNearbyGymsByPostcode = async (
         return [];
     }
 };
+
+/**
+ * Drops every in-process data cache so the next render reads PocketBase again.
+ *
+ * The manual refresh button needs this: the snapshot is cached for 60 seconds,
+ * so a refresh inside that window would re-render the identical numbers and
+ * look broken. Trend and gym-metadata caches are cleared with it so a refresh
+ * after a scraper run shows the new samples rather than an hour-old slot list.
+ */
+export const clearDataCaches = (): void => {
+    snapshotCache = null;
+    snapshotPromise = null;
+    gymMetaCache.clear();
+    gymTrendCache.clear();
+};

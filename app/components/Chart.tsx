@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import RefreshButton from "@/app/components/RefreshButton";
 import {
   Area,
   CartesianGrid,
@@ -252,16 +253,19 @@ export default function Chart({
               <p className="pt-1 text-sm font-medium text-foreground/90">{insight}</p>
             ) : null}
           </div>
-          {formattedCurrentCount ? (
-            <div className="hidden rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-left sm:block sm:min-w-[8.5rem] sm:text-right">
-              <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
-                {countLabel}
-              </p>
-              <p className="mt-1 text-4xl font-semibold leading-none tracking-tight">
-                {formattedCurrentCount}
-              </p>
-            </div>
-          ) : null}
+          <div className="flex shrink-0 items-center gap-2 self-start sm:flex-col sm:items-end sm:gap-1">
+            {formattedCurrentCount ? (
+              <div className="hidden rounded-lg border border-border/70 bg-muted/20 px-4 py-3 text-left sm:block sm:min-w-[8.5rem] sm:text-right">
+                <p className="text-[0.7rem] font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
+                  {countLabel}
+                </p>
+                <p className="mt-1 text-4xl font-semibold leading-none tracking-tight">
+                  {formattedCurrentCount}
+                </p>
+              </div>
+            ) : null}
+            <RefreshButton />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="px-3 pb-4 pt-4 sm:px-6 sm:pb-6 sm:pt-6">
