@@ -2,7 +2,7 @@
 # Requires BuildKit (default in Docker 23+) for cache mounts.
 
 # --- Stage 1: install dependencies with Bun ---
-FROM oven/bun:1-alpine AS deps
+FROM oven/bun:1.4.4-alpine AS deps
 WORKDIR /app
 
 # Copy lockfile and manifest only — this layer is cached until they change
@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
 
 # --- Stage 2: build the Next.js app ---
-FROM oven/bun:1-alpine AS builder
+FROM oven/bun:1.4.4-alpine AS builder
 WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -57,7 +57,7 @@ RUN --mount=type=cache,target=/app/.next/cache \
     bun run build
 
 # --- Stage 3: minimal runtime image ---
-FROM node:22-alpine AS runner
+FROM node:22.23.4-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
